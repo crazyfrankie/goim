@@ -60,7 +60,11 @@ func (h *UserHandler) Login() gin.HandlerFunc {
 			return
 		}
 
-		res, err := h.userClient.Login(c.Request.Context(), &userv1.LoginRequest{
+		ctx := metadata.NewOutgoingContext(c.Request.Context(), metadata.New(map[string]string{
+			"user_agent": c.Request.UserAgent(),
+		}))
+
+		res, err := h.userClient.Login(ctx, &userv1.LoginRequest{
 			Email:    req.Email,
 			Password: req.Password,
 		})
