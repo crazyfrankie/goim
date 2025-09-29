@@ -2,10 +2,7 @@ module github.com/crazyfrankie/goim
 
 go 1.25.1
 
-replace github.com/crazyfrankie/goim/protocol => ./protocol
-
 require (
-	github.com/crazyfrankie/goim/protocol v0.0.0-20250928141448-3e2a746aad61
 	github.com/gin-gonic/gin v1.11.0
 	github.com/golang-jwt/jwt/v5 v5.3.0
 	github.com/joho/godotenv v1.5.1
@@ -14,6 +11,7 @@ require (
 	github.com/redis/go-redis/v9 v9.14.0
 	golang.org/x/crypto v0.42.0
 	google.golang.org/grpc v1.75.1
+	google.golang.org/protobuf v1.36.9
 	gopkg.in/yaml.v3 v3.0.1
 	gorm.io/driver/mysql v1.6.0
 	gorm.io/gen v0.3.27
@@ -67,7 +65,6 @@ require (
 	golang.org/x/text v0.29.0 // indirect
 	golang.org/x/tools v0.37.0 // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20250922171735-9219d122eba9 // indirect
-	google.golang.org/protobuf v1.36.9 // indirect
 	gorm.io/datatypes v1.2.7 // indirect
 	gorm.io/hints v1.1.2 // indirect
 )
