@@ -2,23 +2,17 @@ package token
 
 import (
 	"context"
-	"crypto/sha1"
-	"encoding/hex"
+	"crypto/rsa"
 	"errors"
 	"fmt"
 	"os"
-	"strconv"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
-	
+
 	"github.com/crazyfrankie/goim/infra/contract/cache"
 	"github.com/crazyfrankie/goim/infra/contract/token"
 	"github.com/crazyfrankie/goim/types/consts"
-)
-
-var (
-	ErrUserRevoked = errors.New("user revoked")
 )
 
 const (
@@ -29,17 +23,23 @@ const (
 type TokenService struct {
 	cmd       cache.Cmdable
 	signAlgo  string
-	secretKey []byte
+	secretKey *rsa.PrivateKey
 }
 
 func New(cmd cache.Cmdable) (token.Token, error) {
 	signAlgo := os.Getenv(consts.JWTSignAlgo)
-	secret := os.Getenv(consts.JWTSecretKey)
+	secretPath := os.Getenv(consts.JWTSecretKey)
 
-	return &TokenService{cmd: cmd, signAlgo: signAlgo, secretKey: []byte(secret)}, nil
+	privateKey, err := os.ReadFile(secretPath)
+	if err != nil {
+		return nil, err
+	}
+	key, _ := jwt.ParseRSAPrivateKeyFromPEM(privateKey)
+
+	return &TokenService{cmd: cmd, signAlgo: signAlgo, secretKey: key}, nil
 }
 
-func (s *TokenService) GenerateToken(uid int64, ua string) ([]string, error) {
+func (s *TokenService) GenerateToken(uid int64) ([]string, error) {
 	res := make([]string, 2)
 	access, err := s.newToken(uid, time.Minute*15)
 	if err != nil {
@@ -53,7 +53,7 @@ func (s *TokenService) GenerateToken(uid int64, ua string) ([]string, error) {
 	res[1] = refresh
 
 	// set refresh in redis
-	key := refreshKey(uid, ua)
+	key := refreshKey(uid)
 
 	err = s.cmd.Set(context.Background(), key, refresh, time.Hour*24*30).Err()
 	if err != nil {
@@ -78,7 +78,7 @@ func (s *TokenService) newToken(uid int64, duration time.Duration) (string, erro
 	return str, err
 }
 
-func (s *TokenService) ParseToken(tk string, isAccess bool) (*token.Claims, error) {
+func (s *TokenService) ParseToken(tk string) (*token.Claims, error) {
 	t, err := jwt.ParseWithClaims(tk, &token.Claims{}, func(token *jwt.Token) (interface{}, error) {
 		return s.secretKey, nil
 	})
@@ -91,34 +91,23 @@ func (s *TokenService) ParseToken(tk string, isAccess bool) (*token.Claims, erro
 		return nil, errors.New("jwt is invalid")
 	}
 
-	if isAccess {
-		key := revokeKey(claims.UID)
-		revokedTime, err := s.cmd.Get(context.Background(), key).Result()
-		if err == nil {
-			issuedAt, _ := claims.GetIssuedAt()
-			if revokedTime != "" && issuedAt.Unix() < parseRevokedTime(revokedTime) {
-				return nil, ErrUserRevoked
-			}
-		}
-	}
-
 	return claims, nil
 }
 
-func (s *TokenService) TryRefresh(refresh string, ua string) ([]string, *token.Claims, error) {
-	refreshClaims, err := s.ParseToken(refresh, false)
+func (s *TokenService) TryRefresh(refresh string) ([]string, error) {
+	refreshClaims, err := s.ParseToken(refresh)
 	if err != nil {
-		return nil, nil, fmt.Errorf("invalid refresh jwt")
+		return nil, fmt.Errorf("invalid refresh jwt")
 	}
 
-	res, err := s.cmd.Get(context.Background(), refreshKey(refreshClaims.UID, ua)).Result()
+	res, err := s.cmd.Get(context.Background(), refreshKey(refreshClaims.UID)).Result()
 	if err != nil || res != refresh {
-		return nil, nil, errors.New("jwt invalid or revoked")
+		return nil, errors.New("jwt invalid or revoked")
 	}
 
 	access, err := s.newToken(refreshClaims.UID, time.Hour)
 	if err != nil {
-		return nil, nil, err
+		return nil, err
 	}
 
 	now := time.Now()
@@ -127,17 +116,17 @@ func (s *TokenService) TryRefresh(refresh string, ua string) ([]string, *token.C
 	if expire.Sub(now) < expire.Sub(issat.Time)/3 {
 		// try refresh
 		refresh, err = s.newToken(refreshClaims.UID, time.Hour*24*30)
-		err = s.cmd.Set(context.Background(), refreshKey(refreshClaims.UID, ua), refresh, time.Hour*24*30).Err()
+		err = s.cmd.Set(context.Background(), refreshKey(refreshClaims.UID), refresh, time.Hour*24*30).Err()
 		if err != nil {
-			return nil, nil, err
+			return nil, err
 		}
 	}
 
-	return []string{access, refresh}, refreshClaims, nil
+	return []string{access, refresh}, nil
 }
 
-func (s *TokenService) CleanToken(ctx context.Context, uid int64, ua string) error {
-	return s.cmd.Del(ctx, refreshKey(uid, ua)).Err()
+func (s *TokenService) CleanToken(ctx context.Context, uid int64) error {
+	return s.cmd.Del(ctx, refreshKey(uid)).Err()
 }
 
 func (s *TokenService) RevokeToken(ctx context.Context, uid int64) error {
@@ -149,21 +138,6 @@ func revokeKey(uid int64) string {
 	return fmt.Sprintf("%s:%d", RevokePrefix, uid)
 }
 
-func refreshKey(uid int64, ua string) string {
-	hash := hashUA(ua)
-	return fmt.Sprintf("%s:%d:%s", RefreshPrefix, uid, hash)
-}
-
-func hashUA(ua string) string {
-	sum := sha1.Sum([]byte(ua))
-	return hex.EncodeToString(sum[:])
-}
-
-func parseRevokedTime(revokedTime string) int64 {
-	res, err := strconv.ParseInt(revokedTime, 10, 64)
-	if err != nil {
-		return 0
-	}
-
-	return res
+func refreshKey(uid int64) string {
+	return fmt.Sprintf("%s:%d", RefreshPrefix, uid)
 }

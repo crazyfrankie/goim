@@ -43,9 +43,7 @@ func (u *UserApplicationService) Register(ctx context.Context, req *userv1.Regis
 		return nil, err
 	}
 
-	ua := ctxutil.MustGetUserAgent(ctx)
-
-	userInfo, err = u.userDomain.Login(ctx, req.GetEmail(), req.GetPassword(), ua)
+	userInfo, err = u.userDomain.Login(ctx, req.GetEmail(), req.GetPassword())
 	if err != nil {
 		return nil, err
 	}
@@ -56,9 +54,7 @@ func (u *UserApplicationService) Register(ctx context.Context, req *userv1.Regis
 }
 
 func (u *UserApplicationService) Login(ctx context.Context, req *userv1.LoginRequest) (*userv1.LoginResponse, error) {
-	ua := ctxutil.MustGetUserAgent(ctx)
-
-	userInfo, err := u.userDomain.Login(ctx, req.GetEmail(), req.GetPassword(), ua)
+	userInfo, err := u.userDomain.Login(ctx, req.GetEmail(), req.GetPassword())
 	if err != nil {
 		return nil, err
 	}
@@ -101,9 +97,8 @@ func (u *UserApplicationService) MGetUserInfo(ctx context.Context, req *userv1.M
 
 func (u *UserApplicationService) Logout(ctx context.Context, req *userv1.LogoutRequest) (*userv1.LogoutResponse, error) {
 	userID := ctxutil.MustGetUserIDFromCtx(ctx)
-	ua := ctxutil.MustGetUserAgent(ctx)
 
-	err := u.userDomain.Logout(ctx, userID, ua)
+	err := u.userDomain.Logout(ctx, userID)
 	if err != nil {
 		return nil, err
 	}
@@ -161,6 +156,18 @@ func (u *UserApplicationService) UpdateProfile(ctx context.Context, req *userv1.
 	}
 
 	return nil, nil
+}
+
+func (u *UserApplicationService) RefreshToken(ctx context.Context, req *userv1.RefreshTokenRequest) (*userv1.RefreshTokenResponse, error) {
+	tokens, err := u.userDomain.RefreshToken(ctx, req.GetRefreshToken())
+	if err != nil {
+		return nil, err
+	}
+
+	return &userv1.RefreshTokenResponse{
+		AccessToken:  tokens[0],
+		RefreshToken: tokens[1],
+	}, nil
 }
 
 func userDO2DTO(userDo *entity.User) *userv1.User {

@@ -8,6 +8,7 @@ import (
 	"google.golang.org/grpc/credentials/insecure"
 
 	"github.com/crazyfrankie/goim/interfaces/user/api/handler"
+	"github.com/crazyfrankie/goim/pkg/gin/middleware"
 	userv1 "github.com/crazyfrankie/goim/protocol/user/v1"
 )
 
@@ -23,6 +24,13 @@ func InitEngine() (*gin.Engine, error) {
 	}
 	userCli := userv1.NewUserServiceClient(cc)
 	userHdl := handler.NewUserHandler(userCli)
+
+	authHdl, err := middleware.NewAuthnHandler(userCli)
+	if err != nil {
+		return nil, err
+	}
+
+	srv.Use(authHdl.IgnorePath([]string{"/api/user/login", "/api/user/register"}).Auth())
 
 	apiGroup := srv.Group("api")
 	userHdl.RegisterRoute(apiGroup)

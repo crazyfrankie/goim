@@ -27,14 +27,3 @@ func MustGetUserIDFromCtx(ctx context.Context) int64 {
 
 	return userID
 }
-
-func MustGetUserAgent(ctx context.Context) string {
-	md := GetMetadata(ctx)
-	if md == nil {
-		panic("mustGetUserAgentFromCtx: metadata is nil")
-	}
-
-	ua := md.Get("user_agent")
-
-	return ua[0]
-}

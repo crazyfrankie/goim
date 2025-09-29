@@ -101,7 +101,7 @@ func (u *userImpl) Create(ctx context.Context, req *CreateUserRequest) (*entity.
 	return userPO2DO(newUser, nil, iconURL), nil
 }
 
-func (u *userImpl) Login(ctx context.Context, email, password, ua string) (*entity.User, error) {
+func (u *userImpl) Login(ctx context.Context, email, password string) (*entity.User, error) {
 	userModel, exist, err := u.UserRepo.GetUsersByEmail(ctx, email)
 	if err != nil {
 		return nil, err
@@ -115,7 +115,7 @@ func (u *userImpl) Login(ctx context.Context, email, password, ua string) (*enti
 		return nil, errorx.New(errno.ErrUserInfoInvalidCode)
 	}
 
-	tokens, err := u.TokenGen.GenerateToken(userModel.ID, ua)
+	tokens, err := u.TokenGen.GenerateToken(userModel.ID)
 	if err != nil {
 		return nil, err
 	}
@@ -128,8 +128,8 @@ func (u *userImpl) Login(ctx context.Context, email, password, ua string) (*enti
 	return userPO2DO(userModel, tokens, resURL), nil
 }
 
-func (u *userImpl) Logout(ctx context.Context, userID int64, ua string) error {
-	return u.TokenGen.CleanToken(ctx, userID, ua)
+func (u *userImpl) Logout(ctx context.Context, userID int64) error {
+	return u.TokenGen.CleanToken(ctx, userID)
 }
 
 func (u *userImpl) ResetPassword(ctx context.Context, email, password string) error {
@@ -271,6 +271,15 @@ func (u *userImpl) MGetUserProfiles(ctx context.Context, userIDs []int64) (users
 	}
 
 	return users, nil
+}
+
+func (u *userImpl) RefreshToken(ctx context.Context, refreshToken string) ([]string, error) {
+	tokens, err := u.TokenGen.TryRefresh(refreshToken)
+	if err != nil {
+		return nil, err
+	}
+
+	return tokens, nil
 }
 
 func (u *userImpl) getUniqueNameFormEmail(ctx context.Context, email string) string {

@@ -405,7 +405,6 @@ func (*LogoutResponse) Descriptor() ([]byte, []int) {
 
 type GetUserInfoRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	UserId        int64                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -438,13 +437,6 @@ func (x *GetUserInfoRequest) ProtoReflect() protoreflect.Message {
 // Deprecated: Use GetUserInfoRequest.ProtoReflect.Descriptor instead.
 func (*GetUserInfoRequest) Descriptor() ([]byte, []int) {
 	return file_idl_user_v1_user_proto_rawDescGZIP(), []int{7}
-}
-
-func (x *GetUserInfoRequest) GetUserId() int64 {
-	if x != nil {
-		return x.UserId
-	}
-	return 0
 }
 
 type GetUserInfoResponse struct {
@@ -867,6 +859,102 @@ func (*UpdateProfileResponse) Descriptor() ([]byte, []int) {
 	return file_idl_user_v1_user_proto_rawDescGZIP(), []int{16}
 }
 
+type RefreshTokenRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	RefreshToken  string                 `protobuf:"bytes,1,opt,name=refresh_token,json=refreshToken,proto3" json:"refresh_token,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *RefreshTokenRequest) Reset() {
+	*x = RefreshTokenRequest{}
+	mi := &file_idl_user_v1_user_proto_msgTypes[17]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *RefreshTokenRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*RefreshTokenRequest) ProtoMessage() {}
+
+func (x *RefreshTokenRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_idl_user_v1_user_proto_msgTypes[17]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use RefreshTokenRequest.ProtoReflect.Descriptor instead.
+func (*RefreshTokenRequest) Descriptor() ([]byte, []int) {
+	return file_idl_user_v1_user_proto_rawDescGZIP(), []int{17}
+}
+
+func (x *RefreshTokenRequest) GetRefreshToken() string {
+	if x != nil {
+		return x.RefreshToken
+	}
+	return ""
+}
+
+type RefreshTokenResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	AccessToken   string                 `protobuf:"bytes,1,opt,name=access_token,json=accessToken,proto3" json:"access_token,omitempty"`
+	RefreshToken  string                 `protobuf:"bytes,2,opt,name=refresh_token,json=refreshToken,proto3" json:"refresh_token,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *RefreshTokenResponse) Reset() {
+	*x = RefreshTokenResponse{}
+	mi := &file_idl_user_v1_user_proto_msgTypes[18]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *RefreshTokenResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*RefreshTokenResponse) ProtoMessage() {}
+
+func (x *RefreshTokenResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_idl_user_v1_user_proto_msgTypes[18]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use RefreshTokenResponse.ProtoReflect.Descriptor instead.
+func (*RefreshTokenResponse) Descriptor() ([]byte, []int) {
+	return file_idl_user_v1_user_proto_rawDescGZIP(), []int{18}
+}
+
+func (x *RefreshTokenResponse) GetAccessToken() string {
+	if x != nil {
+		return x.AccessToken
+	}
+	return ""
+}
+
+func (x *RefreshTokenResponse) GetRefreshToken() string {
+	if x != nil {
+		return x.RefreshToken
+	}
+	return ""
+}
+
 var File_idl_user_v1_user_proto protoreflect.FileDescriptor
 
 const file_idl_user_v1_user_proto_rawDesc = "" +
@@ -895,9 +983,8 @@ const file_idl_user_v1_user_proto_rawDesc = "" +
 	"\rLoginResponse\x12!\n" +
 	"\x04data\x18\x01 \x01(\v2\r.user.v1.UserR\x04data\"\x0f\n" +
 	"\rLogoutRequest\"\x10\n" +
-	"\x0eLogoutResponse\"-\n" +
-	"\x12GetUserInfoRequest\x12\x17\n" +
-	"\auser_id\x18\x01 \x01(\x03R\x06userId\"8\n" +
+	"\x0eLogoutResponse\"\x14\n" +
+	"\x12GetUserInfoRequest\"8\n" +
 	"\x13GetUserInfoResponse\x12!\n" +
 	"\x04data\x18\x01 \x01(\v2\r.user.v1.UserR\x04data\"0\n" +
 	"\x13MGetUserInfoRequest\x12\x19\n" +
@@ -925,7 +1012,12 @@ const file_idl_user_v1_user_proto_rawDesc = "" +
 	"\x05_nameB\x13\n" +
 	"\x11_user_unique_nameB\x0e\n" +
 	"\f_description\"\x17\n" +
-	"\x15UpdateProfileResponse2\xc5\x04\n" +
+	"\x15UpdateProfileResponse\":\n" +
+	"\x13RefreshTokenRequest\x12#\n" +
+	"\rrefresh_token\x18\x01 \x01(\tR\frefreshToken\"^\n" +
+	"\x14RefreshTokenResponse\x12!\n" +
+	"\faccess_token\x18\x01 \x01(\tR\vaccessToken\x12#\n" +
+	"\rrefresh_token\x18\x02 \x01(\tR\frefreshToken2\x92\x05\n" +
 	"\vUserService\x12?\n" +
 	"\bRegister\x12\x18.user.v1.RegisterRequest\x1a\x19.user.v1.RegisterResponse\x126\n" +
 	"\x05Login\x12\x15.user.v1.LoginRequest\x1a\x16.user.v1.LoginResponse\x129\n" +
@@ -934,7 +1026,8 @@ const file_idl_user_v1_user_proto_rawDesc = "" +
 	"\fMGetUserInfo\x12\x1c.user.v1.MGetUserInfoRequest\x1a\x1d.user.v1.MGetUserInfoResponse\x12N\n" +
 	"\rResetPassword\x12\x1d.user.v1.ResetPasswordRequest\x1a\x1e.user.v1.ResetPasswordResponse\x12K\n" +
 	"\fUpdateAvatar\x12\x1c.user.v1.UpdateAvatarRequest\x1a\x1d.user.v1.UpdateAvatarResponse\x12N\n" +
-	"\rUpdateProfile\x12\x1d.user.v1.UpdateProfileRequest\x1a\x1e.user.v1.UpdateProfileResponseB6Z4github.com/crazyfrankie/goim/protocol/user/v1;userv1b\x06proto3"
+	"\rUpdateProfile\x12\x1d.user.v1.UpdateProfileRequest\x1a\x1e.user.v1.UpdateProfileResponse\x12K\n" +
+	"\fRefreshToken\x12\x1c.user.v1.RefreshTokenRequest\x1a\x1d.user.v1.RefreshTokenResponseB6Z4github.com/crazyfrankie/goim/protocol/user/v1;userv1b\x06proto3"
 
 var (
 	file_idl_user_v1_user_proto_rawDescOnce sync.Once
@@ -948,7 +1041,7 @@ func file_idl_user_v1_user_proto_rawDescGZIP() []byte {
 	return file_idl_user_v1_user_proto_rawDescData
 }
 
-var file_idl_user_v1_user_proto_msgTypes = make([]protoimpl.MessageInfo, 18)
+var file_idl_user_v1_user_proto_msgTypes = make([]protoimpl.MessageInfo, 20)
 var file_idl_user_v1_user_proto_goTypes = []any{
 	(*User)(nil),                  // 0: user.v1.User
 	(*RegisterRequest)(nil),       // 1: user.v1.RegisterRequest
@@ -967,13 +1060,15 @@ var file_idl_user_v1_user_proto_goTypes = []any{
 	(*UpdateAvatarResponse)(nil),  // 14: user.v1.UpdateAvatarResponse
 	(*UpdateProfileRequest)(nil),  // 15: user.v1.UpdateProfileRequest
 	(*UpdateProfileResponse)(nil), // 16: user.v1.UpdateProfileResponse
-	nil,                           // 17: user.v1.MGetUserInfoResponse.DataEntry
+	(*RefreshTokenRequest)(nil),   // 17: user.v1.RefreshTokenRequest
+	(*RefreshTokenResponse)(nil),  // 18: user.v1.RefreshTokenResponse
+	nil,                           // 19: user.v1.MGetUserInfoResponse.DataEntry
 }
 var file_idl_user_v1_user_proto_depIdxs = []int32{
 	0,  // 0: user.v1.RegisterResponse.data:type_name -> user.v1.User
 	0,  // 1: user.v1.LoginResponse.data:type_name -> user.v1.User
 	0,  // 2: user.v1.GetUserInfoResponse.data:type_name -> user.v1.User
-	17, // 3: user.v1.MGetUserInfoResponse.data:type_name -> user.v1.MGetUserInfoResponse.DataEntry
+	19, // 3: user.v1.MGetUserInfoResponse.data:type_name -> user.v1.MGetUserInfoResponse.DataEntry
 	0,  // 4: user.v1.MGetUserInfoResponse.DataEntry.value:type_name -> user.v1.User
 	1,  // 5: user.v1.UserService.Register:input_type -> user.v1.RegisterRequest
 	3,  // 6: user.v1.UserService.Login:input_type -> user.v1.LoginRequest
@@ -983,16 +1078,18 @@ var file_idl_user_v1_user_proto_depIdxs = []int32{
 	11, // 10: user.v1.UserService.ResetPassword:input_type -> user.v1.ResetPasswordRequest
 	13, // 11: user.v1.UserService.UpdateAvatar:input_type -> user.v1.UpdateAvatarRequest
 	15, // 12: user.v1.UserService.UpdateProfile:input_type -> user.v1.UpdateProfileRequest
-	2,  // 13: user.v1.UserService.Register:output_type -> user.v1.RegisterResponse
-	4,  // 14: user.v1.UserService.Login:output_type -> user.v1.LoginResponse
-	6,  // 15: user.v1.UserService.Logout:output_type -> user.v1.LogoutResponse
-	8,  // 16: user.v1.UserService.GetUserInfo:output_type -> user.v1.GetUserInfoResponse
-	10, // 17: user.v1.UserService.MGetUserInfo:output_type -> user.v1.MGetUserInfoResponse
-	12, // 18: user.v1.UserService.ResetPassword:output_type -> user.v1.ResetPasswordResponse
-	14, // 19: user.v1.UserService.UpdateAvatar:output_type -> user.v1.UpdateAvatarResponse
-	16, // 20: user.v1.UserService.UpdateProfile:output_type -> user.v1.UpdateProfileResponse
-	13, // [13:21] is the sub-list for method output_type
-	5,  // [5:13] is the sub-list for method input_type
+	17, // 13: user.v1.UserService.RefreshToken:input_type -> user.v1.RefreshTokenRequest
+	2,  // 14: user.v1.UserService.Register:output_type -> user.v1.RegisterResponse
+	4,  // 15: user.v1.UserService.Login:output_type -> user.v1.LoginResponse
+	6,  // 16: user.v1.UserService.Logout:output_type -> user.v1.LogoutResponse
+	8,  // 17: user.v1.UserService.GetUserInfo:output_type -> user.v1.GetUserInfoResponse
+	10, // 18: user.v1.UserService.MGetUserInfo:output_type -> user.v1.MGetUserInfoResponse
+	12, // 19: user.v1.UserService.ResetPassword:output_type -> user.v1.ResetPasswordResponse
+	14, // 20: user.v1.UserService.UpdateAvatar:output_type -> user.v1.UpdateAvatarResponse
+	16, // 21: user.v1.UserService.UpdateProfile:output_type -> user.v1.UpdateProfileResponse
+	18, // 22: user.v1.UserService.RefreshToken:output_type -> user.v1.RefreshTokenResponse
+	14, // [14:23] is the sub-list for method output_type
+	5,  // [5:14] is the sub-list for method input_type
 	5,  // [5:5] is the sub-list for extension type_name
 	5,  // [5:5] is the sub-list for extension extendee
 	0,  // [0:5] is the sub-list for field type_name
@@ -1010,7 +1107,7 @@ func file_idl_user_v1_user_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_idl_user_v1_user_proto_rawDesc), len(file_idl_user_v1_user_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   18,
+			NumMessages:   20,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
