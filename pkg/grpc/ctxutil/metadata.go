@@ -34,7 +34,7 @@ func MustGetUserAgent(ctx context.Context) string {
 		panic("mustGetUserAgentFromCtx: metadata is nil")
 	}
 
-	ua := md.Get("use_agent")
+	ua := md.Get("user_agent")
 
 	return ua[0]
 }
