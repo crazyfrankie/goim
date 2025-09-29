@@ -1,5 +1,9 @@
 .PHONY: proto clean-proto buf-gen
 
+errcode:
+	@echo "Generating error code"
+	@./scripts/gen-error.sh --biz "*"
+
 proto:
 	@echo "Generating protobuf code with protoc..."
 	@./scripts/gen-proto.sh

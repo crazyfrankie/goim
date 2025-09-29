@@ -5,6 +5,7 @@ package user.v1;
 option go_package = "github.com/crazyfrankie/goim/protocol/user/v1;userv1";
 
 import "idl/common/v1/common.proto";
+import "google/protobuf/wrappers.proto";
 
 message User {
   int64 user_id = 1 [json_name = "user_id_str"];
@@ -13,6 +14,9 @@ message User {
   string user_unique_name = 4;
   string avatar_url = 5;
   string description = 6;
+  string access_token = 7;
+  string refresh_token = 8;
+  int64 user_create_time = 9;
 }
 
 message RegisterRequest {
@@ -22,10 +26,7 @@ message RegisterRequest {
 }
 
 message RegisterResponse {
-  string access_token = 1;
-  string refresh_token = 2;
-
-  common.v1.Error error  = 3;
+  User data = 1;
 }
 
 message LoginRequest {
@@ -34,10 +35,15 @@ message LoginRequest {
 }
 
 message LoginResponse {
-  string access_token = 1;
-  string refresh_token = 2;
+  User data = 1;
+}
 
-  common.v1.Error error = 3;
+message LogoutRequest {
+
+}
+
+message LogoutResponse {
+
 }
 
 message GetUserInfoRequest {
@@ -46,23 +52,51 @@ message GetUserInfoRequest {
 
 message GetUserInfoResponse {
   User data = 1;
-
-  common.v1.Error error = 2;
 }
 
 message MGetUserInfoRequest {
-  repeated int64 user_ids = 1;
+  repeated string user_ids = 1;
 }
 
 message MGetUserInfoResponse {
-  repeated User data = 1;
+  map<string, User> data = 1;
+}
 
-  common.v1.Error error = 3;
+message ResetPasswordRequest {
+  string email = 1;
+  string password = 2;
+}
+
+message ResetPasswordResponse {
+  string token = 1;
+}
+
+message UpdateAvatarRequest {
+  bytes avatar = 1;
+  string mime_type = 2;
+}
+
+message UpdateAvatarResponse {
+  string avatar_url = 1;
+}
+
+message UpdateProfileRequest {
+  optional string name = 1;
+  optional string user_unique_name = 2;
+  optional string description = 3;
+}
+
+message UpdateProfileResponse {
+
 }
 
 service UserService {
   rpc Register(RegisterRequest) returns (RegisterResponse);
   rpc Login(LoginRequest) returns (LoginResponse);
+  rpc Logout(LogoutRequest) returns (LogoutResponse);
   rpc GetUserInfo(GetUserInfoRequest) returns (GetUserInfoResponse);
   rpc MGetUserInfo(MGetUserInfoRequest) returns (MGetUserInfoResponse);
+  rpc ResetPassword(ResetPasswordRequest) returns(ResetPasswordResponse);
+  rpc UpdateAvatar(UpdateAvatarRequest) returns (UpdateAvatarResponse);
+  rpc UpdateProfile(UpdateProfileRequest) returns (UpdateProfileResponse);
 }

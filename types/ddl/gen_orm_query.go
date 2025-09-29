@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"os"
 
 	"gorm.io/driver/mysql"
 	"gorm.io/gen"
@@ -9,7 +10,8 @@ import (
 )
 
 func main() {
-	db := connectDB("root:041126@tcp(localhost:3306)/goim?charset=utf8mb4&parseTime=True")
+	dsn := os.Getenv("MYSQL_DSN")
+	db := connectDB(dsn)
 
 	genUser(db)
 }
