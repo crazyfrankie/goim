@@ -4,21 +4,25 @@
 
 package model
 
+import (
+	"gorm.io/gorm"
+)
+
 const TableNameUser = "user"
 
 // User User Table
 type User struct {
-	ID          int64  `gorm:"column:id;primaryKey;autoIncrement:true;comment:Primary Key ID" json:"id"`          // Primary Key ID
-	Name        string `gorm:"column:name;not null;comment:User Nickname" json:"name"`                            // User Nickname
-	UniqueName  string `gorm:"column:unique_name;not null;comment:User Unique Name" json:"unique_name"`           // User Unique Name
-	Email       string `gorm:"column:email;not null;comment:Email" json:"email"`                                  // Email
-	Password    string `gorm:"column:password;not null;comment:Password (Encrypted)" json:"password"`             // Password (Encrypted)
-	Description string `gorm:"column:description;not null;comment:User Description" json:"description"`           // User Description
-	IconURI     string `gorm:"column:icon_uri;not null;comment:Avatar URI" json:"icon_uri"`                       // Avatar URI
-	Sex         int32  `gorm:"column:sex;comment:User sex" json:"sex"`                                            // User sex
-	CreatedAt   int64  `gorm:"column:created_at;not null;comment:Creation Time (Milliseconds)" json:"created_at"` // Creation Time (Milliseconds)
-	UpdatedAt   int64  `gorm:"column:updated_at;not null;comment:Update Time (Milliseconds)" json:"updated_at"`   // Update Time (Milliseconds)
-	DeletedAt   int64  `gorm:"column:deleted_at;comment:Deletion Time (Milliseconds)" json:"deleted_at"`          // Deletion Time (Milliseconds)
+	ID          int64          `gorm:"column:id;primaryKey;autoIncrement:true;comment:Primary Key ID" json:"id"`                               // Primary Key ID
+	Name        string         `gorm:"column:name;not null;comment:User Nickname" json:"name"`                                                 // User Nickname
+	UniqueName  string         `gorm:"column:unique_name;not null;comment:User Unique Name" json:"unique_name"`                                // User Unique Name
+	Email       string         `gorm:"column:email;not null;comment:Email" json:"email"`                                                       // Email
+	Password    string         `gorm:"column:password;not null;comment:Password (Encrypted)" json:"password"`                                  // Password (Encrypted)
+	Description string         `gorm:"column:description;not null;comment:User Description" json:"description"`                                // User Description
+	IconURI     string         `gorm:"column:icon_uri;not null;comment:Avatar URI" json:"icon_uri"`                                            // Avatar URI
+	Sex         int32          `gorm:"column:sex;comment:User sex" json:"sex"`                                                                 // User sex
+	CreatedAt   int64          `gorm:"column:created_at;not null;autoCreateTime:milli;comment:Creation Time (Milliseconds)" json:"created_at"` // Creation Time (Milliseconds)
+	UpdatedAt   int64          `gorm:"column:updated_at;not null;autoUpdateTime:milli;comment:Update Time (Milliseconds)" json:"updated_at"`   // Update Time (Milliseconds)
+	DeletedAt   gorm.DeletedAt `gorm:"column:deleted_at;comment:Deletion Time (Milliseconds)" json:"deleted_at"`                               // Deletion Time (Milliseconds)
 }
 
 // TableName User's table name

@@ -38,7 +38,7 @@ func newUser(db *gorm.DB, opts ...gen.DOOption) user {
 	_user.Sex = field.NewInt32(tableName, "sex")
 	_user.CreatedAt = field.NewInt64(tableName, "created_at")
 	_user.UpdatedAt = field.NewInt64(tableName, "updated_at")
-	_user.DeletedAt = field.NewInt64(tableName, "deleted_at")
+	_user.DeletedAt = field.NewField(tableName, "deleted_at")
 
 	_user.fillFieldMap()
 
@@ -47,7 +47,7 @@ func newUser(db *gorm.DB, opts ...gen.DOOption) user {
 
 // user User Table
 type user struct {
-	userDo userDo
+	userDo
 
 	ALL         field.Asterisk
 	ID          field.Int64  // Primary Key ID
@@ -60,7 +60,7 @@ type user struct {
 	Sex         field.Int32  // User sex
 	CreatedAt   field.Int64  // Creation Time (Milliseconds)
 	UpdatedAt   field.Int64  // Update Time (Milliseconds)
-	DeletedAt   field.Int64  // Deletion Time (Milliseconds)
+	DeletedAt   field.Field  // Deletion Time (Milliseconds)
 
 	fieldMap map[string]field.Expr
 }
@@ -87,20 +87,12 @@ func (u *user) updateTableName(table string) *user {
 	u.Sex = field.NewInt32(table, "sex")
 	u.CreatedAt = field.NewInt64(table, "created_at")
 	u.UpdatedAt = field.NewInt64(table, "updated_at")
-	u.DeletedAt = field.NewInt64(table, "deleted_at")
+	u.DeletedAt = field.NewField(table, "deleted_at")
 
 	u.fillFieldMap()
 
 	return u
 }
-
-func (u *user) WithContext(ctx context.Context) IUserDo { return u.userDo.WithContext(ctx) }
-
-func (u user) TableName() string { return u.userDo.TableName() }
-
-func (u user) Alias() string { return u.userDo.Alias() }
-
-func (u user) Columns(cols ...field.Expr) gen.Columns { return u.userDo.Columns(cols...) }
 
 func (u *user) GetFieldByName(fieldName string) (field.OrderExpr, bool) {
 	_f, ok := u.fieldMap[fieldName]
