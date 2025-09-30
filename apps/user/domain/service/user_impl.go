@@ -245,6 +245,10 @@ func (u *userImpl) UpdateProfile(ctx context.Context, req *UpdateProfileRequest)
 		updates["description"] = ptr.From(req.Description)
 	}
 
+	if req.Sex != nil {
+		updates["sex"] = ptr.From(req.Sex)
+	}
+
 	err := u.UserRepo.UpdateProfile(ctx, req.UserID, updates)
 	if err != nil {
 		return err
@@ -312,6 +316,7 @@ func userPO2DO(model *model.User, tokens []string, iconURL string) *entity.User 
 		UniqueName:  model.UniqueName,
 		Email:       model.Email,
 		Description: model.Description,
+		Sex:         model.Sex,
 		IconURI:     model.IconURI,
 		IconURL:     iconURL,
 		CreatedAt:   model.CreatedAt,

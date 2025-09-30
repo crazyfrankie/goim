@@ -38,6 +38,7 @@ type UpdateProfileRequest struct {
 	Name        *string
 	UniqueName  *string
 	Description *string
+	Sex         *int32
 }
 
 type User interface {

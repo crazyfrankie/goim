@@ -150,6 +150,7 @@ func (u *UserApplicationService) UpdateProfile(ctx context.Context, req *userv1.
 		Name:        req.Name,
 		UniqueName:  req.UserUniqueName,
 		Description: req.Description,
+		Sex:         (*int32)(req.Sex),
 	})
 	if err != nil {
 		return nil, err
@@ -178,6 +179,7 @@ func userDO2DTO(userDo *entity.User) *userv1.User {
 		UserUniqueName: userDo.UniqueName,
 		AvatarUrl:      userDo.IconURL,
 		Description:    userDo.Description,
+		Sex:            userv1.Sex(userDo.Sex),
 		AccessToken:    userDo.AccessToken,
 		RefreshToken:   userDo.RefreshToken,
 

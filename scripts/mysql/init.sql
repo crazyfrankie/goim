@@ -11,6 +11,7 @@ CREATE TABLE IF NOT EXISTS `user` (
   `password` varchar(128) NOT NULL DEFAULT '' COMMENT 'Password (Encrypted)',
   `description` varchar(512) NOT NULL DEFAULT '' COMMENT 'User Description',
   `icon_uri` varchar(512) NOT NULL DEFAULT '' COMMENT 'Avatar URI',
+  `sex` tinyint DEFAULT NULL COMMENT 'User sex',
   `created_at` bigint unsigned NOT NULL DEFAULT 0 COMMENT 'Creation Time (Milliseconds)',
   `updated_at` bigint unsigned NOT NULL DEFAULT 0 COMMENT 'Update Time (Milliseconds)',
   `deleted_at` bigint unsigned NULL COMMENT 'Deletion Time (Milliseconds)',

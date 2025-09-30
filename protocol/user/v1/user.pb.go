@@ -23,6 +23,58 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
+type Sex int32
+
+const (
+	Sex_SEX_UNSPECIFIED Sex = 0 // 未指定
+	Sex_MALE            Sex = 1 // 男性
+	Sex_FEMALE          Sex = 2 // 女性
+	Sex_OTHER           Sex = 3 // 其他性别
+)
+
+// Enum value maps for Sex.
+var (
+	Sex_name = map[int32]string{
+		0: "SEX_UNSPECIFIED",
+		1: "MALE",
+		2: "FEMALE",
+		3: "OTHER",
+	}
+	Sex_value = map[string]int32{
+		"SEX_UNSPECIFIED": 0,
+		"MALE":            1,
+		"FEMALE":          2,
+		"OTHER":           3,
+	}
+)
+
+func (x Sex) Enum() *Sex {
+	p := new(Sex)
+	*p = x
+	return p
+}
+
+func (x Sex) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (Sex) Descriptor() protoreflect.EnumDescriptor {
+	return file_idl_user_v1_user_proto_enumTypes[0].Descriptor()
+}
+
+func (Sex) Type() protoreflect.EnumType {
+	return &file_idl_user_v1_user_proto_enumTypes[0]
+}
+
+func (x Sex) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use Sex.Descriptor instead.
+func (Sex) EnumDescriptor() ([]byte, []int) {
+	return file_idl_user_v1_user_proto_rawDescGZIP(), []int{0}
+}
+
 type User struct {
 	state          protoimpl.MessageState `protogen:"open.v1"`
 	UserId         int64                  `protobuf:"varint,1,opt,name=user_id,json=user_id_str,proto3" json:"user_id,omitempty"`
@@ -31,9 +83,10 @@ type User struct {
 	UserUniqueName string                 `protobuf:"bytes,4,opt,name=user_unique_name,json=userUniqueName,proto3" json:"user_unique_name,omitempty"`
 	AvatarUrl      string                 `protobuf:"bytes,5,opt,name=avatar_url,json=avatarUrl,proto3" json:"avatar_url,omitempty"`
 	Description    string                 `protobuf:"bytes,6,opt,name=description,proto3" json:"description,omitempty"`
-	AccessToken    string                 `protobuf:"bytes,7,opt,name=access_token,json=accessToken,proto3" json:"access_token,omitempty"`
-	RefreshToken   string                 `protobuf:"bytes,8,opt,name=refresh_token,json=refreshToken,proto3" json:"refresh_token,omitempty"`
-	UserCreateTime int64                  `protobuf:"varint,9,opt,name=user_create_time,json=userCreateTime,proto3" json:"user_create_time,omitempty"`
+	Sex            Sex                    `protobuf:"varint,7,opt,name=sex,proto3,enum=user.v1.Sex" json:"sex,omitempty"`
+	AccessToken    string                 `protobuf:"bytes,8,opt,name=access_token,json=accessToken,proto3" json:"access_token,omitempty"`
+	RefreshToken   string                 `protobuf:"bytes,9,opt,name=refresh_token,json=refreshToken,proto3" json:"refresh_token,omitempty"`
+	UserCreateTime int64                  `protobuf:"varint,10,opt,name=user_create_time,json=userCreateTime,proto3" json:"user_create_time,omitempty"`
 	unknownFields  protoimpl.UnknownFields
 	sizeCache      protoimpl.SizeCache
 }
@@ -108,6 +161,13 @@ func (x *User) GetDescription() string {
 		return x.Description
 	}
 	return ""
+}
+
+func (x *User) GetSex() Sex {
+	if x != nil {
+		return x.Sex
+	}
+	return Sex_SEX_UNSPECIFIED
 }
 
 func (x *User) GetAccessToken() string {
@@ -768,6 +828,7 @@ type UpdateProfileRequest struct {
 	Name           *string                `protobuf:"bytes,1,opt,name=name,proto3,oneof" json:"name,omitempty"`
 	UserUniqueName *string                `protobuf:"bytes,2,opt,name=user_unique_name,json=userUniqueName,proto3,oneof" json:"user_unique_name,omitempty"`
 	Description    *string                `protobuf:"bytes,3,opt,name=description,proto3,oneof" json:"description,omitempty"`
+	Sex            *Sex                   `protobuf:"varint,4,opt,name=sex,proto3,enum=user.v1.Sex,oneof" json:"sex,omitempty"`
 	unknownFields  protoimpl.UnknownFields
 	sizeCache      protoimpl.SizeCache
 }
@@ -821,6 +882,13 @@ func (x *UpdateProfileRequest) GetDescription() string {
 		return *x.Description
 	}
 	return ""
+}
+
+func (x *UpdateProfileRequest) GetSex() Sex {
+	if x != nil && x.Sex != nil {
+		return *x.Sex
+	}
+	return Sex_SEX_UNSPECIFIED
 }
 
 type UpdateProfileResponse struct {
@@ -959,7 +1027,7 @@ var File_idl_user_v1_user_proto protoreflect.FileDescriptor
 
 const file_idl_user_v1_user_proto_rawDesc = "" +
 	"\n" +
-	"\x16idl/user/v1/user.proto\x12\auser.v1\x1a\x1aidl/common/v1/common.proto\x1a\x1egoogle/protobuf/wrappers.proto\"\xab\x02\n" +
+	"\x16idl/user/v1/user.proto\x12\auser.v1\x1a\x1aidl/common/v1/common.proto\x1a\x1egoogle/protobuf/wrappers.proto\"\xcb\x02\n" +
 	"\x04User\x12\x1c\n" +
 	"\auser_id\x18\x01 \x01(\x03R\vuser_id_str\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12\x14\n" +
@@ -967,10 +1035,12 @@ const file_idl_user_v1_user_proto_rawDesc = "" +
 	"\x10user_unique_name\x18\x04 \x01(\tR\x0euserUniqueName\x12\x1d\n" +
 	"\n" +
 	"avatar_url\x18\x05 \x01(\tR\tavatarUrl\x12 \n" +
-	"\vdescription\x18\x06 \x01(\tR\vdescription\x12!\n" +
-	"\faccess_token\x18\a \x01(\tR\vaccessToken\x12#\n" +
-	"\rrefresh_token\x18\b \x01(\tR\frefreshToken\x12(\n" +
-	"\x10user_create_time\x18\t \x01(\x03R\x0euserCreateTime\"W\n" +
+	"\vdescription\x18\x06 \x01(\tR\vdescription\x12\x1e\n" +
+	"\x03sex\x18\a \x01(\x0e2\f.user.v1.SexR\x03sex\x12!\n" +
+	"\faccess_token\x18\b \x01(\tR\vaccessToken\x12#\n" +
+	"\rrefresh_token\x18\t \x01(\tR\frefreshToken\x12(\n" +
+	"\x10user_create_time\x18\n" +
+	" \x01(\x03R\x0euserCreateTime\"W\n" +
 	"\x0fRegisterRequest\x12\x14\n" +
 	"\x05email\x18\x01 \x01(\tR\x05email\x12\x1a\n" +
 	"\bpassword\x18\x02 \x01(\tR\bpassword\x12\x12\n" +
@@ -1004,20 +1074,28 @@ const file_idl_user_v1_user_proto_rawDesc = "" +
 	"\tmime_type\x18\x02 \x01(\tR\bmimeType\"5\n" +
 	"\x14UpdateAvatarResponse\x12\x1d\n" +
 	"\n" +
-	"avatar_url\x18\x01 \x01(\tR\tavatarUrl\"\xb3\x01\n" +
+	"avatar_url\x18\x01 \x01(\tR\tavatarUrl\"\xe0\x01\n" +
 	"\x14UpdateProfileRequest\x12\x17\n" +
 	"\x04name\x18\x01 \x01(\tH\x00R\x04name\x88\x01\x01\x12-\n" +
 	"\x10user_unique_name\x18\x02 \x01(\tH\x01R\x0euserUniqueName\x88\x01\x01\x12%\n" +
-	"\vdescription\x18\x03 \x01(\tH\x02R\vdescription\x88\x01\x01B\a\n" +
+	"\vdescription\x18\x03 \x01(\tH\x02R\vdescription\x88\x01\x01\x12#\n" +
+	"\x03sex\x18\x04 \x01(\x0e2\f.user.v1.SexH\x03R\x03sex\x88\x01\x01B\a\n" +
 	"\x05_nameB\x13\n" +
 	"\x11_user_unique_nameB\x0e\n" +
-	"\f_description\"\x17\n" +
+	"\f_descriptionB\x06\n" +
+	"\x04_sex\"\x17\n" +
 	"\x15UpdateProfileResponse\":\n" +
 	"\x13RefreshTokenRequest\x12#\n" +
 	"\rrefresh_token\x18\x01 \x01(\tR\frefreshToken\"^\n" +
 	"\x14RefreshTokenResponse\x12!\n" +
 	"\faccess_token\x18\x01 \x01(\tR\vaccessToken\x12#\n" +
-	"\rrefresh_token\x18\x02 \x01(\tR\frefreshToken2\x92\x05\n" +
+	"\rrefresh_token\x18\x02 \x01(\tR\frefreshToken*;\n" +
+	"\x03Sex\x12\x13\n" +
+	"\x0fSEX_UNSPECIFIED\x10\x00\x12\b\n" +
+	"\x04MALE\x10\x01\x12\n" +
+	"\n" +
+	"\x06FEMALE\x10\x02\x12\t\n" +
+	"\x05OTHER\x10\x032\x92\x05\n" +
 	"\vUserService\x12?\n" +
 	"\bRegister\x12\x18.user.v1.RegisterRequest\x1a\x19.user.v1.RegisterResponse\x126\n" +
 	"\x05Login\x12\x15.user.v1.LoginRequest\x1a\x16.user.v1.LoginResponse\x129\n" +
@@ -1041,58 +1119,62 @@ func file_idl_user_v1_user_proto_rawDescGZIP() []byte {
 	return file_idl_user_v1_user_proto_rawDescData
 }
 
+var file_idl_user_v1_user_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
 var file_idl_user_v1_user_proto_msgTypes = make([]protoimpl.MessageInfo, 20)
 var file_idl_user_v1_user_proto_goTypes = []any{
-	(*User)(nil),                  // 0: user.v1.User
-	(*RegisterRequest)(nil),       // 1: user.v1.RegisterRequest
-	(*RegisterResponse)(nil),      // 2: user.v1.RegisterResponse
-	(*LoginRequest)(nil),          // 3: user.v1.LoginRequest
-	(*LoginResponse)(nil),         // 4: user.v1.LoginResponse
-	(*LogoutRequest)(nil),         // 5: user.v1.LogoutRequest
-	(*LogoutResponse)(nil),        // 6: user.v1.LogoutResponse
-	(*GetUserInfoRequest)(nil),    // 7: user.v1.GetUserInfoRequest
-	(*GetUserInfoResponse)(nil),   // 8: user.v1.GetUserInfoResponse
-	(*MGetUserInfoRequest)(nil),   // 9: user.v1.MGetUserInfoRequest
-	(*MGetUserInfoResponse)(nil),  // 10: user.v1.MGetUserInfoResponse
-	(*ResetPasswordRequest)(nil),  // 11: user.v1.ResetPasswordRequest
-	(*ResetPasswordResponse)(nil), // 12: user.v1.ResetPasswordResponse
-	(*UpdateAvatarRequest)(nil),   // 13: user.v1.UpdateAvatarRequest
-	(*UpdateAvatarResponse)(nil),  // 14: user.v1.UpdateAvatarResponse
-	(*UpdateProfileRequest)(nil),  // 15: user.v1.UpdateProfileRequest
-	(*UpdateProfileResponse)(nil), // 16: user.v1.UpdateProfileResponse
-	(*RefreshTokenRequest)(nil),   // 17: user.v1.RefreshTokenRequest
-	(*RefreshTokenResponse)(nil),  // 18: user.v1.RefreshTokenResponse
-	nil,                           // 19: user.v1.MGetUserInfoResponse.DataEntry
+	(Sex)(0),                      // 0: user.v1.Sex
+	(*User)(nil),                  // 1: user.v1.User
+	(*RegisterRequest)(nil),       // 2: user.v1.RegisterRequest
+	(*RegisterResponse)(nil),      // 3: user.v1.RegisterResponse
+	(*LoginRequest)(nil),          // 4: user.v1.LoginRequest
+	(*LoginResponse)(nil),         // 5: user.v1.LoginResponse
+	(*LogoutRequest)(nil),         // 6: user.v1.LogoutRequest
+	(*LogoutResponse)(nil),        // 7: user.v1.LogoutResponse
+	(*GetUserInfoRequest)(nil),    // 8: user.v1.GetUserInfoRequest
+	(*GetUserInfoResponse)(nil),   // 9: user.v1.GetUserInfoResponse
+	(*MGetUserInfoRequest)(nil),   // 10: user.v1.MGetUserInfoRequest
+	(*MGetUserInfoResponse)(nil),  // 11: user.v1.MGetUserInfoResponse
+	(*ResetPasswordRequest)(nil),  // 12: user.v1.ResetPasswordRequest
+	(*ResetPasswordResponse)(nil), // 13: user.v1.ResetPasswordResponse
+	(*UpdateAvatarRequest)(nil),   // 14: user.v1.UpdateAvatarRequest
+	(*UpdateAvatarResponse)(nil),  // 15: user.v1.UpdateAvatarResponse
+	(*UpdateProfileRequest)(nil),  // 16: user.v1.UpdateProfileRequest
+	(*UpdateProfileResponse)(nil), // 17: user.v1.UpdateProfileResponse
+	(*RefreshTokenRequest)(nil),   // 18: user.v1.RefreshTokenRequest
+	(*RefreshTokenResponse)(nil),  // 19: user.v1.RefreshTokenResponse
+	nil,                           // 20: user.v1.MGetUserInfoResponse.DataEntry
 }
 var file_idl_user_v1_user_proto_depIdxs = []int32{
-	0,  // 0: user.v1.RegisterResponse.data:type_name -> user.v1.User
-	0,  // 1: user.v1.LoginResponse.data:type_name -> user.v1.User
-	0,  // 2: user.v1.GetUserInfoResponse.data:type_name -> user.v1.User
-	19, // 3: user.v1.MGetUserInfoResponse.data:type_name -> user.v1.MGetUserInfoResponse.DataEntry
-	0,  // 4: user.v1.MGetUserInfoResponse.DataEntry.value:type_name -> user.v1.User
-	1,  // 5: user.v1.UserService.Register:input_type -> user.v1.RegisterRequest
-	3,  // 6: user.v1.UserService.Login:input_type -> user.v1.LoginRequest
-	5,  // 7: user.v1.UserService.Logout:input_type -> user.v1.LogoutRequest
-	7,  // 8: user.v1.UserService.GetUserInfo:input_type -> user.v1.GetUserInfoRequest
-	9,  // 9: user.v1.UserService.MGetUserInfo:input_type -> user.v1.MGetUserInfoRequest
-	11, // 10: user.v1.UserService.ResetPassword:input_type -> user.v1.ResetPasswordRequest
-	13, // 11: user.v1.UserService.UpdateAvatar:input_type -> user.v1.UpdateAvatarRequest
-	15, // 12: user.v1.UserService.UpdateProfile:input_type -> user.v1.UpdateProfileRequest
-	17, // 13: user.v1.UserService.RefreshToken:input_type -> user.v1.RefreshTokenRequest
-	2,  // 14: user.v1.UserService.Register:output_type -> user.v1.RegisterResponse
-	4,  // 15: user.v1.UserService.Login:output_type -> user.v1.LoginResponse
-	6,  // 16: user.v1.UserService.Logout:output_type -> user.v1.LogoutResponse
-	8,  // 17: user.v1.UserService.GetUserInfo:output_type -> user.v1.GetUserInfoResponse
-	10, // 18: user.v1.UserService.MGetUserInfo:output_type -> user.v1.MGetUserInfoResponse
-	12, // 19: user.v1.UserService.ResetPassword:output_type -> user.v1.ResetPasswordResponse
-	14, // 20: user.v1.UserService.UpdateAvatar:output_type -> user.v1.UpdateAvatarResponse
-	16, // 21: user.v1.UserService.UpdateProfile:output_type -> user.v1.UpdateProfileResponse
-	18, // 22: user.v1.UserService.RefreshToken:output_type -> user.v1.RefreshTokenResponse
-	14, // [14:23] is the sub-list for method output_type
-	5,  // [5:14] is the sub-list for method input_type
-	5,  // [5:5] is the sub-list for extension type_name
-	5,  // [5:5] is the sub-list for extension extendee
-	0,  // [0:5] is the sub-list for field type_name
+	0,  // 0: user.v1.User.sex:type_name -> user.v1.Sex
+	1,  // 1: user.v1.RegisterResponse.data:type_name -> user.v1.User
+	1,  // 2: user.v1.LoginResponse.data:type_name -> user.v1.User
+	1,  // 3: user.v1.GetUserInfoResponse.data:type_name -> user.v1.User
+	20, // 4: user.v1.MGetUserInfoResponse.data:type_name -> user.v1.MGetUserInfoResponse.DataEntry
+	0,  // 5: user.v1.UpdateProfileRequest.sex:type_name -> user.v1.Sex
+	1,  // 6: user.v1.MGetUserInfoResponse.DataEntry.value:type_name -> user.v1.User
+	2,  // 7: user.v1.UserService.Register:input_type -> user.v1.RegisterRequest
+	4,  // 8: user.v1.UserService.Login:input_type -> user.v1.LoginRequest
+	6,  // 9: user.v1.UserService.Logout:input_type -> user.v1.LogoutRequest
+	8,  // 10: user.v1.UserService.GetUserInfo:input_type -> user.v1.GetUserInfoRequest
+	10, // 11: user.v1.UserService.MGetUserInfo:input_type -> user.v1.MGetUserInfoRequest
+	12, // 12: user.v1.UserService.ResetPassword:input_type -> user.v1.ResetPasswordRequest
+	14, // 13: user.v1.UserService.UpdateAvatar:input_type -> user.v1.UpdateAvatarRequest
+	16, // 14: user.v1.UserService.UpdateProfile:input_type -> user.v1.UpdateProfileRequest
+	18, // 15: user.v1.UserService.RefreshToken:input_type -> user.v1.RefreshTokenRequest
+	3,  // 16: user.v1.UserService.Register:output_type -> user.v1.RegisterResponse
+	5,  // 17: user.v1.UserService.Login:output_type -> user.v1.LoginResponse
+	7,  // 18: user.v1.UserService.Logout:output_type -> user.v1.LogoutResponse
+	9,  // 19: user.v1.UserService.GetUserInfo:output_type -> user.v1.GetUserInfoResponse
+	11, // 20: user.v1.UserService.MGetUserInfo:output_type -> user.v1.MGetUserInfoResponse
+	13, // 21: user.v1.UserService.ResetPassword:output_type -> user.v1.ResetPasswordResponse
+	15, // 22: user.v1.UserService.UpdateAvatar:output_type -> user.v1.UpdateAvatarResponse
+	17, // 23: user.v1.UserService.UpdateProfile:output_type -> user.v1.UpdateProfileResponse
+	19, // 24: user.v1.UserService.RefreshToken:output_type -> user.v1.RefreshTokenResponse
+	16, // [16:25] is the sub-list for method output_type
+	7,  // [7:16] is the sub-list for method input_type
+	7,  // [7:7] is the sub-list for extension type_name
+	7,  // [7:7] is the sub-list for extension extendee
+	0,  // [0:7] is the sub-list for field type_name
 }
 
 func init() { file_idl_user_v1_user_proto_init() }
@@ -1106,13 +1188,14 @@ func file_idl_user_v1_user_proto_init() {
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_idl_user_v1_user_proto_rawDesc), len(file_idl_user_v1_user_proto_rawDesc)),
-			NumEnums:      0,
+			NumEnums:      1,
 			NumMessages:   20,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
 		GoTypes:           file_idl_user_v1_user_proto_goTypes,
 		DependencyIndexes: file_idl_user_v1_user_proto_depIdxs,
+		EnumInfos:         file_idl_user_v1_user_proto_enumTypes,
 		MessageInfos:      file_idl_user_v1_user_proto_msgTypes,
 	}.Build()
 	File_idl_user_v1_user_proto = out.File
