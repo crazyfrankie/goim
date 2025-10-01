@@ -237,6 +237,7 @@ type RefreshBizTokenResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	AccessToken   string                 `protobuf:"bytes,1,opt,name=access_token,json=accessToken,proto3" json:"access_token,omitempty"`
 	RefreshToken  string                 `protobuf:"bytes,2,opt,name=refresh_token,json=refreshToken,proto3" json:"refresh_token,omitempty"`
+	UserId        int64                  `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -285,6 +286,13 @@ func (x *RefreshBizTokenResponse) GetRefreshToken() string {
 	return ""
 }
 
+func (x *RefreshBizTokenResponse) GetUserId() int64 {
+	if x != nil {
+		return x.UserId
+	}
+	return 0
+}
+
 var File_idl_auth_v1_auth_proto protoreflect.FileDescriptor
 
 const file_idl_auth_v1_auth_proto_rawDesc = "" +
@@ -298,10 +306,11 @@ const file_idl_auth_v1_auth_proto_rawDesc = "" +
 	"\x12ParseTokenResponse\x12\x17\n" +
 	"\auser_id\x18\x01 \x01(\x03R\x06userId\"=\n" +
 	"\x16RefreshBizTokenRequest\x12#\n" +
-	"\rrefresh_token\x18\x01 \x01(\tR\frefreshToken\"a\n" +
+	"\rrefresh_token\x18\x01 \x01(\tR\frefreshToken\"z\n" +
 	"\x17RefreshBizTokenResponse\x12!\n" +
 	"\faccess_token\x18\x01 \x01(\tR\vaccessToken\x12#\n" +
-	"\rrefresh_token\x18\x02 \x01(\tR\frefreshToken2\x86\x02\n" +
+	"\rrefresh_token\x18\x02 \x01(\tR\frefreshToken\x12\x17\n" +
+	"\auser_id\x18\x03 \x01(\x03R\x06userId2\x86\x02\n" +
 	"\vAuthService\x12Z\n" +
 	"\x11GenerateConnToken\x12!.auth.v1.GenerateConnTokenRequest\x1a\".auth.v1.GenerateConnTokenResponse\x12E\n" +
 	"\n" +

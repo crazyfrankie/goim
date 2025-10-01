@@ -64,6 +64,7 @@ func (h *AuthnHandler) Auth() gin.HandlerFunc {
 			response.InternalServerError(c, err)
 			return
 		}
+		c.Request = c.Request.WithContext(h.storeUserID(c.Request.Context(), refreshRes.GetUserId()))
 
 		util.SetAuthorization(c, refreshRes.AccessToken, refreshRes.RefreshToken)
 

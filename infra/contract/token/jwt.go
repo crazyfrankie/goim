@@ -22,7 +22,7 @@ type Token interface {
 	GenerateToken(uid int64) ([]string, error)
 	GenerateConnToken(uid int64) (string, error)
 	ParseToken(token string) (*Claims, error)
-	TryRefresh(refresh string) ([]string, error)
+	TryRefresh(refresh string) ([]string, int64, error)
 	CleanToken(ctx context.Context, uid int64) error
 	RevokeToken(ctx context.Context, uid int64) error
 }

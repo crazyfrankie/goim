@@ -36,11 +36,11 @@ func (a *authImpl) ParseToken(ctx context.Context, token string) (*token.Claims,
 	return claims, err
 }
 
-func (a *authImpl) RefreshBizToken(ctx context.Context, refreshToken string) ([]string, error) {
-	tokens, err := a.TokenGen.TryRefresh(refreshToken)
+func (a *authImpl) RefreshBizToken(ctx context.Context, refreshToken string) ([]string, int64, error) {
+	tokens, userID, err := a.TokenGen.TryRefresh(refreshToken)
 	if err != nil {
-		return nil, err
+		return nil, 0, err
 	}
 
-	return tokens, nil
+	return tokens, userID, nil
 }

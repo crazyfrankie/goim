@@ -25,6 +25,7 @@ message RefreshBizTokenRequest {
 message RefreshBizTokenResponse {
   string access_token = 1;
   string refresh_token = 2;
+  int64 user_id = 3;
 }
 
 service AuthService {

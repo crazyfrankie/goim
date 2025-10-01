@@ -38,7 +38,7 @@ func (a *AuthApplicationService) ParseToken(ctx context.Context, req *authv1.Par
 }
 
 func (a *AuthApplicationService) RefreshBizToken(ctx context.Context, req *authv1.RefreshBizTokenRequest) (*authv1.RefreshBizTokenResponse, error) {
-	tokens, err := a.authDomain.RefreshBizToken(ctx, req.GetRefreshToken())
+	tokens, userID, err := a.authDomain.RefreshBizToken(ctx, req.GetRefreshToken())
 	if err != nil {
 		return nil, err
 	}
@@ -46,5 +46,6 @@ func (a *AuthApplicationService) RefreshBizToken(ctx context.Context, req *authv
 	return &authv1.RefreshBizTokenResponse{
 		AccessToken:  tokens[0],
 		RefreshToken: tokens[1],
+		UserId:       userID,
 	}, nil
 }

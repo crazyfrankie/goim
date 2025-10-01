@@ -106,20 +106,20 @@ func (s *TokenService) ParseToken(tk string) (*token.Claims, error) {
 	return claims, nil
 }
 
-func (s *TokenService) TryRefresh(refresh string) ([]string, error) {
+func (s *TokenService) TryRefresh(refresh string) ([]string, int64, error) {
 	refreshClaims, err := s.ParseToken(refresh)
 	if err != nil {
-		return nil, fmt.Errorf("invalid refresh jwt")
+		return nil, 0, fmt.Errorf("invalid refresh jwt")
 	}
 
 	res, err := s.cmd.Get(context.Background(), refreshKey(refreshClaims.UID)).Result()
 	if err != nil || res != refresh {
-		return nil, errors.New("jwt invalid or revoked")
+		return nil, 0, errors.New("jwt invalid or revoked")
 	}
 
 	access, err := s.newToken(refreshClaims.UID, time.Hour)
 	if err != nil {
-		return nil, err
+		return nil, 0, err
 	}
 
 	now := time.Now()
@@ -130,11 +130,11 @@ func (s *TokenService) TryRefresh(refresh string) ([]string, error) {
 		refresh, err = s.newToken(refreshClaims.UID, time.Hour*24*30)
 		err = s.cmd.Set(context.Background(), refreshKey(refreshClaims.UID), refresh, time.Hour*24*30).Err()
 		if err != nil {
-			return nil, err
+			return nil, 0, err
 		}
 	}
 
-	return []string{access, refresh}, nil
+	return []string{access, refresh}, refreshClaims.UID, nil
 }
 
 func (s *TokenService) CleanToken(ctx context.Context, uid int64) error {
