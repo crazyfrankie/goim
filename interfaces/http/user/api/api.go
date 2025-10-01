@@ -7,8 +7,9 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 
-	"github.com/crazyfrankie/goim/interfaces/user/api/handler"
+	"github.com/crazyfrankie/goim/interfaces/http/user/api/handler"
 	"github.com/crazyfrankie/goim/pkg/gin/middleware"
+	authv1 "github.com/crazyfrankie/goim/protocol/auth/v1"
 	userv1 "github.com/crazyfrankie/goim/protocol/user/v1"
 )
 
@@ -17,15 +18,20 @@ import (
 func InitEngine() (*gin.Engine, error) {
 	srv := gin.Default()
 
-	target := os.Getenv("SERVER_TARGET")
-	cc, err := grpc.NewClient(target, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	userTarget := os.Getenv("USER_SERVER_TARGET")
+	authTarget := os.Getenv("AUTH_SERVER_TARGET")
+	userCC, err := grpc.NewClient(userTarget, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		return nil, err
 	}
-	userCli := userv1.NewUserServiceClient(cc)
+	authCC, err := grpc.NewClient(authTarget, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	if err != nil {
+		return nil, err
+	}
+	userCli := userv1.NewUserServiceClient(userCC)
+	authCli := authv1.NewAuthServiceClient(authCC)
 	userHdl := handler.NewUserHandler(userCli)
-
-	authHdl, err := middleware.NewAuthnHandler(userCli)
+	authHdl, err := middleware.NewAuthnHandler(authCli)
 	if err != nil {
 		return nil, err
 	}

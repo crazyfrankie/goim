@@ -2,38 +2,26 @@ package middleware
 
 import (
 	"context"
-	"crypto/rsa"
 	"errors"
-	"os"
 	"strconv"
 	"strings"
 
 	"github.com/gin-gonic/gin"
-	"github.com/golang-jwt/jwt/v5"
 	"google.golang.org/grpc/metadata"
 
-	"github.com/crazyfrankie/goim/infra/contract/token"
 	"github.com/crazyfrankie/goim/pkg/gin/response"
 	"github.com/crazyfrankie/goim/pkg/util"
-	userv1 "github.com/crazyfrankie/goim/protocol/user/v1"
-	"github.com/crazyfrankie/goim/types/consts"
+	authv1 "github.com/crazyfrankie/goim/protocol/auth/v1"
 )
 
 type AuthnHandler struct {
 	noAuthPaths map[string]struct{}
-	userClient  userv1.UserServiceClient
-	publicKey   *rsa.PublicKey
+	authClient  authv1.AuthServiceClient
 }
 
-func NewAuthnHandler(userClient userv1.UserServiceClient) (*AuthnHandler, error) {
-	publicFile := os.Getenv(consts.JWTPublicKey)
-	publicKey, _ := os.ReadFile(publicFile)
-	key, err := jwt.ParseRSAPublicKeyFromPEM(publicKey)
-	if err != nil {
-		return nil, err
-	}
+func NewAuthnHandler(authClient authv1.AuthServiceClient) (*AuthnHandler, error) {
 
-	return &AuthnHandler{userClient: userClient, noAuthPaths: make(map[string]struct{}), publicKey: key}, nil
+	return &AuthnHandler{authClient: authClient, noAuthPaths: make(map[string]struct{})}, nil
 }
 
 func (h *AuthnHandler) IgnorePath(paths []string) *AuthnHandler {
@@ -57,9 +45,9 @@ func (h *AuthnHandler) Auth() gin.HandlerFunc {
 			response.Unauthorized(c)
 			return
 		}
-		claims, err := h.parseToken(accessToken)
+		parseRes, err := h.authClient.ParseToken(c.Request.Context(), &authv1.ParseTokenRequest{Token: accessToken})
 		if err == nil {
-			c.Request = c.Request.WithContext(h.storeUserID(c.Request.Context(), claims.UID))
+			c.Request = c.Request.WithContext(h.storeUserID(c.Request.Context(), parseRes.GetUserId()))
 
 			c.Next()
 			return
@@ -71,32 +59,16 @@ func (h *AuthnHandler) Auth() gin.HandlerFunc {
 			return
 		}
 
-		res, err := h.userClient.RefreshToken(c.Request.Context(), &userv1.RefreshTokenRequest{RefreshToken: refreshToken})
+		refreshRes, err := h.authClient.RefreshBizToken(c.Request.Context(), &authv1.RefreshBizTokenRequest{RefreshToken: refreshToken})
 		if err != nil {
 			response.InternalServerError(c, err)
 			return
 		}
 
-		util.SetAuthorization(c, res.AccessToken, res.RefreshToken)
+		util.SetAuthorization(c, refreshRes.AccessToken, refreshRes.RefreshToken)
 
 		c.Next()
 	}
-}
-
-func (h *AuthnHandler) parseToken(tk string) (*token.Claims, error) {
-	t, err := jwt.ParseWithClaims(tk, &token.Claims{}, func(token *jwt.Token) (interface{}, error) {
-		return h.publicKey, nil
-	})
-	if err != nil {
-		return nil, err
-	}
-
-	claims, ok := t.Claims.(*token.Claims)
-	if !ok {
-		return nil, errors.New("jwt is invalid")
-	}
-
-	return claims, nil
 }
 
 func (h *AuthnHandler) storeUserID(ctx context.Context, userID int64) context.Context {

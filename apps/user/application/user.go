@@ -95,17 +95,6 @@ func (u *UserApplicationService) MGetUserInfo(ctx context.Context, req *userv1.M
 	}, nil
 }
 
-func (u *UserApplicationService) Logout(ctx context.Context, req *userv1.LogoutRequest) (*userv1.LogoutResponse, error) {
-	userID := ctxutil.MustGetUserIDFromCtx(ctx)
-
-	err := u.userDomain.Logout(ctx, userID)
-	if err != nil {
-		return nil, err
-	}
-
-	return nil, nil
-}
-
 func (u *UserApplicationService) ResetPassword(ctx context.Context, req *userv1.ResetPasswordRequest) (*userv1.ResetPasswordResponse, error) {
 	err := u.userDomain.ResetPassword(ctx, req.GetEmail(), req.GetPassword())
 	if err != nil {
@@ -157,18 +146,6 @@ func (u *UserApplicationService) UpdateProfile(ctx context.Context, req *userv1.
 	}
 
 	return nil, nil
-}
-
-func (u *UserApplicationService) RefreshToken(ctx context.Context, req *userv1.RefreshTokenRequest) (*userv1.RefreshTokenResponse, error) {
-	tokens, err := u.userDomain.RefreshToken(ctx, req.GetRefreshToken())
-	if err != nil {
-		return nil, err
-	}
-
-	return &userv1.RefreshTokenResponse{
-		AccessToken:  tokens[0],
-		RefreshToken: tokens[1],
-	}, nil
 }
 
 func userDO2DTO(userDo *entity.User) *userv1.User {

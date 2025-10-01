@@ -7,10 +7,8 @@
 package userv1
 
 import (
-	_ "github.com/crazyfrankie/goim/protocol/common/v1"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
-	_ "google.golang.org/protobuf/types/known/wrapperspb"
 	reflect "reflect"
 	sync "sync"
 	unsafe "unsafe"
@@ -927,107 +925,11 @@ func (*UpdateProfileResponse) Descriptor() ([]byte, []int) {
 	return file_idl_user_v1_user_proto_rawDescGZIP(), []int{16}
 }
 
-type RefreshTokenRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	RefreshToken  string                 `protobuf:"bytes,1,opt,name=refresh_token,json=refreshToken,proto3" json:"refresh_token,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *RefreshTokenRequest) Reset() {
-	*x = RefreshTokenRequest{}
-	mi := &file_idl_user_v1_user_proto_msgTypes[17]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *RefreshTokenRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*RefreshTokenRequest) ProtoMessage() {}
-
-func (x *RefreshTokenRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_idl_user_v1_user_proto_msgTypes[17]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use RefreshTokenRequest.ProtoReflect.Descriptor instead.
-func (*RefreshTokenRequest) Descriptor() ([]byte, []int) {
-	return file_idl_user_v1_user_proto_rawDescGZIP(), []int{17}
-}
-
-func (x *RefreshTokenRequest) GetRefreshToken() string {
-	if x != nil {
-		return x.RefreshToken
-	}
-	return ""
-}
-
-type RefreshTokenResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	AccessToken   string                 `protobuf:"bytes,1,opt,name=access_token,json=accessToken,proto3" json:"access_token,omitempty"`
-	RefreshToken  string                 `protobuf:"bytes,2,opt,name=refresh_token,json=refreshToken,proto3" json:"refresh_token,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *RefreshTokenResponse) Reset() {
-	*x = RefreshTokenResponse{}
-	mi := &file_idl_user_v1_user_proto_msgTypes[18]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *RefreshTokenResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*RefreshTokenResponse) ProtoMessage() {}
-
-func (x *RefreshTokenResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_idl_user_v1_user_proto_msgTypes[18]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use RefreshTokenResponse.ProtoReflect.Descriptor instead.
-func (*RefreshTokenResponse) Descriptor() ([]byte, []int) {
-	return file_idl_user_v1_user_proto_rawDescGZIP(), []int{18}
-}
-
-func (x *RefreshTokenResponse) GetAccessToken() string {
-	if x != nil {
-		return x.AccessToken
-	}
-	return ""
-}
-
-func (x *RefreshTokenResponse) GetRefreshToken() string {
-	if x != nil {
-		return x.RefreshToken
-	}
-	return ""
-}
-
 var File_idl_user_v1_user_proto protoreflect.FileDescriptor
 
 const file_idl_user_v1_user_proto_rawDesc = "" +
 	"\n" +
-	"\x16idl/user/v1/user.proto\x12\auser.v1\x1a\x1aidl/common/v1/common.proto\x1a\x1egoogle/protobuf/wrappers.proto\"\xcb\x02\n" +
+	"\x16idl/user/v1/user.proto\x12\auser.v1\"\xcb\x02\n" +
 	"\x04User\x12\x1c\n" +
 	"\auser_id\x18\x01 \x01(\x03R\vuser_id_str\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12\x14\n" +
@@ -1084,18 +986,13 @@ const file_idl_user_v1_user_proto_rawDesc = "" +
 	"\x11_user_unique_nameB\x0e\n" +
 	"\f_descriptionB\x06\n" +
 	"\x04_sex\"\x17\n" +
-	"\x15UpdateProfileResponse\":\n" +
-	"\x13RefreshTokenRequest\x12#\n" +
-	"\rrefresh_token\x18\x01 \x01(\tR\frefreshToken\"^\n" +
-	"\x14RefreshTokenResponse\x12!\n" +
-	"\faccess_token\x18\x01 \x01(\tR\vaccessToken\x12#\n" +
-	"\rrefresh_token\x18\x02 \x01(\tR\frefreshToken*;\n" +
+	"\x15UpdateProfileResponse*;\n" +
 	"\x03Sex\x12\x13\n" +
 	"\x0fSEX_UNSPECIFIED\x10\x00\x12\b\n" +
 	"\x04MALE\x10\x01\x12\n" +
 	"\n" +
 	"\x06FEMALE\x10\x02\x12\t\n" +
-	"\x05OTHER\x10\x032\x92\x05\n" +
+	"\x05OTHER\x10\x032\xc5\x04\n" +
 	"\vUserService\x12?\n" +
 	"\bRegister\x12\x18.user.v1.RegisterRequest\x1a\x19.user.v1.RegisterResponse\x126\n" +
 	"\x05Login\x12\x15.user.v1.LoginRequest\x1a\x16.user.v1.LoginResponse\x129\n" +
@@ -1104,8 +1001,7 @@ const file_idl_user_v1_user_proto_rawDesc = "" +
 	"\fMGetUserInfo\x12\x1c.user.v1.MGetUserInfoRequest\x1a\x1d.user.v1.MGetUserInfoResponse\x12N\n" +
 	"\rResetPassword\x12\x1d.user.v1.ResetPasswordRequest\x1a\x1e.user.v1.ResetPasswordResponse\x12K\n" +
 	"\fUpdateAvatar\x12\x1c.user.v1.UpdateAvatarRequest\x1a\x1d.user.v1.UpdateAvatarResponse\x12N\n" +
-	"\rUpdateProfile\x12\x1d.user.v1.UpdateProfileRequest\x1a\x1e.user.v1.UpdateProfileResponse\x12K\n" +
-	"\fRefreshToken\x12\x1c.user.v1.RefreshTokenRequest\x1a\x1d.user.v1.RefreshTokenResponseB6Z4github.com/crazyfrankie/goim/protocol/user/v1;userv1b\x06proto3"
+	"\rUpdateProfile\x12\x1d.user.v1.UpdateProfileRequest\x1a\x1e.user.v1.UpdateProfileResponseB6Z4github.com/crazyfrankie/goim/protocol/user/v1;userv1b\x06proto3"
 
 var (
 	file_idl_user_v1_user_proto_rawDescOnce sync.Once
@@ -1120,7 +1016,7 @@ func file_idl_user_v1_user_proto_rawDescGZIP() []byte {
 }
 
 var file_idl_user_v1_user_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_idl_user_v1_user_proto_msgTypes = make([]protoimpl.MessageInfo, 20)
+var file_idl_user_v1_user_proto_msgTypes = make([]protoimpl.MessageInfo, 18)
 var file_idl_user_v1_user_proto_goTypes = []any{
 	(Sex)(0),                      // 0: user.v1.Sex
 	(*User)(nil),                  // 1: user.v1.User
@@ -1140,16 +1036,14 @@ var file_idl_user_v1_user_proto_goTypes = []any{
 	(*UpdateAvatarResponse)(nil),  // 15: user.v1.UpdateAvatarResponse
 	(*UpdateProfileRequest)(nil),  // 16: user.v1.UpdateProfileRequest
 	(*UpdateProfileResponse)(nil), // 17: user.v1.UpdateProfileResponse
-	(*RefreshTokenRequest)(nil),   // 18: user.v1.RefreshTokenRequest
-	(*RefreshTokenResponse)(nil),  // 19: user.v1.RefreshTokenResponse
-	nil,                           // 20: user.v1.MGetUserInfoResponse.DataEntry
+	nil,                           // 18: user.v1.MGetUserInfoResponse.DataEntry
 }
 var file_idl_user_v1_user_proto_depIdxs = []int32{
 	0,  // 0: user.v1.User.sex:type_name -> user.v1.Sex
 	1,  // 1: user.v1.RegisterResponse.data:type_name -> user.v1.User
 	1,  // 2: user.v1.LoginResponse.data:type_name -> user.v1.User
 	1,  // 3: user.v1.GetUserInfoResponse.data:type_name -> user.v1.User
-	20, // 4: user.v1.MGetUserInfoResponse.data:type_name -> user.v1.MGetUserInfoResponse.DataEntry
+	18, // 4: user.v1.MGetUserInfoResponse.data:type_name -> user.v1.MGetUserInfoResponse.DataEntry
 	0,  // 5: user.v1.UpdateProfileRequest.sex:type_name -> user.v1.Sex
 	1,  // 6: user.v1.MGetUserInfoResponse.DataEntry.value:type_name -> user.v1.User
 	2,  // 7: user.v1.UserService.Register:input_type -> user.v1.RegisterRequest
@@ -1160,18 +1054,16 @@ var file_idl_user_v1_user_proto_depIdxs = []int32{
 	12, // 12: user.v1.UserService.ResetPassword:input_type -> user.v1.ResetPasswordRequest
 	14, // 13: user.v1.UserService.UpdateAvatar:input_type -> user.v1.UpdateAvatarRequest
 	16, // 14: user.v1.UserService.UpdateProfile:input_type -> user.v1.UpdateProfileRequest
-	18, // 15: user.v1.UserService.RefreshToken:input_type -> user.v1.RefreshTokenRequest
-	3,  // 16: user.v1.UserService.Register:output_type -> user.v1.RegisterResponse
-	5,  // 17: user.v1.UserService.Login:output_type -> user.v1.LoginResponse
-	7,  // 18: user.v1.UserService.Logout:output_type -> user.v1.LogoutResponse
-	9,  // 19: user.v1.UserService.GetUserInfo:output_type -> user.v1.GetUserInfoResponse
-	11, // 20: user.v1.UserService.MGetUserInfo:output_type -> user.v1.MGetUserInfoResponse
-	13, // 21: user.v1.UserService.ResetPassword:output_type -> user.v1.ResetPasswordResponse
-	15, // 22: user.v1.UserService.UpdateAvatar:output_type -> user.v1.UpdateAvatarResponse
-	17, // 23: user.v1.UserService.UpdateProfile:output_type -> user.v1.UpdateProfileResponse
-	19, // 24: user.v1.UserService.RefreshToken:output_type -> user.v1.RefreshTokenResponse
-	16, // [16:25] is the sub-list for method output_type
-	7,  // [7:16] is the sub-list for method input_type
+	3,  // 15: user.v1.UserService.Register:output_type -> user.v1.RegisterResponse
+	5,  // 16: user.v1.UserService.Login:output_type -> user.v1.LoginResponse
+	7,  // 17: user.v1.UserService.Logout:output_type -> user.v1.LogoutResponse
+	9,  // 18: user.v1.UserService.GetUserInfo:output_type -> user.v1.GetUserInfoResponse
+	11, // 19: user.v1.UserService.MGetUserInfo:output_type -> user.v1.MGetUserInfoResponse
+	13, // 20: user.v1.UserService.ResetPassword:output_type -> user.v1.ResetPasswordResponse
+	15, // 21: user.v1.UserService.UpdateAvatar:output_type -> user.v1.UpdateAvatarResponse
+	17, // 22: user.v1.UserService.UpdateProfile:output_type -> user.v1.UpdateProfileResponse
+	15, // [15:23] is the sub-list for method output_type
+	7,  // [7:15] is the sub-list for method input_type
 	7,  // [7:7] is the sub-list for extension type_name
 	7,  // [7:7] is the sub-list for extension extendee
 	0,  // [0:7] is the sub-list for field type_name
@@ -1189,7 +1081,7 @@ func file_idl_user_v1_user_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_idl_user_v1_user_proto_rawDesc), len(file_idl_user_v1_user_proto_rawDesc)),
 			NumEnums:      1,
-			NumMessages:   20,
+			NumMessages:   18,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

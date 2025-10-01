@@ -51,5 +51,4 @@ type User interface {
 	UpdateAvatar(ctx context.Context, userID int64, ext string, imagePayload []byte) (url string, err error)
 	UpdateProfile(ctx context.Context, req *UpdateProfileRequest) error
 	MGetUserProfiles(ctx context.Context, userIDs []int64) (users []*entity.User, err error)
-	RefreshToken(ctx context.Context, refreshToken string) ([]string, error)
 }

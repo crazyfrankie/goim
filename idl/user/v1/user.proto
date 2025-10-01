@@ -4,9 +4,6 @@ package user.v1;
 
 option go_package = "github.com/crazyfrankie/goim/protocol/user/v1;userv1";
 
-import "idl/common/v1/common.proto";
-import "google/protobuf/wrappers.proto";
-
 enum Sex {
   SEX_UNSPECIFIED = 0;  // 未指定
   MALE = 1;             // 男性
@@ -99,15 +96,6 @@ message UpdateProfileResponse {
 
 }
 
-message RefreshTokenRequest {
-  string refresh_token = 1;
-}
-
-message RefreshTokenResponse {
-  string access_token = 1;
-  string refresh_token = 2;
-}
-
 service UserService {
   rpc Register(RegisterRequest) returns (RegisterResponse);
   rpc Login(LoginRequest) returns (LoginResponse);
@@ -117,5 +105,4 @@ service UserService {
   rpc ResetPassword(ResetPasswordRequest) returns(ResetPasswordResponse);
   rpc UpdateAvatar(UpdateAvatarRequest) returns (UpdateAvatarResponse);
   rpc UpdateProfile(UpdateProfileRequest) returns (UpdateProfileResponse);
-  rpc RefreshToken(RefreshTokenRequest) returns (RefreshTokenResponse);
 }

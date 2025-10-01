@@ -6,7 +6,7 @@ import (
 	"github.com/crazyfrankie/goim/pkg/util"
 	"github.com/gin-gonic/gin"
 
-	"github.com/crazyfrankie/goim/interfaces/user/api/model"
+	"github.com/crazyfrankie/goim/interfaces/http/user/api/model"
 	"github.com/crazyfrankie/goim/pkg/gin/response"
 	userv1 "github.com/crazyfrankie/goim/protocol/user/v1"
 )

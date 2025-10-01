@@ -16,8 +16,8 @@ import (
 )
 
 var path2Table2FieldMapping = map[string]map[string]map[string]any{
-	"apps/user/domain/internal/dal/query": {
-		"user": {},
+	"apps/http/domain/internal/dal/query": {
+		"http": {},
 	},
 	"apps/message/domain/internal/dal/query": {
 		"message":      {},

@@ -9,7 +9,7 @@ func WithAffectStability(affectStability bool) RegisterOptionFn {
 	return internal.WithAffectStability(affectStability)
 }
 
-// Register the predefined error code information of the registered user, and call the code_gen sub-module corresponding to the PSM service when initializing.
+// Register the predefined error code information of the registered http, and call the code_gen sub-module corresponding to the PSM service when initializing.
 func Register(code int32, msg string, opts ...RegisterOptionFn) {
 	internal.Register(code, msg, opts...)
 }

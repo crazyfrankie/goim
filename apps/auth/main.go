@@ -2,16 +2,15 @@ package main
 
 import (
 	"context"
-	"net/http"
+	"net"
 	"os"
 	"strings"
 	"syscall"
-	"time"
 
 	"github.com/joho/godotenv"
 	"github.com/oklog/run"
 
-	"github.com/crazyfrankie/goim/interfaces/user/api"
+	"github.com/crazyfrankie/goim/apps/auth/rpc"
 	"github.com/crazyfrankie/goim/pkg/logs"
 )
 
@@ -21,29 +20,25 @@ func main() {
 		panic(err)
 	}
 
-	engine, err := api.InitEngine()
+	srv, err := rpc.NewGRPCServer(context.Background())
 	if err != nil {
 		panic(err)
 	}
 
 	initLogger()
 
-	addr := os.Getenv("SERVER_ADDR")
-	srv := &http.Server{
-		Handler: engine,
-		Addr:    addr,
-	}
 	g := &run.Group{}
 
 	g.Add(func() error {
-		logs.Infof("user bff running at, %s", addr)
-		return srv.ListenAndServe()
-	}, func(err error) {
-		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-		defer cancel()
-		if err := srv.Shutdown(ctx); err != nil {
-			logs.Errorf("failed to shutdown main server: %v", err)
+		addr := os.Getenv("SERVER_ADDR")
+		listener, err := net.Listen("tcp", addr)
+		if err != nil {
+			return err
 		}
+		return srv.Serve(listener)
+	}, func(err error) {
+		srv.GracefulStop()
+		srv.Stop()
 	})
 
 	g.Add(run.SignalHandler(context.Background(), syscall.SIGINT, syscall.SIGTERM))
@@ -55,7 +50,7 @@ func main() {
 
 func initLogger() {
 	logger := logs.NewLogger(os.Stdout)
-	logger = logs.With(logger, "bff", "user")
+	logger = logs.With(logger, "service.name", "auth")
 	logs.SetGlobalLogger(logger)
 	setLogLevel(logger)
 }

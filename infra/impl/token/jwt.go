@@ -24,19 +24,27 @@ type TokenService struct {
 	cmd       cache.Cmdable
 	signAlgo  string
 	secretKey *rsa.PrivateKey
+	publicKey *rsa.PublicKey
 }
 
 func New(cmd cache.Cmdable) (token.Token, error) {
 	signAlgo := os.Getenv(consts.JWTSignAlgo)
 	secretPath := os.Getenv(consts.JWTSecretKey)
+	publicPath := os.Getenv(consts.JWTPublicKey)
 
 	privateKey, err := os.ReadFile(secretPath)
 	if err != nil {
 		return nil, err
 	}
-	key, _ := jwt.ParseRSAPrivateKeyFromPEM(privateKey)
+	private, _ := jwt.ParseRSAPrivateKeyFromPEM(privateKey)
 
-	return &TokenService{cmd: cmd, signAlgo: signAlgo, secretKey: key}, nil
+	publicKey, _ := os.ReadFile(publicPath)
+	public, err := jwt.ParseRSAPublicKeyFromPEM(publicKey)
+	if err != nil {
+		return nil, err
+	}
+
+	return &TokenService{cmd: cmd, signAlgo: signAlgo, secretKey: private, publicKey: public}, nil
 }
 
 func (s *TokenService) GenerateToken(uid int64) ([]string, error) {
@@ -63,6 +71,10 @@ func (s *TokenService) GenerateToken(uid int64) ([]string, error) {
 	return res, nil
 }
 
+func (s *TokenService) GenerateConnToken(uid int64) (string, error) {
+	return s.newToken(uid, time.Hour*24)
+}
+
 func (s *TokenService) newToken(uid int64, duration time.Duration) (string, error) {
 	now := time.Now()
 	claims := &token.Claims{
@@ -80,7 +92,7 @@ func (s *TokenService) newToken(uid int64, duration time.Duration) (string, erro
 
 func (s *TokenService) ParseToken(tk string) (*token.Claims, error) {
 	t, err := jwt.ParseWithClaims(tk, &token.Claims{}, func(token *jwt.Token) (interface{}, error) {
-		return s.secretKey, nil
+		return s.publicKey, nil
 	})
 	if err != nil {
 		return nil, err

@@ -22,5 +22,5 @@ app:
   - name: goim
     code: 1  # App code for robot-web project
     business:
-      - name: user
-        code: 0  # user module
+      - name: http
+        code: 0  # http module

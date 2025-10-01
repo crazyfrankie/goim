@@ -20,6 +20,7 @@ type ResetClaims struct {
 type Token interface {
 	ResetToken
 	GenerateToken(uid int64) ([]string, error)
+	GenerateConnToken(uid int64) (string, error)
 	ParseToken(token string) (*Claims, error)
 	TryRefresh(refresh string) ([]string, error)
 	CleanToken(ctx context.Context, uid int64) error

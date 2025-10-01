@@ -28,7 +28,6 @@ type Components struct {
 	IDGen    idgen.IDGenerator
 	IconOSS  storage.Storage
 	TokenGen token.Token
-	Logger   logs.Logger
 }
 
 type userImpl struct {
@@ -275,15 +274,6 @@ func (u *userImpl) MGetUserProfiles(ctx context.Context, userIDs []int64) (users
 	}
 
 	return users, nil
-}
-
-func (u *userImpl) RefreshToken(ctx context.Context, refreshToken string) ([]string, error) {
-	tokens, err := u.TokenGen.TryRefresh(refreshToken)
-	if err != nil {
-		return nil, err
-	}
-
-	return tokens, nil
 }
 
 func (u *userImpl) getUniqueNameFormEmail(ctx context.Context, email string) string {
