@@ -1,4 +1,4 @@
-.PHONY: proto clean-proto buf-gen
+.PHONY: proto clean-proto buf-gen buf-lint
 
 errcode:
 	@echo "Generating error code"
@@ -10,7 +10,11 @@ proto:
 
 buf-gen:
 	@echo "Generating protobuf code with buf..."
-	@buf generate
+	@buf generate --template scripts/buf/buf.gen.yaml
+
+buf-lint:
+	@echo "Linting protobuf files with buf..."
+	@buf lint --config scripts/buf/buf.yaml
 
 clean-proto:
 	@echo "Cleaning generated protobuf code..."
