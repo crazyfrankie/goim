@@ -101,7 +101,7 @@ func (u *UserApplicationService) ResetPassword(ctx context.Context, req *userv1.
 		return nil, err
 	}
 
-	return nil, nil
+	return &userv1.ResetPasswordResponse{}, nil
 }
 
 func (u *UserApplicationService) UpdateAvatar(ctx context.Context, req *userv1.UpdateAvatarRequest) (*userv1.UpdateAvatarResponse, error) {
@@ -145,7 +145,7 @@ func (u *UserApplicationService) UpdateProfile(ctx context.Context, req *userv1.
 		return nil, err
 	}
 
-	return nil, nil
+	return &userv1.UpdateProfileResponse{}, nil
 }
 
 func userDO2DTO(userDo *entity.User) *userv1.User {

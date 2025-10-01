@@ -27,10 +27,10 @@ func InternalServerError(c *gin.Context, err error) {
 	})
 }
 
-func InvalidParamError(c *gin.Context) {
+func InvalidParamError(c *gin.Context, message string) {
 	c.JSON(http.StatusBadRequest, Response{
 		Code:    400,
-		Message: "invalid params",
+		Message: "invalid params, " + message,
 	})
 }
 

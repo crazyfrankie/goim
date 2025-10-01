@@ -683,7 +683,6 @@ func (x *ResetPasswordRequest) GetPassword() string {
 
 type ResetPasswordResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Token         string                 `protobuf:"bytes,1,opt,name=token,proto3" json:"token,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -716,13 +715,6 @@ func (x *ResetPasswordResponse) ProtoReflect() protoreflect.Message {
 // Deprecated: Use ResetPasswordResponse.ProtoReflect.Descriptor instead.
 func (*ResetPasswordResponse) Descriptor() ([]byte, []int) {
 	return file_idl_user_v1_user_proto_rawDescGZIP(), []int{12}
-}
-
-func (x *ResetPasswordResponse) GetToken() string {
-	if x != nil {
-		return x.Token
-	}
-	return ""
 }
 
 type UpdateAvatarRequest struct {
@@ -968,9 +960,8 @@ const file_idl_user_v1_user_proto_rawDesc = "" +
 	"\x05value\x18\x02 \x01(\v2\r.user.v1.UserR\x05value:\x028\x01\"H\n" +
 	"\x14ResetPasswordRequest\x12\x14\n" +
 	"\x05email\x18\x01 \x01(\tR\x05email\x12\x1a\n" +
-	"\bpassword\x18\x02 \x01(\tR\bpassword\"-\n" +
-	"\x15ResetPasswordResponse\x12\x14\n" +
-	"\x05token\x18\x01 \x01(\tR\x05token\"J\n" +
+	"\bpassword\x18\x02 \x01(\tR\bpassword\"\x17\n" +
+	"\x15ResetPasswordResponse\"J\n" +
 	"\x13UpdateAvatarRequest\x12\x16\n" +
 	"\x06avatar\x18\x01 \x01(\fR\x06avatar\x12\x1b\n" +
 	"\tmime_type\x18\x02 \x01(\tR\bmimeType\"5\n" +

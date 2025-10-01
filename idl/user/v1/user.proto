@@ -73,7 +73,7 @@ message ResetPasswordRequest {
 }
 
 message ResetPasswordResponse {
-  string token = 1;
+
 }
 
 message UpdateAvatarRequest {
