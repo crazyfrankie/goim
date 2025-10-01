@@ -7,6 +7,13 @@ import (
 	"google.golang.org/grpc/status"
 )
 
+const (
+	SuccessCode int32 = iota
+	InvalidParamCode
+	InternalServer
+	UnauthorizedCode
+)
+
 type Response struct {
 	Code    int32  `json:"code"`
 	Message string `json:"message"`
@@ -14,36 +21,37 @@ type Response struct {
 }
 
 func InternalServerError(c *gin.Context, err error) {
+	code := InternalServer
+	msg := "internal server error"
+
 	if grpcErr, ok := status.FromError(err); ok {
-		c.JSON(http.StatusInternalServerError, Response{
-			Code:    int32(grpcErr.Code()),
-			Message: grpcErr.Message(),
-		})
-		return
+		code = int32(grpcErr.Code())
+		msg = grpcErr.Message()
 	}
+
 	c.JSON(http.StatusInternalServerError, Response{
-		Code:    500,
-		Message: "internal server error",
+		Code:    code,
+		Message: msg,
 	})
 }
 
 func InvalidParamError(c *gin.Context, message string) {
 	c.JSON(http.StatusBadRequest, Response{
-		Code:    400,
+		Code:    InvalidParamCode,
 		Message: "invalid params, " + message,
 	})
 }
 
 func Unauthorized(c *gin.Context) {
 	c.JSON(http.StatusUnauthorized, Response{
-		Code:    401,
+		Code:    UnauthorizedCode,
 		Message: "unauthorized",
 	})
 }
 
 func Success(c *gin.Context, data any) {
 	c.JSON(http.StatusOK, Response{
-		Code:    0,
+		Code:    SuccessCode,
 		Message: "success",
 		Data:    data,
 	})

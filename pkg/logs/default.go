@@ -136,7 +136,6 @@ func (b *BaseLogger) Fatal(v ...any) {
 
 func (b *BaseLogger) Tracef(format string, v ...any) {
 	b.logf(LevelTrace, &format, v...)
-
 }
 
 func (b *BaseLogger) Debugf(format string, v ...any) {
