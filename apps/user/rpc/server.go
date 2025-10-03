@@ -4,61 +4,16 @@ import (
 	"context"
 
 	"google.golang.org/grpc"
-	"gorm.io/gorm"
 
 	"github.com/crazyfrankie/goim/apps/user/application"
 	"github.com/crazyfrankie/goim/apps/user/domain/repository"
 	"github.com/crazyfrankie/goim/apps/user/domain/service"
-	"github.com/crazyfrankie/goim/infra/contract/idgen"
-	"github.com/crazyfrankie/goim/infra/contract/storage"
-	"github.com/crazyfrankie/goim/infra/contract/token"
-	"github.com/crazyfrankie/goim/infra/impl/cache/redis"
-	idgenimpl "github.com/crazyfrankie/goim/infra/impl/idgen"
-	"github.com/crazyfrankie/goim/infra/impl/mysql"
-	storageimpl "github.com/crazyfrankie/goim/infra/impl/storage"
-	tokenimpl "github.com/crazyfrankie/goim/infra/impl/token"
 	"github.com/crazyfrankie/goim/pkg/grpc/interceptor"
 	userv1 "github.com/crazyfrankie/goim/protocol/user/v1"
 )
 
-type basicServices struct {
-	DB       *gorm.DB
-	IDGen    idgen.IDGenerator
-	IconOSS  storage.Storage
-	TokenGen token.Token
-}
-
-func initBasicServices(ctx context.Context) (*basicServices, error) {
-	basic := &basicServices{}
-	var err error
-
-	basic.DB, err = mysql.New()
-	if err != nil {
-		return nil, err
-	}
-
-	cacheCli := redis.New()
-
-	basic.IDGen, err = idgenimpl.New(cacheCli)
-	if err != nil {
-		return nil, err
-	}
-
-	basic.TokenGen, err = tokenimpl.New(cacheCli)
-	if err != nil {
-		return nil, err
-	}
-
-	basic.IconOSS, err = storageimpl.New(ctx)
-	if err != nil {
-		return nil, err
-	}
-
-	return basic, nil
-}
-
 func NewGRPCServer(ctx context.Context) (*grpc.Server, error) {
-	basic, err := initBasicServices(ctx)
+	basic, err := application.Init(ctx)
 	if err != nil {
 		return nil, err
 	}

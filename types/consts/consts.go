@@ -8,6 +8,9 @@ const (
 	MinIOSK       = "MINIO_SK"
 	MinIOEndpoint = "MINIO_ENDPOINT"
 	StorageBucket = "STORAGE_BUCKET"
+	MQTypeKey     = "MQ_TYPE"
+	RMQAccessKey  = "RMQ_ACCESS_KEY"
+	RMQSecretKey  = "RMQ_SECRET_KEY"
 )
 
 const (
