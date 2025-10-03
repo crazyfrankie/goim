@@ -12,7 +12,7 @@ enum Sex {
 }
 
 message User {
-  int64 user_id = 1 [json_name = "user_id_str"];
+  int64 userID = 1;
   string name = 2;
   string email = 3;
   string user_unique_name = 4;
@@ -60,7 +60,7 @@ message GetUserInfoResponse {
 }
 
 message MGetUserInfoRequest {
-  repeated string user_ids = 1;
+  repeated string userIDs = 1;
 }
 
 message MGetUserInfoResponse {

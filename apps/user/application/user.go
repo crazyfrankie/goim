@@ -76,7 +76,7 @@ func (u *UserApplicationService) GetUserInfo(ctx context.Context, req *userv1.Ge
 }
 
 func (u *UserApplicationService) MGetUserInfo(ctx context.Context, req *userv1.MGetUserInfoRequest) (*userv1.MGetUserInfoResponse, error) {
-	userIDs, err := langslice.TransformWithErrorCheck(req.GetUserIds(), func(s string) (int64, error) {
+	userIDs, err := langslice.TransformWithErrorCheck(req.GetUserIDs(), func(s string) (int64, error) {
 		return strconv.ParseInt(s, 10, 64)
 	})
 	if err != nil {
@@ -150,7 +150,7 @@ func (u *UserApplicationService) UpdateProfile(ctx context.Context, req *userv1.
 
 func userDO2DTO(userDo *entity.User) *userv1.User {
 	return &userv1.User{
-		UserId:         userDo.UserID,
+		UserID:         userDo.UserID,
 		Name:           userDo.Name,
 		Email:          userDo.Email,
 		UserUniqueName: userDo.UniqueName,

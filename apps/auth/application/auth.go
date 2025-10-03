@@ -34,7 +34,7 @@ func (a *AuthApplicationService) ParseToken(ctx context.Context, req *authv1.Par
 		return nil, err
 	}
 
-	return &authv1.ParseTokenResponse{UserId: claims.UID}, nil
+	return &authv1.ParseTokenResponse{UserID: claims.UID}, nil
 }
 
 func (a *AuthApplicationService) RefreshBizToken(ctx context.Context, req *authv1.RefreshBizTokenRequest) (*authv1.RefreshBizTokenResponse, error) {
@@ -46,6 +46,6 @@ func (a *AuthApplicationService) RefreshBizToken(ctx context.Context, req *authv
 	return &authv1.RefreshBizTokenResponse{
 		AccessToken:  tokens[0],
 		RefreshToken: tokens[1],
-		UserId:       userID,
+		UserID:       userID,
 	}, nil
 }
