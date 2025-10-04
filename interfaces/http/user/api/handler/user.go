@@ -192,10 +192,11 @@ func (h *UserHandler) ResetPassword() gin.HandlerFunc {
 
 func userDTO2VO(userDto *userv1.User) *model.UserInfoResp {
 	return &model.UserInfoResp{
-		UserID:         strconv.FormatInt(userDto.UserId, 10),
+		UserID:         strconv.FormatInt(userDto.UserID, 10),
 		Name:           userDto.Name,
 		UserUniqueName: userDto.UserUniqueName,
 		Email:          userDto.Email,
+		Sex:            userDto.Sex.String(),
 		Description:    userDto.Description,
 		Avatar:         userDto.AvatarUrl,
 		UserCreateTime: userDto.UserCreateTime,

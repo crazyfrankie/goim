@@ -5,6 +5,7 @@ type UserInfoResp struct {
 	Name           string `json:"name"`
 	UserUniqueName string `json:"user_unique_name"`
 	Email          string `json:"email"`
+	Sex            string `json:"sex"`
 	Description    string `json:"description"`
 	Avatar         string `json:"avatar"`
 	UserCreateTime int64  `json:"user_create_time"`
