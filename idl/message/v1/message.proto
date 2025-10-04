@@ -9,20 +9,11 @@ message SendMessageReq {
   int64 recvID = 2;
   int64 groupID = 3;
   int64 client_msgID = 4;
-  int64 server_msgID = 5;
-  int32 sender_platformID = 6;
-  string sender_name = 7;
-  string sender_face_url = 8;
-  int32 session_type = 9;
-  int32 message_from = 10;
-  int32 contentType = 11;
-  bytes content = 12;
-  int64 seq = 13;
-  int64 send_time = 14;
-  int64 create_time = 15;
-  int32 status = 16;
-  bool is_read = 17;
-  repeated int64 at_user_list = 18;
+  int32 session_type = 5;
+  int32 message_from = 6;
+  int32 contentType = 7;
+  int64 seq = 8;
+  bytes content = 9;
 }
 
 message SendMessageResponse {

@@ -22,27 +22,18 @@ const (
 )
 
 type SendMessageReq struct {
-	state            protoimpl.MessageState `protogen:"open.v1"`
-	SendID           int64                  `protobuf:"varint,1,opt,name=sendID,proto3" json:"sendID,omitempty"`
-	RecvID           int64                  `protobuf:"varint,2,opt,name=recvID,proto3" json:"recvID,omitempty"`
-	GroupID          int64                  `protobuf:"varint,3,opt,name=groupID,proto3" json:"groupID,omitempty"`
-	ClientMsgID      int64                  `protobuf:"varint,4,opt,name=client_msgID,json=clientMsgID,proto3" json:"client_msgID,omitempty"`
-	ServerMsgID      int64                  `protobuf:"varint,5,opt,name=server_msgID,json=serverMsgID,proto3" json:"server_msgID,omitempty"`
-	SenderPlatformID int32                  `protobuf:"varint,6,opt,name=sender_platformID,json=senderPlatformID,proto3" json:"sender_platformID,omitempty"`
-	SenderName       string                 `protobuf:"bytes,7,opt,name=sender_name,json=senderName,proto3" json:"sender_name,omitempty"`
-	SenderFaceUrl    string                 `protobuf:"bytes,8,opt,name=sender_face_url,json=senderFaceUrl,proto3" json:"sender_face_url,omitempty"`
-	SessionType      int32                  `protobuf:"varint,9,opt,name=session_type,json=sessionType,proto3" json:"session_type,omitempty"`
-	MessageFrom      int32                  `protobuf:"varint,10,opt,name=message_from,json=messageFrom,proto3" json:"message_from,omitempty"`
-	ContentType      int32                  `protobuf:"varint,11,opt,name=contentType,proto3" json:"contentType,omitempty"`
-	Content          []byte                 `protobuf:"bytes,12,opt,name=content,proto3" json:"content,omitempty"`
-	Seq              int64                  `protobuf:"varint,13,opt,name=seq,proto3" json:"seq,omitempty"`
-	SendTime         int64                  `protobuf:"varint,14,opt,name=send_time,json=sendTime,proto3" json:"send_time,omitempty"`
-	CreateTime       int64                  `protobuf:"varint,15,opt,name=create_time,json=createTime,proto3" json:"create_time,omitempty"`
-	Status           int32                  `protobuf:"varint,16,opt,name=status,proto3" json:"status,omitempty"`
-	IsRead           bool                   `protobuf:"varint,17,opt,name=is_read,json=isRead,proto3" json:"is_read,omitempty"`
-	AtUserList       []int64                `protobuf:"varint,18,rep,packed,name=at_user_list,json=atUserList,proto3" json:"at_user_list,omitempty"`
-	unknownFields    protoimpl.UnknownFields
-	sizeCache        protoimpl.SizeCache
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	SendID        int64                  `protobuf:"varint,1,opt,name=sendID,proto3" json:"sendID,omitempty"`
+	RecvID        int64                  `protobuf:"varint,2,opt,name=recvID,proto3" json:"recvID,omitempty"`
+	GroupID       int64                  `protobuf:"varint,3,opt,name=groupID,proto3" json:"groupID,omitempty"`
+	ClientMsgID   int64                  `protobuf:"varint,4,opt,name=client_msgID,json=clientMsgID,proto3" json:"client_msgID,omitempty"`
+	SessionType   int32                  `protobuf:"varint,5,opt,name=session_type,json=sessionType,proto3" json:"session_type,omitempty"`
+	MessageFrom   int32                  `protobuf:"varint,6,opt,name=message_from,json=messageFrom,proto3" json:"message_from,omitempty"`
+	ContentType   int32                  `protobuf:"varint,7,opt,name=contentType,proto3" json:"contentType,omitempty"`
+	Seq           int64                  `protobuf:"varint,8,opt,name=seq,proto3" json:"seq,omitempty"`
+	Content       []byte                 `protobuf:"bytes,9,opt,name=content,proto3" json:"content,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *SendMessageReq) Reset() {
@@ -103,34 +94,6 @@ func (x *SendMessageReq) GetClientMsgID() int64 {
 	return 0
 }
 
-func (x *SendMessageReq) GetServerMsgID() int64 {
-	if x != nil {
-		return x.ServerMsgID
-	}
-	return 0
-}
-
-func (x *SendMessageReq) GetSenderPlatformID() int32 {
-	if x != nil {
-		return x.SenderPlatformID
-	}
-	return 0
-}
-
-func (x *SendMessageReq) GetSenderName() string {
-	if x != nil {
-		return x.SenderName
-	}
-	return ""
-}
-
-func (x *SendMessageReq) GetSenderFaceUrl() string {
-	if x != nil {
-		return x.SenderFaceUrl
-	}
-	return ""
-}
-
 func (x *SendMessageReq) GetSessionType() int32 {
 	if x != nil {
 		return x.SessionType
@@ -152,13 +115,6 @@ func (x *SendMessageReq) GetContentType() int32 {
 	return 0
 }
 
-func (x *SendMessageReq) GetContent() []byte {
-	if x != nil {
-		return x.Content
-	}
-	return nil
-}
-
 func (x *SendMessageReq) GetSeq() int64 {
 	if x != nil {
 		return x.Seq
@@ -166,37 +122,9 @@ func (x *SendMessageReq) GetSeq() int64 {
 	return 0
 }
 
-func (x *SendMessageReq) GetSendTime() int64 {
+func (x *SendMessageReq) GetContent() []byte {
 	if x != nil {
-		return x.SendTime
-	}
-	return 0
-}
-
-func (x *SendMessageReq) GetCreateTime() int64 {
-	if x != nil {
-		return x.CreateTime
-	}
-	return 0
-}
-
-func (x *SendMessageReq) GetStatus() int32 {
-	if x != nil {
-		return x.Status
-	}
-	return 0
-}
-
-func (x *SendMessageReq) GetIsRead() bool {
-	if x != nil {
-		return x.IsRead
-	}
-	return false
-}
-
-func (x *SendMessageReq) GetAtUserList() []int64 {
-	if x != nil {
-		return x.AtUserList
+		return x.Content
 	}
 	return nil
 }
@@ -266,30 +194,17 @@ var File_idl_message_v1_message_proto protoreflect.FileDescriptor
 const file_idl_message_v1_message_proto_rawDesc = "" +
 	"\n" +
 	"\x1cidl/message/v1/message.proto\x12\n" +
-	"message.v1\"\xbb\x04\n" +
+	"message.v1\"\x91\x02\n" +
 	"\x0eSendMessageReq\x12\x16\n" +
 	"\x06sendID\x18\x01 \x01(\x03R\x06sendID\x12\x16\n" +
 	"\x06recvID\x18\x02 \x01(\x03R\x06recvID\x12\x18\n" +
 	"\agroupID\x18\x03 \x01(\x03R\agroupID\x12!\n" +
 	"\fclient_msgID\x18\x04 \x01(\x03R\vclientMsgID\x12!\n" +
-	"\fserver_msgID\x18\x05 \x01(\x03R\vserverMsgID\x12+\n" +
-	"\x11sender_platformID\x18\x06 \x01(\x05R\x10senderPlatformID\x12\x1f\n" +
-	"\vsender_name\x18\a \x01(\tR\n" +
-	"senderName\x12&\n" +
-	"\x0fsender_face_url\x18\b \x01(\tR\rsenderFaceUrl\x12!\n" +
-	"\fsession_type\x18\t \x01(\x05R\vsessionType\x12!\n" +
-	"\fmessage_from\x18\n" +
-	" \x01(\x05R\vmessageFrom\x12 \n" +
-	"\vcontentType\x18\v \x01(\x05R\vcontentType\x12\x18\n" +
-	"\acontent\x18\f \x01(\fR\acontent\x12\x10\n" +
-	"\x03seq\x18\r \x01(\x03R\x03seq\x12\x1b\n" +
-	"\tsend_time\x18\x0e \x01(\x03R\bsendTime\x12\x1f\n" +
-	"\vcreate_time\x18\x0f \x01(\x03R\n" +
-	"createTime\x12\x16\n" +
-	"\x06status\x18\x10 \x01(\x05R\x06status\x12\x17\n" +
-	"\ais_read\x18\x11 \x01(\bR\x06isRead\x12 \n" +
-	"\fat_user_list\x18\x12 \x03(\x03R\n" +
-	"atUserList\"u\n" +
+	"\fsession_type\x18\x05 \x01(\x05R\vsessionType\x12!\n" +
+	"\fmessage_from\x18\x06 \x01(\x05R\vmessageFrom\x12 \n" +
+	"\vcontentType\x18\a \x01(\x05R\vcontentType\x12\x10\n" +
+	"\x03seq\x18\b \x01(\x03R\x03seq\x12\x18\n" +
+	"\acontent\x18\t \x01(\fR\acontent\"u\n" +
 	"\x13SendMessageResponse\x12 \n" +
 	"\vserverMsgID\x18\x01 \x01(\x03R\vserverMsgID\x12 \n" +
 	"\vclientMsgID\x18\x02 \x01(\x03R\vclientMsgID\x12\x1a\n" +

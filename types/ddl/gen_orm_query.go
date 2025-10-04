@@ -16,12 +16,12 @@ import (
 )
 
 var path2Table2FieldMapping = map[string]map[string]map[string]any{
-	"apps/http/domain/internal/dal/query": {
-		"http": {},
+	"apps/user/domain/internal/dal/query": {
+		"user": {},
 	},
 	"apps/message/domain/internal/dal/query": {
-		"message":      {},
-		"conversation": {},
+		"message": {},
+		//"conversation": {},
 	},
 }
 

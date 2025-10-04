@@ -19,3 +19,25 @@ CREATE TABLE IF NOT EXISTS `user` (
   UNIQUE INDEX `uniq_email` (`email`),
   UNIQUE INDEX `uniq_unique_name` (`unique_name`)
 ) ENGINE=InnoDB CHARSET utf8mb4 COLLATE utf8mb4_unicode_ci COMMENT 'User Table';
+
+CREATE TABLE IF NOT EXISTS `message` (
+  `id` bigint NOT NULL AUTO_INCREMENT COMMENT 'Message ID',
+  `send_id` bigint NOT NULL COMMENT 'Sender ID',
+  `recv_id` bigint NOT NULL COMMENT 'Receiver ID',
+  `group_id` bigint NOT NULL COMMENT 'Group ID',
+  `client_msg_id` bigint NOT NULL COMMENT 'Client Message ID',
+  `session_type` int NOT NULL COMMENT 'Session Type',
+  `message_from` int NOT NULL COMMENT 'Message Source',
+  `content_type` int NOT NULL COMMENT 'Message Content Type',
+  `content` text NOT NULL COMMENT 'Message Content',
+  `seq` bigint NOT NULL COMMENT 'Message Sequence Number',
+  `send_time` bigint NOT NULL COMMENT 'Send Time (Milliseconds)',
+  `status` int NOT NULL COMMENT 'Message Status',
+  `is_read` boolean NOT NULL COMMENT 'Message Read Status',
+  `created_time` bigint NOT NULL COMMENT 'Creation Time (Milliseconds)',
+  `updated_time` bigint NOT NULL COMMENT 'Update Time (Milliseconds)',
+  PRIMARY KEY (`id`),
+  INDEX `idx_send_id` (`send_id`),
+  INDEX `idx_recv_id` (`recv_id`),
+  INDEX `idx_group_id` (`group_id`)
+) ENGINE=InnoDB CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT 'Message Table';
