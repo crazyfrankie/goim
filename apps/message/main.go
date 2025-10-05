@@ -50,7 +50,7 @@ func main() {
 
 func initLogger() {
 	logger := logs.NewLogger(os.Stdout)
-	logger = logs.With(logger, "service.name", "user")
+	logger = logs.With(logger, "service.name", "message")
 	logs.SetGlobalLogger(logger)
 	setLogLevel(logger)
 }

@@ -11,6 +11,12 @@ const (
 	MQTypeKey     = "MQ_TYPE"
 	RMQAccessKey  = "RMQ_ACCESS_KEY"
 	RMQSecretKey  = "RMQ_SECRET_KEY"
+	MQServer      = "MQ_SERVER"
+)
+
+const (
+	RMQTopicMessage        = "goim_publish_message"
+	RMQConsumeGroupMessage = "cg_publish_message"
 )
 
 const (
