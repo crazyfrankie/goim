@@ -4,7 +4,7 @@ package message.v1;
 
 option go_package="github.com/crazyfrankie/goim/protocol/message/v1;messagev1";
 
-message SendMessageReq {
+message SendMessageRequest {
   int64 sendID = 1;
   int64 recvID = 2;
   int64 groupID = 3;
@@ -12,7 +12,7 @@ message SendMessageReq {
   int32 session_type = 5;
   int32 message_from = 6;
   int32 contentType = 7;
-  int64 seq = 8;
+  int64 send_time = 8;
   bytes content = 9;
 }
 
@@ -22,6 +22,13 @@ message SendMessageResponse {
   int64 sendTime = 3;
 }
 
+message SetMessageStatusRequest {
+  int32 status = 1;
+}
+
+message SetMessageStatusResponse {}
+
 service MessageService {
-  rpc SendMessage(SendMessageReq) returns (SendMessageResponse);
+  rpc SendMessage(SendMessageRequest) returns (SendMessageResponse);
+  rpc SetMessageStatus(SetMessageStatusRequest) returns (SetMessageStatusResponse);
 }

@@ -20,3 +20,8 @@ func NewMessageDao(db *gorm.DB) *MessageDao {
 func (m *MessageDao) Create(ctx context.Context, message *model.Message) error {
 	return m.query.Message.WithContext(ctx).Create(message)
 }
+
+func (m *MessageDao) UpdateMessageStatus(ctx context.Context, status int32) error {
+	_, err := m.query.Message.WithContext(ctx).Update(m.query.Message.Status, status)
+	return err
+}

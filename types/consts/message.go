@@ -1,14 +1,25 @@
 package consts
 
-type MessageType int
-
 const (
-	TextMessageType MessageType = iota
+	TextMessageType = iota
+	PictureMessageType
+	VoiceMessageType
+	VideoMessageType
+	FileMessageType
+	AtTextMessageType
+	MergerMessageType
+	CardMessageType
+	LocationMessageType
+	CustomMessageType
+	RevokeMessageType
+	TypingMessageType
+	QuoteMessageType
 )
 
-type ChatType int
-
 const (
-	GroupChatType ChatType = iota + 1
+	GroupChatType = iota
 	SingleChatType
+	WriteGroupChatType
+	ReadGroupChatType
+	NotificationChatType
 )

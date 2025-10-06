@@ -6,6 +6,7 @@ import (
 
 	"gorm.io/gorm"
 
+	"github.com/crazyfrankie/goim/apps/message/domain/entity"
 	"github.com/crazyfrankie/goim/apps/message/domain/internal/dal/model"
 	"github.com/crazyfrankie/goim/apps/message/domain/repository"
 	"github.com/crazyfrankie/goim/infra/contract/idgen"
@@ -25,10 +26,10 @@ func NewMessageDomain(c *Components) Message {
 	return &messageImpl{c}
 }
 
-func (m *messageImpl) Create(ctx context.Context, req *CreateMessageRequest) error {
+func (m *messageImpl) Create(ctx context.Context, req *CreateMessageRequest) (*entity.Message, error) {
 	msgID, err := m.IDGen.GenID(ctx)
 	if err != nil {
-		return fmt.Errorf("generate id error: %w", err)
+		return nil, fmt.Errorf("generate id error: %w", err)
 	}
 	newMessage := &model.Message{
 		ID:          msgID,
@@ -42,14 +43,38 @@ func (m *messageImpl) Create(ctx context.Context, req *CreateMessageRequest) err
 		Content:     req.Content,
 		Seq:         req.Seq,
 		SendTime:    req.SendTime,
-		Status:      req.Status,
-		IsRead:      req.IsRead,
 	}
 
 	err = m.MessageRepo.Create(ctx, newMessage)
+	if err != nil {
+		return nil, err
+	}
+
+	return messagePO2DO(newMessage), nil
+}
+
+func (m *messageImpl) UpdateMessageStatus(ctx context.Context, status int32) error {
+	err := m.MessageRepo.UpdateMessageStatus(ctx, status)
 	if err != nil {
 		return err
 	}
 
 	return nil
+}
+
+func messagePO2DO(msgPO *model.Message) *entity.Message {
+	return &entity.Message{
+		MsgID:       msgPO.ID,
+		SendID:      msgPO.SendID,
+		RecvID:      msgPO.RecvID,
+		GroupID:     msgPO.GroupID,
+		ClientMsgID: msgPO.ClientMsgID,
+		Seq:         msgPO.Seq,
+		Content:     msgPO.Content,
+		SendTime:    msgPO.SendTime,
+		Status:      msgPO.Status,
+		IsRead:      msgPO.IsRead,
+		CreatedTime: msgPO.CreatedTime,
+		UpdatedTime: msgPO.UpdatedTime,
+	}
 }

@@ -21,7 +21,7 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-type SendMessageReq struct {
+type SendMessageRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	SendID        int64                  `protobuf:"varint,1,opt,name=sendID,proto3" json:"sendID,omitempty"`
 	RecvID        int64                  `protobuf:"varint,2,opt,name=recvID,proto3" json:"recvID,omitempty"`
@@ -30,26 +30,26 @@ type SendMessageReq struct {
 	SessionType   int32                  `protobuf:"varint,5,opt,name=session_type,json=sessionType,proto3" json:"session_type,omitempty"`
 	MessageFrom   int32                  `protobuf:"varint,6,opt,name=message_from,json=messageFrom,proto3" json:"message_from,omitempty"`
 	ContentType   int32                  `protobuf:"varint,7,opt,name=contentType,proto3" json:"contentType,omitempty"`
-	Seq           int64                  `protobuf:"varint,8,opt,name=seq,proto3" json:"seq,omitempty"`
+	SendTime      int64                  `protobuf:"varint,8,opt,name=send_time,json=sendTime,proto3" json:"send_time,omitempty"`
 	Content       []byte                 `protobuf:"bytes,9,opt,name=content,proto3" json:"content,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *SendMessageReq) Reset() {
-	*x = SendMessageReq{}
+func (x *SendMessageRequest) Reset() {
+	*x = SendMessageRequest{}
 	mi := &file_idl_message_v1_message_proto_msgTypes[0]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *SendMessageReq) String() string {
+func (x *SendMessageRequest) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*SendMessageReq) ProtoMessage() {}
+func (*SendMessageRequest) ProtoMessage() {}
 
-func (x *SendMessageReq) ProtoReflect() protoreflect.Message {
+func (x *SendMessageRequest) ProtoReflect() protoreflect.Message {
 	mi := &file_idl_message_v1_message_proto_msgTypes[0]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -61,68 +61,68 @@ func (x *SendMessageReq) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use SendMessageReq.ProtoReflect.Descriptor instead.
-func (*SendMessageReq) Descriptor() ([]byte, []int) {
+// Deprecated: Use SendMessageRequest.ProtoReflect.Descriptor instead.
+func (*SendMessageRequest) Descriptor() ([]byte, []int) {
 	return file_idl_message_v1_message_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *SendMessageReq) GetSendID() int64 {
+func (x *SendMessageRequest) GetSendID() int64 {
 	if x != nil {
 		return x.SendID
 	}
 	return 0
 }
 
-func (x *SendMessageReq) GetRecvID() int64 {
+func (x *SendMessageRequest) GetRecvID() int64 {
 	if x != nil {
 		return x.RecvID
 	}
 	return 0
 }
 
-func (x *SendMessageReq) GetGroupID() int64 {
+func (x *SendMessageRequest) GetGroupID() int64 {
 	if x != nil {
 		return x.GroupID
 	}
 	return 0
 }
 
-func (x *SendMessageReq) GetClientMsgID() int64 {
+func (x *SendMessageRequest) GetClientMsgID() int64 {
 	if x != nil {
 		return x.ClientMsgID
 	}
 	return 0
 }
 
-func (x *SendMessageReq) GetSessionType() int32 {
+func (x *SendMessageRequest) GetSessionType() int32 {
 	if x != nil {
 		return x.SessionType
 	}
 	return 0
 }
 
-func (x *SendMessageReq) GetMessageFrom() int32 {
+func (x *SendMessageRequest) GetMessageFrom() int32 {
 	if x != nil {
 		return x.MessageFrom
 	}
 	return 0
 }
 
-func (x *SendMessageReq) GetContentType() int32 {
+func (x *SendMessageRequest) GetContentType() int32 {
 	if x != nil {
 		return x.ContentType
 	}
 	return 0
 }
 
-func (x *SendMessageReq) GetSeq() int64 {
+func (x *SendMessageRequest) GetSendTime() int64 {
 	if x != nil {
-		return x.Seq
+		return x.SendTime
 	}
 	return 0
 }
 
-func (x *SendMessageReq) GetContent() []byte {
+func (x *SendMessageRequest) GetContent() []byte {
 	if x != nil {
 		return x.Content
 	}
@@ -189,28 +189,112 @@ func (x *SendMessageResponse) GetSendTime() int64 {
 	return 0
 }
 
+type SetMessageStatusRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Status        int32                  `protobuf:"varint,1,opt,name=status,proto3" json:"status,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *SetMessageStatusRequest) Reset() {
+	*x = SetMessageStatusRequest{}
+	mi := &file_idl_message_v1_message_proto_msgTypes[2]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *SetMessageStatusRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SetMessageStatusRequest) ProtoMessage() {}
+
+func (x *SetMessageStatusRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_idl_message_v1_message_proto_msgTypes[2]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SetMessageStatusRequest.ProtoReflect.Descriptor instead.
+func (*SetMessageStatusRequest) Descriptor() ([]byte, []int) {
+	return file_idl_message_v1_message_proto_rawDescGZIP(), []int{2}
+}
+
+func (x *SetMessageStatusRequest) GetStatus() int32 {
+	if x != nil {
+		return x.Status
+	}
+	return 0
+}
+
+type SetMessageStatusResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *SetMessageStatusResponse) Reset() {
+	*x = SetMessageStatusResponse{}
+	mi := &file_idl_message_v1_message_proto_msgTypes[3]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *SetMessageStatusResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SetMessageStatusResponse) ProtoMessage() {}
+
+func (x *SetMessageStatusResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_idl_message_v1_message_proto_msgTypes[3]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SetMessageStatusResponse.ProtoReflect.Descriptor instead.
+func (*SetMessageStatusResponse) Descriptor() ([]byte, []int) {
+	return file_idl_message_v1_message_proto_rawDescGZIP(), []int{3}
+}
+
 var File_idl_message_v1_message_proto protoreflect.FileDescriptor
 
 const file_idl_message_v1_message_proto_rawDesc = "" +
 	"\n" +
 	"\x1cidl/message/v1/message.proto\x12\n" +
-	"message.v1\"\x91\x02\n" +
-	"\x0eSendMessageReq\x12\x16\n" +
+	"message.v1\"\xa0\x02\n" +
+	"\x12SendMessageRequest\x12\x16\n" +
 	"\x06sendID\x18\x01 \x01(\x03R\x06sendID\x12\x16\n" +
 	"\x06recvID\x18\x02 \x01(\x03R\x06recvID\x12\x18\n" +
 	"\agroupID\x18\x03 \x01(\x03R\agroupID\x12!\n" +
 	"\fclient_msgID\x18\x04 \x01(\x03R\vclientMsgID\x12!\n" +
 	"\fsession_type\x18\x05 \x01(\x05R\vsessionType\x12!\n" +
 	"\fmessage_from\x18\x06 \x01(\x05R\vmessageFrom\x12 \n" +
-	"\vcontentType\x18\a \x01(\x05R\vcontentType\x12\x10\n" +
-	"\x03seq\x18\b \x01(\x03R\x03seq\x12\x18\n" +
+	"\vcontentType\x18\a \x01(\x05R\vcontentType\x12\x1b\n" +
+	"\tsend_time\x18\b \x01(\x03R\bsendTime\x12\x18\n" +
 	"\acontent\x18\t \x01(\fR\acontent\"u\n" +
 	"\x13SendMessageResponse\x12 \n" +
 	"\vserverMsgID\x18\x01 \x01(\x03R\vserverMsgID\x12 \n" +
 	"\vclientMsgID\x18\x02 \x01(\x03R\vclientMsgID\x12\x1a\n" +
-	"\bsendTime\x18\x03 \x01(\x03R\bsendTime2\\\n" +
-	"\x0eMessageService\x12J\n" +
-	"\vSendMessage\x12\x1a.message.v1.SendMessageReq\x1a\x1f.message.v1.SendMessageResponseB<Z:github.com/crazyfrankie/goim/protocol/message/v1;messagev1b\x06proto3"
+	"\bsendTime\x18\x03 \x01(\x03R\bsendTime\"1\n" +
+	"\x17SetMessageStatusRequest\x12\x16\n" +
+	"\x06status\x18\x01 \x01(\x05R\x06status\"\x1a\n" +
+	"\x18SetMessageStatusResponse2\xbf\x01\n" +
+	"\x0eMessageService\x12N\n" +
+	"\vSendMessage\x12\x1e.message.v1.SendMessageRequest\x1a\x1f.message.v1.SendMessageResponse\x12]\n" +
+	"\x10SetMessageStatus\x12#.message.v1.SetMessageStatusRequest\x1a$.message.v1.SetMessageStatusResponseB<Z:github.com/crazyfrankie/goim/protocol/message/v1;messagev1b\x06proto3"
 
 var (
 	file_idl_message_v1_message_proto_rawDescOnce sync.Once
@@ -224,16 +308,20 @@ func file_idl_message_v1_message_proto_rawDescGZIP() []byte {
 	return file_idl_message_v1_message_proto_rawDescData
 }
 
-var file_idl_message_v1_message_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
+var file_idl_message_v1_message_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
 var file_idl_message_v1_message_proto_goTypes = []any{
-	(*SendMessageReq)(nil),      // 0: message.v1.SendMessageReq
-	(*SendMessageResponse)(nil), // 1: message.v1.SendMessageResponse
+	(*SendMessageRequest)(nil),       // 0: message.v1.SendMessageRequest
+	(*SendMessageResponse)(nil),      // 1: message.v1.SendMessageResponse
+	(*SetMessageStatusRequest)(nil),  // 2: message.v1.SetMessageStatusRequest
+	(*SetMessageStatusResponse)(nil), // 3: message.v1.SetMessageStatusResponse
 }
 var file_idl_message_v1_message_proto_depIdxs = []int32{
-	0, // 0: message.v1.MessageService.SendMessage:input_type -> message.v1.SendMessageReq
-	1, // 1: message.v1.MessageService.SendMessage:output_type -> message.v1.SendMessageResponse
-	1, // [1:2] is the sub-list for method output_type
-	0, // [0:1] is the sub-list for method input_type
+	0, // 0: message.v1.MessageService.SendMessage:input_type -> message.v1.SendMessageRequest
+	2, // 1: message.v1.MessageService.SetMessageStatus:input_type -> message.v1.SetMessageStatusRequest
+	1, // 2: message.v1.MessageService.SendMessage:output_type -> message.v1.SendMessageResponse
+	3, // 3: message.v1.MessageService.SetMessageStatus:output_type -> message.v1.SetMessageStatusResponse
+	2, // [2:4] is the sub-list for method output_type
+	0, // [0:2] is the sub-list for method input_type
 	0, // [0:0] is the sub-list for extension type_name
 	0, // [0:0] is the sub-list for extension extendee
 	0, // [0:0] is the sub-list for field type_name
@@ -250,7 +338,7 @@ func file_idl_message_v1_message_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_idl_message_v1_message_proto_rawDesc), len(file_idl_message_v1_message_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   2,
+			NumMessages:   4,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
