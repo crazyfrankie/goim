@@ -1,14 +1,12 @@
 package message
 
-import "time"
-
 type MessageEvent struct {
-	EventType EventType  `json:"event_type"`
-	MessageID int64      `json:"message_id"`
-	UserID    int64      `json:"user_id"`
-	Content   string     `json:"content"`
-	Timestamp time.Time  `json:"timestamp"`
-	Meta      *EventMeta `json:"meta,omitempty"`
+	EventType   EventType  `json:"event_type"`
+	MessageID   int64      `json:"message_id"`
+	UserID      int64      `json:"user_id"`
+	Content     string     `json:"content"`
+	TimestampMS int64      `json:"timestamp_ms"`
+	Meta        *EventMeta `json:"meta,omitempty"`
 }
 
 type EventType int

@@ -49,7 +49,7 @@ func main() {
 	g.Add(run.SignalHandler(context.Background(), syscall.SIGINT, syscall.SIGTERM))
 
 	if err := g.Run(); err != nil {
-		logs.Warnf("all programs down")
+		logs.Warnf("All programs down")
 	}
 }
 

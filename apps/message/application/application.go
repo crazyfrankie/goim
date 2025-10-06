@@ -27,7 +27,7 @@ func Init(ctx context.Context) (*BasicServices, error) {
 	basic := &BasicServices{}
 	var err error
 
-	basic.DB, err = mysql.New("MYSQL_DSN")
+	basic.DB, err = mysql.New("TIDB_DSN")
 	if err != nil {
 		return nil, err
 	}

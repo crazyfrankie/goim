@@ -29,6 +29,7 @@ func (h *UserHandler) RegisterRoute(r *gin.RouterGroup) {
 		userGroup.POST("login", h.Login())
 		userGroup.GET("logout", h.Logout())
 		userGroup.GET("profile", h.GetUserInfo())
+		userGroup.POST("avatar", h.UpdateAvatar())
 		userGroup.PUT("profile", h.UpdateProfile())
 		userGroup.POST("reset-password", h.ResetPassword())
 	}
