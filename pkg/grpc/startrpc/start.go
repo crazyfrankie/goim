@@ -18,14 +18,11 @@ func Start(ctx context.Context, listenIP, registerIP, listenPort, rpcRegisterNam
 	g := &run.Group{}
 
 	// Signal handler
-	{
-		ctx, cancel := context.WithCancel(ctx)
-		g.Add(func() error {
-			return signal.CtxWaitExit(ctx)
-		}, func(err error) {
-			cancel()
-		})
-	}
+	g.Add(func() error {
+		return signal.CtxWaitExit(ctx)
+	}, func(err error) {
+
+	})
 
 	// Prometheus metrics server
 	// TODO
@@ -64,16 +61,25 @@ func Start(ctx context.Context, listenIP, registerIP, listenPort, rpcRegisterNam
 		}, func(err error) {
 			if rpcServer != nil {
 				// Graceful stop with timeout
-				stopped := make(chan struct{})
+				stopCtx, cancel := context.WithTimeout(ctx, 15*time.Second)
+				defer cancel()
+
+				done := make(chan struct{})
 				go func() {
 					rpcServer.GracefulStop()
-					close(stopped)
+					close(done)
 				}()
 
 				select {
-				case <-stopped:
-				case <-time.After(15 * time.Second):
-					logs.CtxWarnf(ctx, "rcp graceful stop timeout")
+				case <-done:
+					logs.CtxInfof(ctx, "gRPC server stopped gracefully")
+				case <-stopCtx.Done():
+					logs.CtxWarnf(ctx, "gRPC server graceful stop timeout, forcing shutdown")
+					rpcServer.Stop()
+				}
+
+				if rpcListener != nil {
+					rpcListener.Close()
 				}
 			}
 			if rpcListener != nil {
@@ -88,11 +94,11 @@ func Start(ctx context.Context, listenIP, registerIP, listenPort, rpcRegisterNam
 
 	// Run all services
 	if err := g.Run(); err != nil {
-		logs.CtxDebugf(ctx, "program interrupted, %v", err)
+		logs.Infof("program interrupted, %v", err)
 		return err
 	}
 
-	logs.CtxDebugf(ctx, "Server exited gracefully")
+	logs.Infof("Server exited gracefully")
 
 	return nil
 }

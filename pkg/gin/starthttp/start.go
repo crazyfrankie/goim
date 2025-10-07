@@ -3,11 +3,12 @@ package starthttp
 import (
 	"context"
 	"errors"
+	"fmt"
 	"net/http"
 	"time"
 
 	"github.com/oklog/run"
-	
+
 	"github.com/crazyfrankie/goim/pkg/lang/signal"
 	"github.com/crazyfrankie/goim/pkg/logs"
 )
@@ -16,14 +17,11 @@ func Start(ctx context.Context, listenAddr string, initFn func() (http.Handler, 
 	g := &run.Group{}
 
 	// Signal handler
-	{
-		ctx, cancel := context.WithCancel(ctx)
-		g.Add(func() error {
-			return signal.CtxWaitExit(ctx)
-		}, func(err error) {
-			cancel()
-		})
-	}
+	g.Add(func() error {
+		return signal.CtxWaitExit(ctx)
+	}, func(err error) {
+
+	})
 
 	engine, err := initFn()
 	if err != nil {
@@ -37,16 +35,24 @@ func Start(ctx context.Context, listenAddr string, initFn func() (http.Handler, 
 
 	g.Add(func() error {
 		if err := srv.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
-			return err
+			return fmt.Errorf("server failed: %w", err)
 		}
 		return nil
 	}, func(err error) {
-		shutdownCtx, cancel := context.WithTimeout(context.Background(), shutdownTimeout)
+		shutdownCtx, cancel := context.WithTimeout(ctx, shutdownTimeout)
 		defer cancel()
 		if err := srv.Shutdown(shutdownCtx); err != nil {
 			logs.Errorf("failed to shutdown main server: %v", err)
 		}
+		logs.Infof("Server shutdown successfully")
 	})
 
-	return g.Run()
+	if err := g.Run(); err != nil {
+		logs.Infof("program interrupted, %v", err)
+		return err
+	}
+
+	logs.Infof("Server exited gracefully")
+
+	return nil
 }
