@@ -2,5 +2,4 @@
 .env.*
 *.pem
 goim
-bff-structure.md
 *.md

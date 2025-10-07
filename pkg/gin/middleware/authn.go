@@ -3,13 +3,13 @@ package middleware
 import (
 	"context"
 	"errors"
-	"strconv"
 	"strings"
 
 	"github.com/gin-gonic/gin"
 	"google.golang.org/grpc/metadata"
 
 	"github.com/crazyfrankie/goim/pkg/gin/response"
+	"github.com/crazyfrankie/goim/pkg/lang/conv"
 	authv1 "github.com/crazyfrankie/goim/protocol/auth/v1"
 )
 
@@ -19,7 +19,6 @@ type AuthnHandler struct {
 }
 
 func NewAuthnHandler(authClient authv1.AuthServiceClient) (*AuthnHandler, error) {
-
 	return &AuthnHandler{authClient: authClient, noAuthPaths: make(map[string]struct{})}, nil
 }
 
@@ -73,7 +72,7 @@ func (h *AuthnHandler) Auth() gin.HandlerFunc {
 
 func (h *AuthnHandler) storeUserID(ctx context.Context, userID int64) context.Context {
 	return metadata.NewOutgoingContext(ctx, metadata.New(map[string]string{
-		"user_id": strconv.FormatInt(userID, 10),
+		"user_id": conv.Int64ToStr(userID),
 	}))
 }
 

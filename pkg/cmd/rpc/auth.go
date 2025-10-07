@@ -5,9 +5,11 @@ import (
 	"os"
 
 	"github.com/spf13/cobra"
+	"google.golang.org/grpc"
 
 	"github.com/crazyfrankie/goim/apps/auth"
 	"github.com/crazyfrankie/goim/pkg/cmd"
+	"github.com/crazyfrankie/goim/pkg/grpc/interceptor"
 	"github.com/crazyfrankie/goim/pkg/grpc/startrpc"
 	"github.com/crazyfrankie/goim/pkg/lang/program"
 )
@@ -38,5 +40,11 @@ func (a *AuthCmd) runE() error {
 	registerIP := os.Getenv("REGISTER_IP")
 	listenPort := os.Getenv("LISTEN_PORT")
 
-	return startrpc.Start(context.Background(), listenIP, registerIP, listenPort, authServiceName, auth.Start)
+	return startrpc.Start(context.Background(), listenIP, registerIP, listenPort, authServiceName, auth.Start, authGrpcServerOption()...)
+}
+
+func authGrpcServerOption() []grpc.ServerOption {
+	return []grpc.ServerOption{
+		grpc.UnaryInterceptor(interceptor.ResponseInterceptor()),
+	}
 }

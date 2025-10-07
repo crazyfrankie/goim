@@ -3,12 +3,12 @@ package application
 import (
 	"context"
 	"net/mail"
-	"strconv"
 
 	"github.com/crazyfrankie/goim/apps/user/domain/entity"
 	user "github.com/crazyfrankie/goim/apps/user/domain/service"
 	"github.com/crazyfrankie/goim/pkg/errorx"
 	"github.com/crazyfrankie/goim/pkg/grpc/ctxutil"
+	"github.com/crazyfrankie/goim/pkg/lang/conv"
 	langslice "github.com/crazyfrankie/goim/pkg/lang/slice"
 	userv1 "github.com/crazyfrankie/goim/protocol/user/v1"
 	"github.com/crazyfrankie/goim/types/errno"
@@ -77,7 +77,7 @@ func (u *UserApplicationService) GetUserInfo(ctx context.Context, req *userv1.Ge
 
 func (u *UserApplicationService) MGetUserInfo(ctx context.Context, req *userv1.MGetUserInfoRequest) (*userv1.MGetUserInfoResponse, error) {
 	userIDs, err := langslice.TransformWithErrorCheck(req.GetUserIDs(), func(s string) (int64, error) {
-		return strconv.ParseInt(s, 10, 64)
+		return conv.StrToInt64(s)
 	})
 	if err != nil {
 		return nil, errorx.WrapByCode(err, errno.ErrUserInvalidParamCode, errorx.KV("msg", "invalid user id"))
@@ -90,7 +90,7 @@ func (u *UserApplicationService) MGetUserInfo(ctx context.Context, req *userv1.M
 
 	return &userv1.MGetUserInfoResponse{
 		Data: langslice.ToMap(userInfos, func(userInfo *entity.User) (string, *userv1.User) {
-			return strconv.FormatInt(userInfo.UserID, 10), userDO2DTO(userInfo)
+			return conv.Int64ToStr(userInfo.UserID), userDO2DTO(userInfo)
 		}),
 	}, nil
 }

@@ -2,13 +2,13 @@ package handler
 
 import (
 	"io"
-	"strconv"
 	"strings"
 
 	"github.com/gin-gonic/gin"
 
 	"github.com/crazyfrankie/goim/interfaces/http/user/model"
 	"github.com/crazyfrankie/goim/pkg/gin/response"
+	"github.com/crazyfrankie/goim/pkg/lang/conv"
 	"github.com/crazyfrankie/goim/pkg/logs"
 	userv1 "github.com/crazyfrankie/goim/protocol/user/v1"
 )
@@ -192,7 +192,7 @@ func (h *UserHandler) ResetPassword() gin.HandlerFunc {
 
 func userDTO2VO(userDto *userv1.User) *model.UserInfoResp {
 	return &model.UserInfoResp{
-		UserID:         strconv.FormatInt(userDto.UserID, 10),
+		UserID:         conv.Int64ToStr(userDto.UserID),
 		Name:           userDto.Name,
 		UserUniqueName: userDto.UserUniqueName,
 		Email:          userDto.Email,

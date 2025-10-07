@@ -5,9 +5,11 @@ import (
 	"os"
 
 	"github.com/spf13/cobra"
+	"google.golang.org/grpc"
 
 	"github.com/crazyfrankie/goim/apps/message"
 	"github.com/crazyfrankie/goim/pkg/cmd"
+	"github.com/crazyfrankie/goim/pkg/grpc/interceptor"
 	"github.com/crazyfrankie/goim/pkg/grpc/startrpc"
 	"github.com/crazyfrankie/goim/pkg/lang/program"
 )
@@ -38,5 +40,11 @@ func (m *MessageCmd) runE() error {
 	registerIP := os.Getenv("REGISTER_IP")
 	listenPort := os.Getenv("LISTEN_PORT")
 
-	return startrpc.Start(context.Background(), listenIP, registerIP, listenPort, messageServiceName, message.Start)
+	return startrpc.Start(context.Background(), listenIP, registerIP, listenPort, messageServiceName, message.Start, msgGrpcServerOption()...)
+}
+
+func msgGrpcServerOption() []grpc.ServerOption {
+	return []grpc.ServerOption{
+		grpc.UnaryInterceptor(interceptor.ResponseInterceptor()),
+	}
 }

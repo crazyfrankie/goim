@@ -4,12 +4,14 @@ import (
 	"context"
 	"os"
 
-	"github.com/crazyfrankie/goim/apps/user"
-	"github.com/crazyfrankie/goim/pkg/lang/program"
 	"github.com/spf13/cobra"
+	"google.golang.org/grpc"
 
+	"github.com/crazyfrankie/goim/apps/user"
 	"github.com/crazyfrankie/goim/pkg/cmd"
+	"github.com/crazyfrankie/goim/pkg/grpc/interceptor"
 	"github.com/crazyfrankie/goim/pkg/grpc/startrpc"
+	"github.com/crazyfrankie/goim/pkg/lang/program"
 )
 
 const userServiceName = "goim-rpc-user"
@@ -38,5 +40,11 @@ func (u *UserCmd) runE() error {
 	registerIP := os.Getenv("REGISTER_IP")
 	listenPort := os.Getenv("LISTEN_PORT")
 
-	return startrpc.Start(context.Background(), listenIP, registerIP, listenPort, userServiceName, user.Start)
+	return startrpc.Start(context.Background(), listenIP, registerIP, listenPort, userServiceName, user.Start, userGrpcServerOption()...)
+}
+
+func userGrpcServerOption() []grpc.ServerOption {
+	return []grpc.ServerOption{
+		grpc.UnaryInterceptor(interceptor.ResponseInterceptor()),
+	}
 }

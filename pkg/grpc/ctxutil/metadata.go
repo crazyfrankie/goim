@@ -2,9 +2,10 @@ package ctxutil
 
 import (
 	"context"
-	"strconv"
 
 	"google.golang.org/grpc/metadata"
+
+	"github.com/crazyfrankie/goim/pkg/lang/conv"
 )
 
 func GetMetadata(ctx context.Context) metadata.MD {
@@ -23,7 +24,7 @@ func MustGetUserIDFromCtx(ctx context.Context) int64 {
 	}
 
 	uid := md.Get("user_id")
-	userID, _ := strconv.ParseInt(uid[0], 10, 64)
+	userID, _ := conv.StrToInt64(uid[0])
 
 	return userID
 }

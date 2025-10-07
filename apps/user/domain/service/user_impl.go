@@ -3,7 +3,6 @@ package service
 import (
 	"context"
 	"fmt"
-	"strconv"
 	"strings"
 	"time"
 	"unicode/utf8"
@@ -17,6 +16,7 @@ import (
 	"github.com/crazyfrankie/goim/infra/contract/storage"
 	"github.com/crazyfrankie/goim/infra/contract/token"
 	"github.com/crazyfrankie/goim/pkg/errorx"
+	"github.com/crazyfrankie/goim/pkg/lang/conv"
 	"github.com/crazyfrankie/goim/pkg/lang/ptr"
 	"github.com/crazyfrankie/goim/pkg/logs"
 	"github.com/crazyfrankie/goim/types/consts"
@@ -160,7 +160,7 @@ func (u *userImpl) GetUserInfo(ctx context.Context, userID int64) (*entity.User,
 }
 
 func (u *userImpl) UpdateAvatar(ctx context.Context, userID int64, ext string, imagePayload []byte) (url string, err error) {
-	avatarKey := "user_avatar/" + strconv.FormatInt(userID, 10) + "." + ext
+	avatarKey := "user_avatar/" + conv.Int64ToStr(userID) + "." + ext
 	err = u.IconOSS.PutObject(ctx, avatarKey, imagePayload)
 	if err != nil {
 		return "", err

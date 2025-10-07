@@ -69,7 +69,6 @@ func (r *RootCmd) initLog() {
 func setLogLevel(logger logs.FullLogger) {
 	level := strings.ToLower(os.Getenv("LOG_LEVEL"))
 
-	logs.Infof("[log level: %s]", level)
 	switch level {
 	case "trace":
 		logger.SetLevel(logs.LevelTrace)

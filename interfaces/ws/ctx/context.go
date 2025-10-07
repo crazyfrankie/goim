@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/crazyfrankie/goim/interfaces/ws/constant"
+	"github.com/crazyfrankie/goim/pkg/lang/conv"
 	"github.com/crazyfrankie/goim/pkg/lang/encrypt"
 )
 
@@ -145,5 +146,5 @@ func (c *Context) ShouldSendResp() bool {
 }
 
 func userConnID(remoteAddr string) string {
-	return encrypt.Md5(remoteAddr + "_" + strconv.FormatInt(time.Now().UnixMilli(), 10))
+	return encrypt.Md5(remoteAddr + "_" + conv.Int64ToStr(time.Now().UnixMilli()))
 }
