@@ -61,7 +61,7 @@ func (r *RootCmd) initEnv() error {
 func (r *RootCmd) initLog() {
 	logger := logs.NewLogger(os.Stdout)
 	logger.WithCaller()
-	logger.With(logger, "service.name", r.serviceName)
+	logger.With("service.name", r.serviceName)
 	logs.SetGlobalLogger(logger)
 	setLogLevel(logger)
 }

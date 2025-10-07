@@ -26,14 +26,12 @@ func NewLogger(output io.Writer) FullLogger {
 	}
 }
 
-func (b *BaseLogger) With(kv ...any) FullLogger {
+func (b *BaseLogger) With(kv ...any) {
 	kvs := make([]interface{}, 0, len(b.prefix)+len(kv))
 	kvs = append(kvs, kv...)
 	kvs = append(kvs, b.prefix...)
-	return &BaseLogger{
-		stdlog: b.stdlog,
-		prefix: kvs,
-	}
+
+	b.prefix = kvs
 }
 
 func (b *BaseLogger) WithCaller() {

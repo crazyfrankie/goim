@@ -47,7 +47,7 @@ type Control interface {
 }
 
 type LogOption interface {
-	With(kv ...any) FullLogger
+	With(kv ...any)
 	WithCaller()
 	WithCallerSkip(skip int)
 }
