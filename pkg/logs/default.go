@@ -11,30 +11,37 @@ import (
 )
 
 type BaseLogger struct {
-	stdlog *log.Logger
-	level  Level
-	prefix []any
+	stdlog     *log.Logger
+	level      Level
+	enableCall bool
+	callerSkip int
+	prefix     []any
 }
 
 func NewLogger(output io.Writer) FullLogger {
 	return &BaseLogger{
-		stdlog: log.New(output, "", log.LstdFlags|log.Lshortfile|log.Lmicroseconds),
+		stdlog: log.New(output, "", log.LstdFlags|log.Lmicroseconds),
 		level:  LevelDebug,
 		prefix: make([]any, 0),
 	}
 }
 
-func With(l FullLogger, kv ...any) FullLogger {
-	if c, ok := l.(*BaseLogger); ok {
-		kvs := make([]interface{}, 0, len(c.prefix)+len(kv))
-		kvs = append(kvs, kv...)
-		kvs = append(kvs, c.prefix...)
-		return &BaseLogger{
-			stdlog: c.stdlog,
-			prefix: kvs,
-		}
+func (b *BaseLogger) With(kv ...any) FullLogger {
+	kvs := make([]interface{}, 0, len(b.prefix)+len(kv))
+	kvs = append(kvs, kv...)
+	kvs = append(kvs, b.prefix...)
+	return &BaseLogger{
+		stdlog: b.stdlog,
+		prefix: kvs,
 	}
-	return l
+}
+
+func (b *BaseLogger) WithCaller() {
+	b.enableCall = true
+}
+
+func (b *BaseLogger) WithCallerSkip(skip int) {
+	b.callerSkip += skip
 }
 
 func (b *BaseLogger) SetOutput(w io.Writer) {
@@ -59,27 +66,29 @@ func (b *BaseLogger) buildPrefix() string {
 }
 
 func (b *BaseLogger) getCaller() string {
-	_, file, line, ok := runtime.Caller(4)
+	if !b.enableCall {
+		return ""
+	}
+	_, file, line, ok := runtime.Caller(4 + b.callerSkip)
 	if !ok {
 		return ""
 	}
 	if idx := strings.LastIndexByte(file, '/'); idx != -1 {
 		file = file[idx+1:]
 	}
-	return fmt.Sprintf(" %s:%d", file, line)
+	return fmt.Sprintf("%s:%d ", file, line)
 }
 
 func (b *BaseLogger) logf(lv Level, format *string, v ...any) {
 	if b.level > lv {
 		return
 	}
-	msg := lv.String() + b.buildPrefix()
+	msg := b.getCaller() + lv.String() + b.buildPrefix()
 	if format != nil {
 		msg += fmt.Sprintf(*format, v...)
 	} else {
 		msg += fmt.Sprint(v...)
 	}
-	msg += b.getCaller()
 	b.stdlog.Output(4, msg)
 	if lv == LevelFatal {
 		os.Exit(1)
@@ -90,7 +99,7 @@ func (b *BaseLogger) logfCtx(ctx context.Context, lv Level, format *string, v ..
 	if b.level > lv {
 		return
 	}
-	msg := lv.String() + b.buildPrefix()
+	msg := b.getCaller() + lv.String() + b.buildPrefix()
 	if traceID := ctx.Value("trace_id"); traceID != nil {
 		msg += fmt.Sprintf("[trace_id=%v] ", traceID)
 	}
@@ -99,7 +108,6 @@ func (b *BaseLogger) logfCtx(ctx context.Context, lv Level, format *string, v ..
 	} else {
 		msg += fmt.Sprint(v...)
 	}
-	msg += b.getCaller()
 	b.stdlog.Output(4, msg)
 	if lv == LevelFatal {
 		os.Exit(1)

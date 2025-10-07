@@ -1,21 +1,22 @@
-package api
+package user
 
 import (
+	"net/http"
 	"os"
 
+	"github.com/crazyfrankie/goim/interfaces/http/user/handler"
 	"github.com/gin-gonic/gin"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 
-	"github.com/crazyfrankie/goim/interfaces/http/user/api/handler"
 	"github.com/crazyfrankie/goim/pkg/gin/middleware"
 	authv1 "github.com/crazyfrankie/goim/protocol/auth/v1"
 	userv1 "github.com/crazyfrankie/goim/protocol/user/v1"
 )
 
-// InitEngine returns gin.Engine.Currently, gRPC employs a direct connection approach,
+// Start returns gin.Engine.Currently, gRPC employs a direct connection approach,
 // with plans to introduce a service registration and discovery mechanism in the future.
-func InitEngine() (*gin.Engine, error) {
+func Start() (http.Handler, error) {
 	srv := gin.Default()
 
 	userTarget := os.Getenv("USER_SERVER_TARGET")

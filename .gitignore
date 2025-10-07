@@ -1,5 +1,5 @@
 .idea
-.env
+.env.*
 *.pem
 goim
 bff-structure.md

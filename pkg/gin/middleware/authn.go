@@ -10,7 +10,6 @@ import (
 	"google.golang.org/grpc/metadata"
 
 	"github.com/crazyfrankie/goim/pkg/gin/response"
-	"github.com/crazyfrankie/goim/pkg/util"
 	authv1 "github.com/crazyfrankie/goim/protocol/auth/v1"
 )
 
@@ -47,7 +46,7 @@ func (h *AuthnHandler) Auth() gin.HandlerFunc {
 		}
 		parseRes, err := h.authClient.ParseToken(c.Request.Context(), &authv1.ParseTokenRequest{Token: accessToken})
 		if err == nil {
-			c.Request = c.Request.WithContext(h.storeUserID(c.Request.Context(), parseRes.GetUserId()))
+			c.Request = c.Request.WithContext(h.storeUserID(c.Request.Context(), parseRes.GetUserID()))
 
 			c.Next()
 			return
@@ -64,9 +63,9 @@ func (h *AuthnHandler) Auth() gin.HandlerFunc {
 			response.InternalServerError(c, err)
 			return
 		}
-		c.Request = c.Request.WithContext(h.storeUserID(c.Request.Context(), refreshRes.GetUserId()))
+		c.Request = c.Request.WithContext(h.storeUserID(c.Request.Context(), refreshRes.GetUserID()))
 
-		util.SetAuthorization(c, refreshRes.AccessToken, refreshRes.RefreshToken)
+		response.SetAuthorization(c, refreshRes.AccessToken, refreshRes.RefreshToken)
 
 		c.Next()
 	}

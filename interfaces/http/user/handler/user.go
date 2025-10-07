@@ -5,12 +5,11 @@ import (
 	"strconv"
 	"strings"
 
+	model2 "github.com/crazyfrankie/goim/interfaces/http/user/model"
 	"github.com/gin-gonic/gin"
 
-	"github.com/crazyfrankie/goim/interfaces/http/user/api/model"
 	"github.com/crazyfrankie/goim/pkg/gin/response"
 	"github.com/crazyfrankie/goim/pkg/logs"
-	"github.com/crazyfrankie/goim/pkg/util"
 	userv1 "github.com/crazyfrankie/goim/protocol/user/v1"
 )
 
@@ -37,7 +36,7 @@ func (h *UserHandler) RegisterRoute(r *gin.RouterGroup) {
 
 func (h *UserHandler) Register() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		var req model.UserRegisterReq
+		var req model2.UserRegisterReq
 		if err := c.ShouldBind(&req); err != nil {
 			response.InvalidParamError(c, err.Error())
 			return
@@ -52,7 +51,7 @@ func (h *UserHandler) Register() gin.HandlerFunc {
 			return
 		}
 
-		util.SetAuthorization(c, res.Data.AccessToken, res.Data.RefreshToken)
+		response.SetAuthorization(c, res.Data.AccessToken, res.Data.RefreshToken)
 
 		response.Success(c, userDTO2VO(res.Data))
 	}
@@ -60,7 +59,7 @@ func (h *UserHandler) Register() gin.HandlerFunc {
 
 func (h *UserHandler) Login() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		var req model.UserLoginReq
+		var req model2.UserLoginReq
 		if err := c.ShouldBind(&req); err != nil {
 			response.InvalidParamError(c, err.Error())
 			return
@@ -75,7 +74,7 @@ func (h *UserHandler) Login() gin.HandlerFunc {
 			return
 		}
 
-		util.SetAuthorization(c, res.Data.AccessToken, res.Data.RefreshToken)
+		response.SetAuthorization(c, res.Data.AccessToken, res.Data.RefreshToken)
 
 		response.Success(c, userDTO2VO(res.Data))
 	}
@@ -149,7 +148,7 @@ func (h *UserHandler) UpdateAvatar() gin.HandlerFunc {
 
 func (h *UserHandler) UpdateProfile() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		var req model.UserUpdateProfileReq
+		var req model2.UserUpdateProfileReq
 		if err := c.ShouldBind(&req); err != nil {
 			response.InvalidParamError(c, err.Error())
 			return
@@ -172,7 +171,7 @@ func (h *UserHandler) UpdateProfile() gin.HandlerFunc {
 
 func (h *UserHandler) ResetPassword() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		var req model.UserResetPasswordReq
+		var req model2.UserResetPasswordReq
 		if err := c.ShouldBind(&req); err != nil {
 			response.InvalidParamError(c, err.Error())
 			return
@@ -191,8 +190,8 @@ func (h *UserHandler) ResetPassword() gin.HandlerFunc {
 	}
 }
 
-func userDTO2VO(userDto *userv1.User) *model.UserInfoResp {
-	return &model.UserInfoResp{
+func userDTO2VO(userDto *userv1.User) *model2.UserInfoResp {
+	return &model2.UserInfoResp{
 		UserID:         strconv.FormatInt(userDto.UserID, 10),
 		Name:           userDto.Name,
 		UserUniqueName: userDto.UserUniqueName,

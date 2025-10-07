@@ -46,12 +46,19 @@ type Control interface {
 	SetOutput(io.Writer)
 }
 
+type LogOption interface {
+	With(kv ...any) FullLogger
+	WithCaller()
+	WithCallerSkip(skip int)
+}
+
 // FullLogger is the combination of Logger, FormatLogger, CtxLogger and Control.
 type FullLogger interface {
 	Logger
 	FormatLogger
 	CtxLogger
 	Control
+	LogOption
 }
 
 // Level defines the priority of a log message.
