@@ -5,9 +5,13 @@ import (
 	"sync"
 	"sync/atomic"
 	"time"
-
-	"github.com/crazyfrankie/goim/interfaces/ws/types"
 )
+
+// BroadcastReq represents a broadcast request
+type BroadcastReq struct {
+	RoomID  string
+	Message []byte
+}
 
 // BucketManager performs sharding based on city-hash, where the number of cities (bucketNum) can be specified.
 // Additionally, we implement secondary sharding to account for users potentially logging in across different platforms,
@@ -22,6 +26,15 @@ type BucketConfig struct {
 	RoomSize      int
 	RoutineAmount int
 	RoutineSize   int
+}
+
+func DefaultBucketConfig() *BucketConfig {
+	return &BucketConfig{
+		ChannelSize:   0,
+		RoomSize:      0,
+		RoutineAmount: 0,
+		RoutineSize:   0,
+	}
 }
 
 type ServerConfig struct {
@@ -68,7 +81,7 @@ type Bucket struct {
 	ipCount map[string]int32
 
 	// Asynchronous processing
-	routines   []chan *types.BroadcastReq
+	routines   []chan *BroadcastReq
 	routineNum uint64
 }
 
@@ -86,11 +99,11 @@ func NewBucket(id int, config *BucketConfig) *Bucket {
 		rooms:    make(map[string]*Room, config.RoomSize),
 		userMap:  make(map[string]*UserPlatforms),
 		ipCount:  make(map[string]int32),
-		routines: make([]chan *types.BroadcastReq, config.RoutineAmount),
+		routines: make([]chan *BroadcastReq, config.RoutineAmount),
 	}
 
 	for i := 0; i < config.RoutineAmount; i++ {
-		ch := make(chan *types.BroadcastReq, config.RoutineSize)
+		ch := make(chan *BroadcastReq, config.RoutineSize)
 		b.routines[i] = ch
 		go b.roomProcessor(ch)
 	}
@@ -239,7 +252,7 @@ func (b *Bucket) GetRoom(roomID string) (*Room, bool) {
 }
 
 // BroadcastRoom Room Broadcast
-func (b *Bucket) BroadcastRoom(req *types.BroadcastReq) {
+func (b *Bucket) BroadcastRoom(req *BroadcastReq) {
 	idx := atomic.AddUint64(&b.routineNum, 1) % uint64(len(b.routines))
 	select {
 	case b.routines[idx] <- req:
@@ -249,7 +262,7 @@ func (b *Bucket) BroadcastRoom(req *types.BroadcastReq) {
 }
 
 // Broadcast Global Broadcast
-func (b *Bucket) Broadcast(msg *types.Message) {
+func (b *Bucket) Broadcast(msg []byte) {
 	b.lock.RLock()
 	defer b.lock.RUnlock()
 
@@ -308,7 +321,7 @@ func (b *Bucket) updateUserPlatforms(client *Client, add bool) {
 }
 
 // roomProcessor Process Room Messages
-func (b *Bucket) roomProcessor(ch chan *types.BroadcastReq) {
+func (b *Bucket) roomProcessor(ch chan *BroadcastReq) {
 	for req := range ch {
 		b.lock.RLock()
 		room, ok := b.rooms[req.RoomID]

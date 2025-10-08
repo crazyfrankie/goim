@@ -1,0 +1,5 @@
+error_code:
+  - name: ErrConnArgs
+    code: 101
+    message: args err, need token, sendID, platformID
+    no_affect_stability: true

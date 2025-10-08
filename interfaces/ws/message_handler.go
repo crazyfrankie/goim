@@ -4,9 +4,8 @@ import (
 	"context"
 	"sync"
 
-	"github.com/crazyfrankie/goim/interfaces/ws/compressor"
-	"github.com/crazyfrankie/goim/interfaces/ws/encoding"
 	"github.com/crazyfrankie/goim/pkg/sonic"
+	"github.com/go-playground/validator/v10"
 )
 
 const (
@@ -91,101 +90,46 @@ func (r *Resp) String() string {
 }
 
 type GrpcHandler struct {
-	encoder    encoding.Encoder
-	compressor compressor.Compressor
+	validate *validator.Validate
 	// msgClient    pb.MsgClient
 	// pushClient   pb.PushClient
 	// userClient   pb.UserClient
 }
 
-func NewGrpcHandler() *GrpcHandler {
+func NewGrpcHandler(validate *validator.Validate) *GrpcHandler {
 	return &GrpcHandler{
-		encoder:    encoding.NewJSONEncoder(),
-		compressor: compressor.NewCompressor(),
+		validate: validate,
 	}
 }
 
 func (g *GrpcHandler) GetSeq(ctx context.Context, data *Req) ([]byte, error) {
-	resp := &Resp{
-		ReqIdentifier: data.ReqIdentifier,
-		MsgIncr:       data.MsgIncr,
-		OperationID:   data.OperationID,
-		ErrCode:       0,
-		ErrMsg:        "",
-		Data:          map[string]interface{}{"seq": 1}, // 简化实现
-	}
-
-	return g.encoder.Encode(resp)
+	//TODO implement me
+	panic("implement me")
 }
 
 func (g *GrpcHandler) SendMessage(ctx context.Context, data *Req) ([]byte, error) {
-	// 实现发送消息逻辑
-	// 这里应该调用你的消息服务
-
-	resp := &Resp{
-		ReqIdentifier: data.ReqIdentifier,
-		MsgIncr:       data.MsgIncr,
-		OperationID:   data.OperationID,
-		ErrCode:       0,
-		ErrMsg:        "",
-		Data:          map[string]interface{}{"status": "sent"},
-	}
-
-	return g.encoder.Encode(resp)
+	//TODO implement me
+	panic("implement me")
 }
 
 func (g *GrpcHandler) SendSignalMessage(ctx context.Context, data *Req) ([]byte, error) {
-	// 实现信令消息逻辑
-	resp := &Resp{
-		ReqIdentifier: data.ReqIdentifier,
-		MsgIncr:       data.MsgIncr,
-		OperationID:   data.OperationID,
-		ErrCode:       0,
-		ErrMsg:        "",
-		Data:          map[string]interface{}{"status": "signal_sent"},
-	}
-
-	return g.encoder.Encode(resp)
+	//TODO implement me
+	panic("implement me")
 }
 
 func (g *GrpcHandler) PullMessageBySeqList(ctx context.Context, data *Req) ([]byte, error) {
-	// 实现拉取消息逻辑
-	resp := &Resp{
-		ReqIdentifier: data.ReqIdentifier,
-		MsgIncr:       data.MsgIncr,
-		OperationID:   data.OperationID,
-		ErrCode:       0,
-		ErrMsg:        "",
-		Data:          map[string]interface{}{"messages": []interface{}{}},
-	}
-
-	return g.encoder.Encode(resp)
+	//TODO implement me
+	panic("implement me")
 }
 
 func (g *GrpcHandler) UserLogout(ctx context.Context, data *Req) ([]byte, error) {
-	resp := &Resp{
-		ReqIdentifier: data.ReqIdentifier,
-		MsgIncr:       data.MsgIncr,
-		OperationID:   data.OperationID,
-		ErrCode:       0,
-		ErrMsg:        "",
-		Data:          map[string]interface{}{"status": "logout"},
-	}
-
-	return g.encoder.Encode(resp)
+	//TODO implement me
+	panic("implement me")
 }
 
-func (g *GrpcHandler) SetUserDeviceBackground(ctx context.Context, data *Req) ([]byte, error) {
-	resp := &Resp{
-		ReqIdentifier: data.ReqIdentifier,
-		MsgIncr:       data.MsgIncr,
-		OperationID:   data.OperationID,
-		ErrCode:       0,
-		ErrMsg:        "",
-		Data:          map[string]interface{}{"status": "background_set"},
-	}
-
-	return g.encoder.Encode(resp)
+func (g *GrpcHandler) SetUserDeviceBackground(ctx context.Context, data *Req) ([]byte, bool, error) {
+	//TODO implement me
+	panic("implement me")
 }
 
 func (g *GrpcHandler) GetConversationsHasReadAndMaxSeq(ctx context.Context, data *Req) ([]byte, error) {

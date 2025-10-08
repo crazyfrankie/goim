@@ -25,5 +25,7 @@ app:
       - name: common
         code: 0
       - name: user
-        code: 1  # user module
+        code: 1
+      - name: ws
+        code: 2
 

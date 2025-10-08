@@ -4,8 +4,6 @@ import (
 	"errors"
 	"sync"
 	"sync/atomic"
-
-	"github.com/crazyfrankie/goim/interfaces/ws/types"
 )
 
 var (
@@ -79,13 +77,13 @@ func (r *Room) DelClient(client *Client) bool {
 }
 
 // Broadcast Room Broadcast Message
-func (r *Room) Broadcast(msg *types.Message) {
+func (r *Room) Broadcast(data []byte) {
 	r.lock.RLock()
 	defer r.lock.RUnlock()
 
 	for client := r.head; client != nil; client = client.Next {
 		select {
-		case client.sendCh <- msg:
+		case client.sendCh <- data:
 		default:
 			// Skip when the send queue is full
 		}
@@ -93,7 +91,7 @@ func (r *Room) Broadcast(msg *types.Message) {
 }
 
 // BroadcastFilter Broadcast with filter
-func (r *Room) BroadcastFilter(msg *types.Message, filter func(*Client) bool) {
+func (r *Room) BroadcastFilter(data []byte, filter func(*Client) bool) {
 	r.lock.RLock()
 	defer r.lock.RUnlock()
 
@@ -103,7 +101,7 @@ func (r *Room) BroadcastFilter(msg *types.Message, filter func(*Client) bool) {
 		}
 
 		select {
-		case client.sendCh <- msg:
+		case client.sendCh <- data:
 		default:
 			// Skip when the send queue is full
 		}

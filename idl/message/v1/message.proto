@@ -4,7 +4,7 @@ package message.v1;
 
 option go_package="github.com/crazyfrankie/goim/protocol/message/v1;messagev1";
 
-message SendMessageRequest {
+message Message {
   int64 sendID = 1;
   int64 recvID = 2;
   int64 groupID = 3;
@@ -14,6 +14,10 @@ message SendMessageRequest {
   int32 contentType = 7;
   int64 send_time = 8;
   bytes content = 9;
+}
+
+message SendMessageRequest {
+  Message data = 1;
 }
 
 message SendMessageResponse {

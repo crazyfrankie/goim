@@ -4,23 +4,6 @@ import (
 	"errors"
 )
 
-type Message struct {
-	Type      int32       `json:"type"`
-	Operation int32       `json:"operation"`
-	Seq       int32       `json:"seq"`
-	Data      []byte      `json:"data"`
-	Meta      interface{} `json:"meta,omitempty"`
-}
-
-const (
-	MessageTypeHeartbeat = 1
-	MessageTypeData      = 2
-	MessageTypeNotify    = 3
-	MessageTypeBinary    = 4
-	MessageTypeAuth      = 7
-	MessageTypeAuthReply = 8
-)
-
 const (
 	OpHeartbeat      = 2
 	OpHeartbeatReply = 3
@@ -42,19 +25,6 @@ const (
 	OpSubReply        = OpSub + 1000
 	OpUnsubReply      = OpUnsub + 1000
 )
-
-// BroadcastReq Broadcast Request
-type BroadcastReq struct {
-	RoomID  string
-	Message *Message
-}
-
-// UserState User Status
-type UserState struct {
-	UserID  string
-	Online  []int32
-	Offline []int32
-}
 
 var (
 	ErrClientClosed           = errors.New("client closed")

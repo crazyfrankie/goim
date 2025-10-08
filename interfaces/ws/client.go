@@ -8,7 +8,6 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/crazyfrankie/goim/interfaces/ws/compressor"
 	wsctx "github.com/crazyfrankie/goim/interfaces/ws/context"
 	"github.com/crazyfrankie/goim/interfaces/ws/encoding"
 	"github.com/crazyfrankie/goim/interfaces/ws/types"
@@ -18,15 +17,27 @@ import (
 	"github.com/crazyfrankie/goim/pkg/logs"
 	"github.com/crazyfrankie/goim/pkg/safego"
 	"github.com/crazyfrankie/goim/pkg/sonic"
+	messagev1 "github.com/crazyfrankie/goim/protocol/message/v1"
 	"github.com/crazyfrankie/goim/types/consts"
 )
 
 const (
-	MessageText   = 1
-	MessageBinary = 2
-	CloseMessage  = 8
-	PingMessage   = 9
-	PongMessage   = 10
+	// MessageText is for UTF-8 encoded text messages like JSON.
+	MessageText = iota + 1
+	// MessageBinary is for binary messages like protobufs.
+	MessageBinary
+	// CloseMessage denotes a close control message. The optional message
+	// payload contains a numeric code and text. Use the FormatCloseMessage
+	// function to format a close message payload.
+	CloseMessage = 8
+
+	// PingMessage denotes a ping control message. The optional message payload
+	// is UTF-8 encoded text.
+	PingMessage = 9
+
+	// PongMessage denotes a pong control message. The optional message payload
+	// is UTF-8 encoded text.
+	PongMessage = 10
 )
 
 const (
@@ -60,16 +71,17 @@ type Client struct {
 	PlatformID   int32
 	Token        string
 	SDKType      string
-	IsBackground bool
 	ConnID       string
+	IsBackground bool
+	IsCompress   bool
 
-	sendCh   chan *types.Message
+	sendCh   chan []byte
 	recvRing *Ring
 
 	subscriptions map[string]struct{}
 	subLock       sync.RWMutex
-	encoder       encoding.Encoder
-	compressor    compressor.Compressor
+
+	encoder encoding.Encoder
 
 	closed     atomic.Bool
 	closedErr  error
@@ -84,9 +96,11 @@ type Client struct {
 	wg        sync.WaitGroup
 
 	writeMutex sync.Mutex
+
+	ConnServer LongConnServer
 }
 
-func NewClient(conn Conn, ctx *wsctx.Context, config *ClientConfig) *Client {
+func NewClient(conn Conn, ctx *wsctx.Context, config *ClientConfig, connServer LongConnServer) *Client {
 	clientCtx, cancel := context.WithCancel(context.Background())
 
 	client := &Client{
@@ -97,28 +111,35 @@ func NewClient(conn Conn, ctx *wsctx.Context, config *ClientConfig) *Client {
 		Token:         ctx.GetToken(),
 		SDKType:       ctx.GetSDKType(),
 		ConnID:        ctx.GetConnID(),
-		sendCh:        make(chan *types.Message, config.SendQueueSize),
+		sendCh:        make(chan []byte, config.SendQueueSize),
 		recvRing:      NewRing(config.RecvRingSize),
 		subscriptions: make(map[string]struct{}),
 		encoder:       encoding.NewJSONEncoder(),
-		compressor:    compressor.NewCompressor(),
 		clientCtx:     clientCtx,
 		cancel:        cancel,
 		lastActive:    time.Now().Unix(),
+		ConnServer:    connServer,
 	}
 
 	return client
 }
 
-func (c *Client) Reset() {
-	c.conn = nil
-	c.ctx = nil
-	c.UserID = ""
-	c.PlatformID = 0
-	c.Token = ""
-	c.ConnID = ""
+func (c *Client) Reset(ctx *wsctx.Context, conn Conn, wsSrv LongConnServer) {
+	c.conn = conn
+	c.ctx = ctx
+
+	c.UserID = ctx.GetUserID()
+	c.PlatformID = stringToInt(ctx.GetPlatformID())
+	c.Token = ctx.GetToken()
+	c.SDKType = ctx.GetSDKType()
+	c.ConnID = ctx.GetConnID()
+	c.IsCompress = ctx.GetCompression()
+	c.IsBackground = false
+
 	c.closed.Store(false)
 	c.closedErr = nil
+	c.lastActive = 0
+
 	c.room = nil
 	c.Next = nil
 	c.Prev = nil
@@ -132,6 +153,32 @@ func (c *Client) Reset() {
 	if c.recvRing != nil {
 		c.recvRing.Reset()
 	}
+
+	if c.SDKType == types.GoSDK {
+		c.encoder = encoding.NewGobEncoder()
+	} else {
+		c.encoder = encoding.NewJSONEncoder()
+	}
+
+	if c.sendCh != nil {
+		for {
+			select {
+			case <-c.sendCh:
+			default:
+				goto done
+			}
+		}
+	done:
+	}
+
+	c.ConnServer = wsSrv
+
+	// 取消上下文
+	if c.cancel != nil {
+		c.cancel()
+		c.cancel = nil
+	}
+	c.clientCtx = nil
 }
 
 func (c *Client) Key() string {
@@ -142,12 +189,60 @@ func (c *Client) IP() string {
 	return c.ctx.GetRemoteAddr()
 }
 
-func (c *Client) readMessage() {
+func (c *Client) Start() {
+	c.wg.Add(2)
+	go c.readLoop()
+	go c.writeLoop()
+}
+
+func (c *Client) KickOnlineMessage() error {
+	resp := &Resp{
+		ReqIdentifier: types.WSKickOnlineMsg,
+	}
+	logs.CtxDebugf(c.ctx, "KickOnlineMessage debug")
+	err := c.sendResp(resp)
+	c.close()
+	return err
+}
+
+func (c *Client) PushUserOnlineStatus(data []byte) error {
+	resp := &Resp{
+		ReqIdentifier: types.WsSubUserOnlineStatus,
+		Data:          data,
+	}
+	return c.sendResp(resp)
+}
+
+func (c *Client) PushMessage(ctx context.Context, msgData *messagev1.Message) error {
+	//var msg *messagev1.Message
+	//conversationID := msgprocessor.GetConversationIDByMsg(msgData)
+	//m := map[string]*sdkws.PullMsgs{conversationID: {Msgs: []*sdkws.MsgData{msgData}}}
+	//if msgprocessor.IsNotification(conversationID) {
+	//	msg.NotificationMsgs = m
+	//} else {
+	//	msg.Msgs = m
+	//}
+	//log.ZDebug(ctx, "PushMessage", "msg", &msg)
+	//data, err := proto.Marshal(&msg)
+	//if err != nil {
+	//	return err
+	//}
+	//resp := Resp{
+	//	ReqIdentifier: WSPushMsg,
+	//	OperationID:   mcontext.GetOperationID(ctx),
+	//	Data:          data,
+	//}
+	//return c.writeBinaryMsg(resp)
+	return nil
+}
+
+func (c *Client) readLoop() {
 	defer func() {
 		if r := recover(); r != nil {
 			c.closedErr = safego.NewPanicErr(r, debug.Stack())
 		}
 		c.close()
+		c.wg.Done()
 	}()
 
 	c.conn.SetReadLimit(maxMessageSize)
@@ -167,10 +262,11 @@ func (c *Client) readMessage() {
 		logs.CtxInfof(c.ctx, "readMessage,messageType: %d", messageType)
 
 		if c.closed.Load() {
-			// The scenario where the connection has just been closed, but the coroutine has not exited
 			c.closedErr = types.ErrConnClosed
 			return
 		}
+
+		c.lastActive = time.Now().Unix()
 
 		switch messageType {
 		case MessageBinary:
@@ -190,17 +286,82 @@ func (c *Client) readMessage() {
 		case PingMessage:
 			err := c.writePongMsg("")
 			logs.CtxErrorf(c.ctx, "writePongMsg err: %v", err)
-
 		case CloseMessage:
 			c.closedErr = types.ErrClientClosed
 			return
-
 		default:
 		}
 	}
 }
 
+// writeLoop 写入消息循环
+func (c *Client) writeLoop() {
+	defer func() {
+		if r := recover(); r != nil {
+			logs.CtxErrorf(c.ctx, "writeLoop panic: %v", r)
+		}
+		c.wg.Done()
+	}()
+
+	ticker := time.NewTicker(time.Millisecond * 10)
+	defer ticker.Stop()
+
+	var batch [][]byte
+	const maxBatchSize = 10
+
+	for {
+		select {
+		case msgData, ok := <-c.sendCh:
+			if !ok {
+				if len(batch) > 0 {
+					c.flushBatch(batch)
+				}
+				return
+			}
+
+			batch = append(batch, msgData)
+			if len(batch) >= maxBatchSize {
+				c.flushBatch(batch)
+				batch = batch[:0]
+			}
+
+		case <-ticker.C:
+			if len(batch) > 0 {
+				c.flushBatch(batch)
+				batch = batch[:0]
+			}
+
+		case <-c.clientCtx.Done():
+			if len(batch) > 0 {
+				c.flushBatch(batch)
+			}
+			return
+		}
+	}
+}
+
+// flushBatch 批量发送消息
+func (c *Client) flushBatch(batch [][]byte) {
+	for _, msgData := range batch {
+		if err := c.writeMessage(msgData); err != nil {
+			logs.CtxWarnf(c.ctx, "writeRawMessage failed: %v", err)
+			c.close()
+			return
+		}
+	}
+}
+
 func (c *Client) handleMessage(message []byte) error {
+	if c.IsCompress && c.ConnServer != nil {
+		if decompressed, err := c.ConnServer.Decompress(message); err == nil {
+			message = decompressed
+		}
+	}
+
+	return c.processMessage(message)
+}
+
+func (c *Client) processMessage(message []byte) error {
 	ctx := ctxcache.Init(context.Background())
 
 	var binaryReq = getReq()
@@ -211,9 +372,9 @@ func (c *Client) handleMessage(message []byte) error {
 		return err
 	}
 
-	//if err := c.longConnServer.Validate(binaryReq); err != nil {
-	//	return err
-	//}
+	if err := c.ConnServer.Validate(binaryReq); err != nil {
+		return err
+	}
 
 	if binaryReq.SendID != c.UserID {
 		return errorx.Wrapf(nil, "exception conn userID not same to req userID, binaryReq: %s", binaryReq.String())
@@ -234,25 +395,25 @@ func (c *Client) handleMessage(message []byte) error {
 
 	switch binaryReq.ReqIdentifier {
 	case types.WSGetNewestSeq:
-		//resp, messageErr = c.longConnServer.GetSeq(ctx, binaryReq)
+		resp, messageErr = c.ConnServer.GetSeq(ctx, binaryReq)
 	case types.WSSendMsg:
-		//resp, messageErr = c.longConnServer.SendMessage(ctx, binaryReq)
+		resp, messageErr = c.ConnServer.SendMessage(ctx, binaryReq)
 	case types.WSSendSignalMsg:
-		//resp, messageErr = c.longConnServer.SendSignalMessage(ctx, binaryReq)
+		resp, messageErr = c.ConnServer.SendSignalMessage(ctx, binaryReq)
 	case types.WSPullMsgBySeqList:
-		//resp, messageErr = c.longConnServer.PullMessageBySeqList(ctx, binaryReq)
+		resp, messageErr = c.ConnServer.PullMessageBySeqList(ctx, binaryReq)
 	case types.WSPullMsg:
-		//resp, messageErr = c.longConnServer.GetSeqMessage(ctx, binaryReq)
+		resp, messageErr = c.ConnServer.GetSeqMessage(ctx, binaryReq)
 	case types.WSGetConvMaxReadSeq:
-		//resp, messageErr = c.longConnServer.GetConversationsHasReadAndMaxSeq(ctx, binaryReq)
+		resp, messageErr = c.ConnServer.GetConversationsHasReadAndMaxSeq(ctx, binaryReq)
 	case types.WsPullConvLastMessage:
-		//resp, messageErr = c.longConnServer.GetLastMessage(ctx, binaryReq)
+		resp, messageErr = c.ConnServer.GetLastMessage(ctx, binaryReq)
 	case types.WsLogoutMsg:
-		//resp, messageErr = c.longConnServer.UserLogout(ctx, binaryReq)
+		resp, messageErr = c.ConnServer.UserLogout(ctx, binaryReq)
 	case types.WsSetBackgroundStatus:
-		//resp, messageErr = c.setAppBackgroundStatus(ctx, binaryReq)
+		resp, messageErr = c.setAppBackgroundStatus(ctx, binaryReq)
 	case types.WsSubUserOnlineStatus:
-		//resp, messageErr = c.longConnServer.SubUserOnlineStatus(ctx, c, binaryReq)
+		resp, messageErr = c.ConnServer.SubUserOnlineStatus(ctx, c, binaryReq)
 	default:
 		return fmt.Errorf(
 			"ReqIdentifier failed,sendID:%s,msgIncr:%s,reqIdentifier:%d",
@@ -302,50 +463,30 @@ func (c *Client) replyMessage(ctx context.Context, binaryReq *Req, err error, re
 	}
 	t := time.Now()
 	logs.CtxDebugf(ctx, "gateway reply message, resp: %s", mReply.String())
-	err = c.writeBinaryMsg(mReply)
+	err = c.sendResp(mReply)
 	if err != nil {
 		logs.CtxWarnf(ctx, "wireBinaryMsg replyMessage, err: %v, resp: %s", err, mReply.String())
 	}
 	logs.CtxDebugf(ctx, "wireBinaryMsg end, time cost: %v", time.Since(t))
 
 	if binaryReq.ReqIdentifier == types.WsLogoutMsg {
-		return errorx.Wrapf(nil, "operationID, %s", binaryReq.OperationID)
+		go func() {
+			time.Sleep(time.Millisecond * 100)
+			c.close()
+		}()
+		return errorx.Wrapf(nil, "user logout, operationID: %s", binaryReq.OperationID)
 	}
 
 	return nil
 }
 
-func (c *Client) writeBinaryMsg(resp *Resp) error {
-	if c.closed.Load() {
-		return types.ErrClientClosed
-	}
-
-	encodedBuf, err := c.encoder.Encode(resp)
-	if err != nil {
-		return err
-	}
-
-	c.writeMutex.Lock()
-	defer c.writeMutex.Unlock()
-
-	err = c.conn.SetWriteDeadline(writeWait)
-	if err != nil {
-		return err
-	}
-
-	if c.ctx.GetCompression() && len(encodedBuf) > 1024 {
-		compressed, err := c.compressor.Compress(encodedBuf)
-		if err == nil {
-			encodedBuf = compressed
-		}
-	}
-
-	return c.conn.WriteMessage(MessageBinary, encodedBuf)
-}
-
 func (c *Client) close() error {
 	if !c.closed.CompareAndSwap(false, true) {
 		return nil
+	}
+
+	if c.ConnServer != nil {
+		c.ConnServer.UnRegister(c)
 	}
 
 	c.cancel()
@@ -432,6 +573,74 @@ func (c *Client) writePongMsg(appData string) error {
 	}
 
 	return errorx.Wrapf(err, "")
+}
+
+func (c *Client) sendResp(resp *Resp) error {
+	data, err := c.encoder.Encode(resp)
+	if err != nil {
+		return err
+	}
+
+	if c.closed.Load() {
+		return types.ErrClientClosed
+	}
+
+	select {
+	case c.sendCh <- data:
+		return nil
+	default:
+		return types.ErrSendQueueFull
+	}
+}
+
+func (c *Client) writeMessage(data []byte) error {
+	if c.closed.Load() {
+		return types.ErrClientClosed
+	}
+
+	originalSize := len(data)
+
+	if c.IsCompress && len(data) > 1024 {
+		if compressed, err := c.ConnServer.Compress(data); err == nil {
+			data = compressed
+			logs.CtxDebugf(c.ctx, "message compressed: %d -> %d bytes (%.1f%%)",
+				originalSize, len(data),
+				float64(len(data))/float64(originalSize)*100)
+		}
+	}
+
+	c.writeMutex.Lock()
+	defer c.writeMutex.Unlock()
+
+	if err := c.conn.SetWriteDeadline(writeWait); err != nil {
+		return err
+	}
+
+	if err := c.conn.WriteMessage(MessageBinary, data); err != nil {
+		return err
+	}
+
+	c.lastActive = time.Now().Unix()
+
+	return nil
+}
+
+func (c *Client) KickOut() error {
+	if c.ConnServer != nil {
+		return c.ConnServer.KickUserConn(c)
+	}
+	return c.close()
+}
+
+func (c *Client) setAppBackgroundStatus(ctx context.Context, binaryReq *Req) ([]byte, error) {
+	resp, isBackground, messageErr := c.ConnServer.SetUserDeviceBackground(ctx, binaryReq)
+	if messageErr != nil {
+		return nil, messageErr
+	}
+
+	c.IsBackground = isBackground
+	// TODO: callback
+	return resp, nil
 }
 
 func stringToInt(s string) int32 {

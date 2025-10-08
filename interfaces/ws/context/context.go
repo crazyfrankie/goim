@@ -2,12 +2,15 @@ package context
 
 import (
 	"net/http"
+	"net/url"
 	"strconv"
 	"time"
 
 	"github.com/crazyfrankie/goim/interfaces/ws/types"
+	"github.com/crazyfrankie/goim/pkg/errorx"
 	"github.com/crazyfrankie/goim/pkg/lang/conv"
 	"github.com/crazyfrankie/goim/pkg/lang/encrypt"
+	"github.com/crazyfrankie/goim/types/errno"
 )
 
 type Context struct {
@@ -61,6 +64,12 @@ func NewContext(r http.ResponseWriter, req *http.Request) *Context {
 	}
 }
 
+func NewTempContext() *Context {
+	return &Context{
+		Request: &http.Request{URL: &url.URL{}},
+	}
+}
+
 func (c *Context) GetRemoteAddr() string {
 	return c.RemoteAddr
 }
@@ -111,6 +120,10 @@ func (c *Context) GetToken() string {
 	return c.Request.URL.Query().Get(types.Token)
 }
 
+func (c *Context) SetToken(token string) {
+	c.Request.URL.RawQuery = types.Token + "=" + token
+}
+
 func (c *Context) GetCompression() bool {
 	compression, exists := c.Query(types.Compression)
 	if exists && compression == types.GzipCompressionProtocol {
@@ -143,6 +156,31 @@ func (c *Context) ShouldSendResp() bool {
 		}
 	}
 	return false
+}
+
+func (c *Context) ParseEssentialArgs() error {
+	_, exists := c.Query(types.Token)
+	if !exists {
+		return errorx.New(errno.ErrConnArgsCode, errorx.KV("cause", "token is empty"))
+	}
+	_, exists = c.Query(types.WsUserID)
+	if !exists {
+		return errorx.New(errno.ErrConnArgsCode, errorx.KV("cause", "sendID is empty"))
+	}
+	platformIDStr, exists := c.Query(types.PlatformID)
+	if !exists {
+		return errorx.New(errno.ErrConnArgsCode, errorx.KV("cause", "platformID is empty"))
+	}
+	_, err := strconv.Atoi(platformIDStr)
+	if err != nil {
+		return errorx.New(errno.ErrConnArgsCode, errorx.KV("cause", "platformID is not int"))
+	}
+	switch sdkType, _ := c.Query(types.SDKType); sdkType {
+	case "", types.GoSDK, types.JsSDK:
+	default:
+		return errorx.New(errno.ErrConnArgsCode, errorx.KV("cause", "sdkType is not go or js"))
+	}
+	return nil
 }
 
 func userConnID(remoteAddr string) string {

@@ -23,28 +23,28 @@ func NewMessageApplicationService(messageDomain message.Message) *MessageApplica
 }
 
 func (m *MessageApplicationService) SendMessage(ctx context.Context, req *messagev1.SendMessageRequest) (*messagev1.SendMessageResponse, error) {
-	if err := ctxutil.CheckAccess(ctx, req.SendID); err != nil {
+	if err := ctxutil.CheckAccess(ctx, req.GetData().GetSendID()); err != nil {
 		return nil, err
 	}
 
 	msg, err := m.messageDomain.Create(ctx, &message.CreateMessageRequest{
-		SendID:      req.GetSendID(),
-		RecvID:      req.GetRecvID(),
-		GroupID:     req.GetGroupID(),
-		ClientMsgID: req.GetClientMsgID(),
-		Content:     string(req.GetContent()),
-		SessionType: req.GetSessionType(),
-		MessageFrom: req.GetMessageFrom(),
-		ContentType: req.GetContentType(),
+		SendID:      req.GetData().GetSendID(),
+		RecvID:      req.GetData().GetRecvID(),
+		GroupID:     req.GetData().GetGroupID(),
+		ClientMsgID: req.GetData().GetClientMsgID(),
+		Content:     string(req.GetData().GetContent()),
+		SessionType: req.GetData().GetSessionType(),
+		MessageFrom: req.GetData().GetMessageFrom(),
+		ContentType: req.GetData().GetContentType(),
 		// TODO add seq generated
 		//Seq:       ,
-		SendTime: req.GetSendTime(),
+		SendTime: req.GetData().GetSendTime(),
 	})
 	if err != nil {
 		return nil, err
 	}
 
-	switch req.GetSessionType() {
+	switch req.GetData().GetSessionType() {
 	case consts.SingleChatType:
 		return m.sendSingleChat(ctx, msg)
 	case consts.GroupChatType:

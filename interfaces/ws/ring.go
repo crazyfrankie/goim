@@ -27,7 +27,7 @@ type Ring struct {
 
 	// Buffer
 	mask uint64
-	data []types.Message
+	data [][]byte
 }
 
 func NewRing(size int) *Ring {
@@ -41,12 +41,12 @@ func NewRing(size int) *Ring {
 
 	return &Ring{
 		mask: uint64(size - 1),
-		data: make([]types.Message, size),
+		data: make([][]byte, size),
 	}
 }
 
 // Set Obtain the write position
-func (r *Ring) Set() (*types.Message, error) {
+func (r *Ring) Set() (*[]byte, error) {
 	if r.wp-r.rp >= uint64(len(r.data)) {
 		return nil, types.ErrRingFull
 	}
@@ -60,7 +60,7 @@ func (r *Ring) SetAdv() {
 }
 
 // Get Returns the reading position
-func (r *Ring) Get() (*types.Message, error) {
+func (r *Ring) Get() (*[]byte, error) {
 	if r.rp == r.wp {
 		return nil, types.ErrRingEmpty
 	}
