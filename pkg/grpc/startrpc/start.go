@@ -2,18 +2,27 @@ package startrpc
 
 import (
 	"context"
+	"fmt"
 	"net"
 	"time"
 
 	"github.com/oklog/run"
 	"google.golang.org/grpc"
 
+	"github.com/crazyfrankie/goim/infra/contract/discovery"
+	discoveryimpl "github.com/crazyfrankie/goim/infra/impl/discovery"
 	"github.com/crazyfrankie/goim/pkg/lang/signal"
 	"github.com/crazyfrankie/goim/pkg/logs"
 )
 
 func Start(ctx context.Context, listenIP, registerIP, listenPort, rpcRegisterName string,
-	rpcStart func(ctx context.Context, srv grpc.ServiceRegistrar) error, opts ...grpc.ServerOption) error {
+	rpcStart func(ctx context.Context, client discovery.SvcDiscoveryRegistry, srv grpc.ServiceRegistrar) error,
+	opts ...grpc.ServerOption) error {
+
+	client, err := discoveryimpl.NewDiscoveryRegister()
+	if err != nil {
+		return err
+	}
 
 	g := &run.Group{}
 
@@ -53,8 +62,10 @@ func Start(ctx context.Context, listenIP, registerIP, listenPort, rpcRegisterNam
 		logs.CtxDebugf(ctx, "rpc start register, rpcRegisterName: %s, registerIP: %s, listenPort: %s", rpcRegisterName, registerIP, listenPort)
 
 		g.Add(func() error {
-			// TODO
 			// Register service
+			if err := client.Register(ctx, rpcRegisterName, registerIP, listenPort); err != nil {
+				return fmt.Errorf("rpc register %s: %w", rpcRegisterName, err)
+			}
 
 			// Start serving
 			return rpcServer.Serve(rpcListener)
@@ -88,7 +99,7 @@ func Start(ctx context.Context, listenIP, registerIP, listenPort, rpcRegisterNam
 		})
 	}
 
-	if err := rpcStart(ctx, &grpcServiceRegistrar{onRegisterService: onRegisterService}); err != nil {
+	if err := rpcStart(ctx, client, &grpcServiceRegistrar{onRegisterService: onRegisterService}); err != nil {
 		return err
 	}
 

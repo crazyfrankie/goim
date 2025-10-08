@@ -7,10 +7,11 @@ import (
 
 	"github.com/crazyfrankie/goim/apps/auth/application"
 	"github.com/crazyfrankie/goim/apps/auth/domain/service"
+	"github.com/crazyfrankie/goim/infra/contract/discovery"
 	authv1 "github.com/crazyfrankie/goim/protocol/auth/v1"
 )
 
-func Start(ctx context.Context, srv grpc.ServiceRegistrar) error {
+func Start(ctx context.Context, client discovery.SvcDiscoveryRegistry, srv grpc.ServiceRegistrar) error {
 	basic, err := application.Init(ctx)
 	if err != nil {
 		return err

@@ -9,11 +9,18 @@ import (
 
 	"github.com/oklog/run"
 
+	"github.com/crazyfrankie/goim/infra/contract/discovery"
+	discoveryimpl "github.com/crazyfrankie/goim/infra/impl/discovery"
 	"github.com/crazyfrankie/goim/pkg/lang/signal"
 	"github.com/crazyfrankie/goim/pkg/logs"
 )
 
-func Start(ctx context.Context, listenAddr string, initFn func() (http.Handler, error), shutdownTimeout time.Duration) error {
+func Start(ctx context.Context, listenAddr string, initFn func(ctx context.Context, client discovery.SvcDiscoveryRegistry) (http.Handler, error), shutdownTimeout time.Duration) error {
+	client, err := discoveryimpl.NewDiscoveryRegister()
+	if err != nil {
+		return err
+	}
+
 	g := &run.Group{}
 
 	// Signal handler
@@ -23,7 +30,7 @@ func Start(ctx context.Context, listenAddr string, initFn func() (http.Handler, 
 
 	})
 
-	engine, err := initFn()
+	engine, err := initFn(ctx, client)
 	if err != nil {
 		return err
 	}
