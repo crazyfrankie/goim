@@ -12,6 +12,7 @@ const (
 	RMQAccessKey  = "RMQ_ACCESS_KEY"
 	RMQSecretKey  = "RMQ_SECRET_KEY"
 	MQServer      = "MQ_SERVER"
+	DiscoveryType = "DISCOVERY_TYPE"
 )
 
 const (

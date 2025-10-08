@@ -60,3 +60,14 @@ func ToMap[E any, K comparable, V any](src []E, fn func(e E) (K, V)) map[K]V {
 
 	return dst
 }
+
+func Batch[T any, V any](fn func(T) V, ts []T) []V {
+	if ts == nil {
+		return nil
+	}
+	res := make([]V, 0, len(ts))
+	for i := range ts {
+		res = append(res, fn(ts[i]))
+	}
+	return res
+}
