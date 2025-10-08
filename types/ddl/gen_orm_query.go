@@ -40,7 +40,7 @@ func main() {
 
 	rootPath, err := findProjectRoot()
 	if err != nil {
-		log.Fatalf("failed to find project root: %v", err)
+		log.Fatalf("failed to find project room: %v", err)
 	}
 
 	for path, mapping := range path2Table2FieldMapping {

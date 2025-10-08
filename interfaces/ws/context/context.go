@@ -1,11 +1,11 @@
-package ctx
+package context
 
 import (
 	"net/http"
 	"strconv"
 	"time"
 
-	"github.com/crazyfrankie/goim/interfaces/ws/constant"
+	"github.com/crazyfrankie/goim/interfaces/ws/types"
 	"github.com/crazyfrankie/goim/pkg/lang/conv"
 	"github.com/crazyfrankie/goim/pkg/lang/encrypt"
 )
@@ -33,13 +33,13 @@ func (c *Context) Err() error {
 
 func (c *Context) Value(key any) any {
 	switch key {
-	case constant.OpUserID:
+	case types.OpUserID:
 		return c.GetUserID()
-	case constant.OperationID:
+	case types.OperationID:
 		return c.GetOperationID()
-	case constant.ConnID:
+	case types.ConnID:
 		return c.GetConnID()
-	case constant.RemoteAddr:
+	case types.RemoteAddr:
 		return c.RemoteAddr
 	default:
 		return ""
@@ -90,34 +90,34 @@ func (c *Context) GetConnID() string {
 }
 
 func (c *Context) GetUserID() string {
-	return c.Request.URL.Query().Get(constant.WsUserID)
+	return c.Request.URL.Query().Get(types.WsUserID)
 }
 
 func (c *Context) GetPlatformID() string {
-	return c.Request.URL.Query().Get(constant.PlatformID)
+	return c.Request.URL.Query().Get(types.PlatformID)
 }
 
 func (c *Context) GetOperationID() string {
-	return c.Request.URL.Query().Get(constant.OperationID)
+	return c.Request.URL.Query().Get(types.OperationID)
 }
 
 func (c *Context) SetOperationID(operationID string) {
 	values := c.Request.URL.Query()
-	values.Set(constant.OperationID, operationID)
+	values.Set(types.OperationID, operationID)
 	c.Request.URL.RawQuery = values.Encode()
 }
 
 func (c *Context) GetToken() string {
-	return c.Request.URL.Query().Get(constant.Token)
+	return c.Request.URL.Query().Get(types.Token)
 }
 
 func (c *Context) GetCompression() bool {
-	compression, exists := c.Query(constant.Compression)
-	if exists && compression == constant.GzipCompressionProtocol {
+	compression, exists := c.Query(types.Compression)
+	if exists && compression == types.GzipCompressionProtocol {
 		return true
 	} else {
-		compression, exists := c.GetHeader(constant.Compression)
-		if exists && compression == constant.GzipCompressionProtocol {
+		compression, exists := c.GetHeader(types.Compression)
+		if exists && compression == types.GzipCompressionProtocol {
 			return true
 		}
 	}
@@ -125,15 +125,15 @@ func (c *Context) GetCompression() bool {
 }
 
 func (c *Context) GetSDKType() string {
-	sdkType := c.Request.URL.Query().Get(constant.SDKType)
+	sdkType := c.Request.URL.Query().Get(types.SDKType)
 	if sdkType == "" {
-		sdkType = constant.GoSDK
+		sdkType = types.GoSDK
 	}
 	return sdkType
 }
 
 func (c *Context) ShouldSendResp() bool {
-	errResp, exists := c.Query(constant.SendResponse)
+	errResp, exists := c.Query(types.SendResponse)
 	if exists {
 		b, err := strconv.ParseBool(errResp)
 		if err != nil {

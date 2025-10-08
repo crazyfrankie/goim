@@ -242,7 +242,7 @@ func generateGoCode(config *Config, bizName string, bizCode int, bizErrors []int
 		description := getString(errorMap, "description")
 		noAffect := getBool(errorMap, "no_affect_stability")
 
-		// Create constant group
+		// Create types group
 		constantGroup := ConstantGroup{
 			CodeName:       name + "Code",
 			CodeValue:      code,
@@ -370,7 +370,7 @@ func main() {
 		appCode        = flag.Int("app-code", 1, "Application code (1-9)")
 		importPath     = flag.String("import-path", "github.com/example/project/pkg/errorx/code", "Import path for error code package")
 		scriptDir      = flag.String("script-dir", "", "Script directory (default: current directory)")
-		projectRoot    = flag.String("project-root", "", "Project root directory (default: 3 levels up from script dir)")
+		projectRoot    = flag.String("project-room", "", "Project room directory (default: 3 levels up from script dir)")
 		outputTemplate = flag.String("output-template", "{project_root}/modules/{biz}/pkg/errno", "Output directory template")
 		metadataFile   = flag.String("metadata-file", "metadata.yaml", "Metadata file name")
 	)
@@ -403,7 +403,7 @@ func main() {
 		*scriptDir = pwd
 	}
 
-	// Determine project root
+	// Determine project room
 	if *projectRoot == "" {
 		*projectRoot = filepath.Dir(filepath.Dir(filepath.Dir(*scriptDir)))
 	}

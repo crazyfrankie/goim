@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/gorilla/websocket"
-	
+
 	"github.com/crazyfrankie/goim/pkg/errorx"
 )
 
@@ -24,6 +24,10 @@ type Conn interface {
 	SetWriteDeadline(timeout time.Duration) error
 	// GenerateConn Check the connection of the current and when it was sent are the same
 	GenerateConn(w http.ResponseWriter, r *http.Request) error
+	// SetReadLimit sets the maximum size for a message read from the peer.bytes
+	SetReadLimit(limit int64)
+	SetPongHandler(handler PingPongHandler)
+	SetPingHandler(handler PingPongHandler)
 }
 
 type WebSocketConn struct {
@@ -63,6 +67,18 @@ func (wc *WebSocketConn) SetWriteDeadline(timeout time.Duration) error {
 	}
 
 	return nil
+}
+
+func (wc *WebSocketConn) SetReadLimit(limit int64) {
+	wc.conn.SetReadLimit(limit)
+}
+
+func (wc *WebSocketConn) SetPongHandler(handler PingPongHandler) {
+	wc.conn.SetPongHandler(handler)
+}
+
+func (wc *WebSocketConn) SetPingHandler(handler PingPongHandler) {
+	wc.conn.SetPingHandler(handler)
 }
 
 func (wc *WebSocketConn) GenerateConn(w http.ResponseWriter, r *http.Request) error {

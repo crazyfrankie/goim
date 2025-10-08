@@ -21,18 +21,7 @@ type Response struct {
 }
 
 func InternalServerError(c *gin.Context, err error) {
-	code := InternalServer
-	msg := "internal server error"
-
-	if grpcErr, ok := status.FromError(err); ok {
-		code = int32(grpcErr.Code())
-		msg = grpcErr.Message()
-	}
-
-	c.JSON(http.StatusInternalServerError, Response{
-		Code:    code,
-		Message: msg,
-	})
+	c.JSON(http.StatusInternalServerError, ParseError(err))
 }
 
 func InvalidParamError(c *gin.Context, message string) {
@@ -55,4 +44,19 @@ func Success(c *gin.Context, data any) {
 		Message: "success",
 		Data:    data,
 	})
+}
+
+func ParseError(err error) *Response {
+	code := InternalServer
+	msg := "internal server error"
+
+	if grpcErr, ok := status.FromError(err); ok {
+		code = int32(grpcErr.Code())
+		msg = grpcErr.Message()
+	}
+
+	return &Response{
+		Code:    code,
+		Message: msg,
+	}
 }
