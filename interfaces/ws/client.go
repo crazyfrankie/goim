@@ -219,7 +219,11 @@ func (c *Client) handleMessage(message []byte) error {
 		return errorx.Wrapf(nil, "exception conn userID not same to req userID, binaryReq: %s", binaryReq.String())
 	}
 
-	ctxcache.StoreM(ctx, binaryReq.OperationID, binaryReq.SendID, consts.PlatformIDToName(c.PlatformID), c.ctx.GetConnID())
+	ctxcache.StoreM(ctx,
+		types.OperationID, binaryReq.OperationID,
+		types.WsUserID, binaryReq.SendID,
+		types.PlatformID, consts.PlatformIDToName(c.PlatformID),
+		types.ConnID, c.ctx.GetConnID())
 
 	logs.CtxDebugf(ctx, "gateway req message, req: %s", binaryReq.String())
 
