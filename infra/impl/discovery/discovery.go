@@ -31,11 +31,11 @@ func initEtcdDis() (discovery.SvcDiscoveryRegistry, error) {
 
 	rootDir := os.Getenv("ROOT_DIR")
 
-	userName := os.Getenv("ETCD_USER")
-	password := os.Getenv("ETCD_PASSWORD")
+	//userName := os.Getenv("ETCD_USER")
+	//password := os.Getenv("ETCD_PASSWORD")
 
 	return etcd.NewSvcDiscoveryRegistry(rootDir, endpoints, watchNames,
 		etcd.WithDialTimeout(10*time.Second),
-		etcd.WithMaxCallSendMsgSize(20*1024*1024),
-		etcd.WithAuth(userName, password))
+		etcd.WithMaxCallSendMsgSize(20*1024*1024))
+	//etcd.WithAuth(userName, password))
 }

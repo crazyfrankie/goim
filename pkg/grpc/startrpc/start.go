@@ -8,9 +8,11 @@ import (
 
 	"github.com/oklog/run"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
 
 	"github.com/crazyfrankie/goim/infra/contract/discovery"
 	discoveryimpl "github.com/crazyfrankie/goim/infra/impl/discovery"
+	"github.com/crazyfrankie/goim/pkg/grpc/interceptor"
 	"github.com/crazyfrankie/goim/pkg/lang/signal"
 	"github.com/crazyfrankie/goim/pkg/logs"
 )
@@ -24,6 +26,12 @@ func Start(ctx context.Context, listenIP, registerIP, listenPort, rpcRegisterNam
 		return err
 	}
 	defer client.Close()
+
+	client.AppendOption(
+		grpc.WithTransportCredentials(insecure.NewCredentials()),
+		grpc.WithDefaultServiceConfig(fmt.Sprintf(`{"LoadBalancingPolicy": "%s"}`, "round_robin")),
+		grpc.WithChainUnaryInterceptor(interceptor.ClientLogInterceptor()),
+	)
 
 	g := &run.Group{}
 
