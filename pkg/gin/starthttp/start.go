@@ -20,6 +20,7 @@ func Start(ctx context.Context, listenAddr string, initFn func(ctx context.Conte
 	if err != nil {
 		return err
 	}
+	defer client.Close()
 
 	g := &run.Group{}
 

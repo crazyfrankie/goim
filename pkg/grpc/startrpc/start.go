@@ -23,6 +23,7 @@ func Start(ctx context.Context, listenIP, registerIP, listenPort, rpcRegisterNam
 	if err != nil {
 		return err
 	}
+	defer client.Close()
 
 	g := &run.Group{}
 
