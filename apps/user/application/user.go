@@ -10,17 +10,19 @@ import (
 	"github.com/crazyfrankie/goim/pkg/grpc/ctxutil"
 	"github.com/crazyfrankie/goim/pkg/lang/conv"
 	langslice "github.com/crazyfrankie/goim/pkg/lang/slice"
+	authv1 "github.com/crazyfrankie/goim/protocol/auth/v1"
 	userv1 "github.com/crazyfrankie/goim/protocol/user/v1"
 	"github.com/crazyfrankie/goim/types/errno"
 )
 
 type UserApplicationService struct {
 	userDomain user.User
+	authCli    authv1.AuthServiceClient
 	userv1.UnimplementedUserServiceServer
 }
 
-func NewUserApplicationService(userDomain user.User) userv1.UserServiceServer {
-	return &UserApplicationService{userDomain: userDomain}
+func NewUserApplicationService(userDomain user.User, authCli authv1.AuthServiceClient) userv1.UserServiceServer {
+	return &UserApplicationService{userDomain: userDomain, authCli: authCli}
 }
 
 func isValidEmail(email string) bool {
@@ -48,8 +50,19 @@ func (u *UserApplicationService) Register(ctx context.Context, req *userv1.Regis
 		return nil, err
 	}
 
+	tkRes, err := u.authCli.GenerateToken(ctx, &authv1.GenerateTokenRequest{
+		UserID: userInfo.UserID,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	data := userDO2DTO(userInfo)
+	data.AccessToken = tkRes.AccessToken
+	data.RefreshToken = tkRes.RefreshToken
+
 	return &userv1.RegisterResponse{
-		Data: userDO2DTO(userInfo),
+		Data: data,
 	}, nil
 }
 
@@ -58,6 +71,17 @@ func (u *UserApplicationService) Login(ctx context.Context, req *userv1.LoginReq
 	if err != nil {
 		return nil, err
 	}
+
+	tkRes, err := u.authCli.GenerateToken(ctx, &authv1.GenerateTokenRequest{
+		UserID: userInfo.UserID,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	data := userDO2DTO(userInfo)
+	data.AccessToken = tkRes.AccessToken
+	data.RefreshToken = tkRes.RefreshToken
 
 	return &userv1.LoginResponse{
 		Data: userDO2DTO(userInfo),
@@ -157,8 +181,6 @@ func userDO2DTO(userDo *entity.User) *userv1.User {
 		AvatarUrl:      userDo.IconURL,
 		Description:    userDo.Description,
 		Sex:            userv1.Sex(userDo.Sex),
-		AccessToken:    userDo.AccessToken,
-		RefreshToken:   userDo.RefreshToken,
 
 		UserCreateTime: userDo.CreatedAt / 1000,
 	}

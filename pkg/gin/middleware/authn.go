@@ -57,7 +57,7 @@ func (h *AuthnHandler) Auth() gin.HandlerFunc {
 			return
 		}
 
-		refreshRes, err := h.authClient.RefreshBizToken(c.Request.Context(), &authv1.RefreshBizTokenRequest{RefreshToken: refreshToken})
+		refreshRes, err := h.authClient.RefreshToken(c.Request.Context(), &authv1.RefreshTokenRequest{RefreshToken: refreshToken})
 		if err != nil {
 			response.InternalServerError(c, err)
 			return

@@ -18,13 +18,13 @@ func NewAuthDomain(c *Components) Auth {
 	return &authImpl{c}
 }
 
-func (a *authImpl) GenerateConnToken(ctx context.Context, userID int64) (string, error) {
-	token, err := a.TokenGen.GenerateConnToken(userID)
+func (a *authImpl) GenerateToken(ctx context.Context, uid int64) ([]string, error) {
+	tokens, err := a.TokenGen.GenerateToken(uid)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
-	return token, nil
+	return tokens, nil
 }
 
 func (a *authImpl) ParseToken(ctx context.Context, token string) (*token.Claims, error) {
@@ -36,7 +36,7 @@ func (a *authImpl) ParseToken(ctx context.Context, token string) (*token.Claims,
 	return claims, err
 }
 
-func (a *authImpl) RefreshBizToken(ctx context.Context, refreshToken string) ([]string, int64, error) {
+func (a *authImpl) RefreshToken(ctx context.Context, refreshToken string) ([]string, int64, error) {
 	tokens, userID, err := a.TokenGen.TryRefresh(refreshToken)
 	if err != nil {
 		return nil, 0, err

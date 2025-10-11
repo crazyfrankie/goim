@@ -21,26 +21,27 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-type GenerateConnTokenRequest struct {
+type GenerateTokenRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
+	UserID        int64                  `protobuf:"varint,1,opt,name=userID,proto3" json:"userID,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *GenerateConnTokenRequest) Reset() {
-	*x = GenerateConnTokenRequest{}
+func (x *GenerateTokenRequest) Reset() {
+	*x = GenerateTokenRequest{}
 	mi := &file_idl_auth_v1_auth_proto_msgTypes[0]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *GenerateConnTokenRequest) String() string {
+func (x *GenerateTokenRequest) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*GenerateConnTokenRequest) ProtoMessage() {}
+func (*GenerateTokenRequest) ProtoMessage() {}
 
-func (x *GenerateConnTokenRequest) ProtoReflect() protoreflect.Message {
+func (x *GenerateTokenRequest) ProtoReflect() protoreflect.Message {
 	mi := &file_idl_auth_v1_auth_proto_msgTypes[0]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -52,32 +53,40 @@ func (x *GenerateConnTokenRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use GenerateConnTokenRequest.ProtoReflect.Descriptor instead.
-func (*GenerateConnTokenRequest) Descriptor() ([]byte, []int) {
+// Deprecated: Use GenerateTokenRequest.ProtoReflect.Descriptor instead.
+func (*GenerateTokenRequest) Descriptor() ([]byte, []int) {
 	return file_idl_auth_v1_auth_proto_rawDescGZIP(), []int{0}
 }
 
-type GenerateConnTokenResponse struct {
+func (x *GenerateTokenRequest) GetUserID() int64 {
+	if x != nil {
+		return x.UserID
+	}
+	return 0
+}
+
+type GenerateTokenResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Token         string                 `protobuf:"bytes,1,opt,name=token,proto3" json:"token,omitempty"`
+	AccessToken   string                 `protobuf:"bytes,1,opt,name=access_token,json=accessToken,proto3" json:"access_token,omitempty"`
+	RefreshToken  string                 `protobuf:"bytes,2,opt,name=refresh_token,json=refreshToken,proto3" json:"refresh_token,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *GenerateConnTokenResponse) Reset() {
-	*x = GenerateConnTokenResponse{}
+func (x *GenerateTokenResponse) Reset() {
+	*x = GenerateTokenResponse{}
 	mi := &file_idl_auth_v1_auth_proto_msgTypes[1]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *GenerateConnTokenResponse) String() string {
+func (x *GenerateTokenResponse) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*GenerateConnTokenResponse) ProtoMessage() {}
+func (*GenerateTokenResponse) ProtoMessage() {}
 
-func (x *GenerateConnTokenResponse) ProtoReflect() protoreflect.Message {
+func (x *GenerateTokenResponse) ProtoReflect() protoreflect.Message {
 	mi := &file_idl_auth_v1_auth_proto_msgTypes[1]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -89,14 +98,21 @@ func (x *GenerateConnTokenResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use GenerateConnTokenResponse.ProtoReflect.Descriptor instead.
-func (*GenerateConnTokenResponse) Descriptor() ([]byte, []int) {
+// Deprecated: Use GenerateTokenResponse.ProtoReflect.Descriptor instead.
+func (*GenerateTokenResponse) Descriptor() ([]byte, []int) {
 	return file_idl_auth_v1_auth_proto_rawDescGZIP(), []int{1}
 }
 
-func (x *GenerateConnTokenResponse) GetToken() string {
+func (x *GenerateTokenResponse) GetAccessToken() string {
 	if x != nil {
-		return x.Token
+		return x.AccessToken
+	}
+	return ""
+}
+
+func (x *GenerateTokenResponse) GetRefreshToken() string {
+	if x != nil {
+		return x.RefreshToken
 	}
 	return ""
 }
@@ -189,27 +205,27 @@ func (x *ParseTokenResponse) GetUserID() int64 {
 	return 0
 }
 
-type RefreshBizTokenRequest struct {
+type RefreshTokenRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	RefreshToken  string                 `protobuf:"bytes,1,opt,name=refresh_token,json=refreshToken,proto3" json:"refresh_token,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *RefreshBizTokenRequest) Reset() {
-	*x = RefreshBizTokenRequest{}
+func (x *RefreshTokenRequest) Reset() {
+	*x = RefreshTokenRequest{}
 	mi := &file_idl_auth_v1_auth_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *RefreshBizTokenRequest) String() string {
+func (x *RefreshTokenRequest) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*RefreshBizTokenRequest) ProtoMessage() {}
+func (*RefreshTokenRequest) ProtoMessage() {}
 
-func (x *RefreshBizTokenRequest) ProtoReflect() protoreflect.Message {
+func (x *RefreshTokenRequest) ProtoReflect() protoreflect.Message {
 	mi := &file_idl_auth_v1_auth_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -221,19 +237,19 @@ func (x *RefreshBizTokenRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use RefreshBizTokenRequest.ProtoReflect.Descriptor instead.
-func (*RefreshBizTokenRequest) Descriptor() ([]byte, []int) {
+// Deprecated: Use RefreshTokenRequest.ProtoReflect.Descriptor instead.
+func (*RefreshTokenRequest) Descriptor() ([]byte, []int) {
 	return file_idl_auth_v1_auth_proto_rawDescGZIP(), []int{4}
 }
 
-func (x *RefreshBizTokenRequest) GetRefreshToken() string {
+func (x *RefreshTokenRequest) GetRefreshToken() string {
 	if x != nil {
 		return x.RefreshToken
 	}
 	return ""
 }
 
-type RefreshBizTokenResponse struct {
+type RefreshTokenResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	AccessToken   string                 `protobuf:"bytes,1,opt,name=access_token,json=accessToken,proto3" json:"access_token,omitempty"`
 	RefreshToken  string                 `protobuf:"bytes,2,opt,name=refresh_token,json=refreshToken,proto3" json:"refresh_token,omitempty"`
@@ -242,20 +258,20 @@ type RefreshBizTokenResponse struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *RefreshBizTokenResponse) Reset() {
-	*x = RefreshBizTokenResponse{}
+func (x *RefreshTokenResponse) Reset() {
+	*x = RefreshTokenResponse{}
 	mi := &file_idl_auth_v1_auth_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *RefreshBizTokenResponse) String() string {
+func (x *RefreshTokenResponse) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*RefreshBizTokenResponse) ProtoMessage() {}
+func (*RefreshTokenResponse) ProtoMessage() {}
 
-func (x *RefreshBizTokenResponse) ProtoReflect() protoreflect.Message {
+func (x *RefreshTokenResponse) ProtoReflect() protoreflect.Message {
 	mi := &file_idl_auth_v1_auth_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -267,26 +283,26 @@ func (x *RefreshBizTokenResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use RefreshBizTokenResponse.ProtoReflect.Descriptor instead.
-func (*RefreshBizTokenResponse) Descriptor() ([]byte, []int) {
+// Deprecated: Use RefreshTokenResponse.ProtoReflect.Descriptor instead.
+func (*RefreshTokenResponse) Descriptor() ([]byte, []int) {
 	return file_idl_auth_v1_auth_proto_rawDescGZIP(), []int{5}
 }
 
-func (x *RefreshBizTokenResponse) GetAccessToken() string {
+func (x *RefreshTokenResponse) GetAccessToken() string {
 	if x != nil {
 		return x.AccessToken
 	}
 	return ""
 }
 
-func (x *RefreshBizTokenResponse) GetRefreshToken() string {
+func (x *RefreshTokenResponse) GetRefreshToken() string {
 	if x != nil {
 		return x.RefreshToken
 	}
 	return ""
 }
 
-func (x *RefreshBizTokenResponse) GetUserID() int64 {
+func (x *RefreshTokenResponse) GetUserID() int64 {
 	if x != nil {
 		return x.UserID
 	}
@@ -297,25 +313,27 @@ var File_idl_auth_v1_auth_proto protoreflect.FileDescriptor
 
 const file_idl_auth_v1_auth_proto_rawDesc = "" +
 	"\n" +
-	"\x16idl/auth/v1/auth.proto\x12\aauth.v1\"\x1a\n" +
-	"\x18GenerateConnTokenRequest\"1\n" +
-	"\x19GenerateConnTokenResponse\x12\x14\n" +
-	"\x05token\x18\x01 \x01(\tR\x05token\")\n" +
+	"\x16idl/auth/v1/auth.proto\x12\aauth.v1\".\n" +
+	"\x14GenerateTokenRequest\x12\x16\n" +
+	"\x06userID\x18\x01 \x01(\x03R\x06userID\"_\n" +
+	"\x15GenerateTokenResponse\x12!\n" +
+	"\faccess_token\x18\x01 \x01(\tR\vaccessToken\x12#\n" +
+	"\rrefresh_token\x18\x02 \x01(\tR\frefreshToken\")\n" +
 	"\x11ParseTokenRequest\x12\x14\n" +
 	"\x05token\x18\x01 \x01(\tR\x05token\",\n" +
 	"\x12ParseTokenResponse\x12\x16\n" +
-	"\x06userID\x18\x01 \x01(\x03R\x06userID\"=\n" +
-	"\x16RefreshBizTokenRequest\x12#\n" +
-	"\rrefresh_token\x18\x01 \x01(\tR\frefreshToken\"y\n" +
-	"\x17RefreshBizTokenResponse\x12!\n" +
+	"\x06userID\x18\x01 \x01(\x03R\x06userID\":\n" +
+	"\x13RefreshTokenRequest\x12#\n" +
+	"\rrefresh_token\x18\x01 \x01(\tR\frefreshToken\"v\n" +
+	"\x14RefreshTokenResponse\x12!\n" +
 	"\faccess_token\x18\x01 \x01(\tR\vaccessToken\x12#\n" +
 	"\rrefresh_token\x18\x02 \x01(\tR\frefreshToken\x12\x16\n" +
-	"\x06userID\x18\x03 \x01(\x03R\x06userID2\x86\x02\n" +
-	"\vAuthService\x12Z\n" +
-	"\x11GenerateConnToken\x12!.auth.v1.GenerateConnTokenRequest\x1a\".auth.v1.GenerateConnTokenResponse\x12E\n" +
+	"\x06userID\x18\x03 \x01(\x03R\x06userID2\xf1\x01\n" +
+	"\vAuthService\x12N\n" +
+	"\rGenerateToken\x12\x1d.auth.v1.GenerateTokenRequest\x1a\x1e.auth.v1.GenerateTokenResponse\x12E\n" +
 	"\n" +
-	"ParseToken\x12\x1a.auth.v1.ParseTokenRequest\x1a\x1b.auth.v1.ParseTokenResponse\x12T\n" +
-	"\x0fRefreshBizToken\x12\x1f.auth.v1.RefreshBizTokenRequest\x1a .auth.v1.RefreshBizTokenResponseB6Z4github.com/crazyfrankie/goim/protocol/auth/v1;authv1b\x06proto3"
+	"ParseToken\x12\x1a.auth.v1.ParseTokenRequest\x1a\x1b.auth.v1.ParseTokenResponse\x12K\n" +
+	"\fRefreshToken\x12\x1c.auth.v1.RefreshTokenRequest\x1a\x1d.auth.v1.RefreshTokenResponseB6Z4github.com/crazyfrankie/goim/protocol/auth/v1;authv1b\x06proto3"
 
 var (
 	file_idl_auth_v1_auth_proto_rawDescOnce sync.Once
@@ -331,20 +349,20 @@ func file_idl_auth_v1_auth_proto_rawDescGZIP() []byte {
 
 var file_idl_auth_v1_auth_proto_msgTypes = make([]protoimpl.MessageInfo, 6)
 var file_idl_auth_v1_auth_proto_goTypes = []any{
-	(*GenerateConnTokenRequest)(nil),  // 0: auth.v1.GenerateConnTokenRequest
-	(*GenerateConnTokenResponse)(nil), // 1: auth.v1.GenerateConnTokenResponse
-	(*ParseTokenRequest)(nil),         // 2: auth.v1.ParseTokenRequest
-	(*ParseTokenResponse)(nil),        // 3: auth.v1.ParseTokenResponse
-	(*RefreshBizTokenRequest)(nil),    // 4: auth.v1.RefreshBizTokenRequest
-	(*RefreshBizTokenResponse)(nil),   // 5: auth.v1.RefreshBizTokenResponse
+	(*GenerateTokenRequest)(nil),  // 0: auth.v1.GenerateTokenRequest
+	(*GenerateTokenResponse)(nil), // 1: auth.v1.GenerateTokenResponse
+	(*ParseTokenRequest)(nil),     // 2: auth.v1.ParseTokenRequest
+	(*ParseTokenResponse)(nil),    // 3: auth.v1.ParseTokenResponse
+	(*RefreshTokenRequest)(nil),   // 4: auth.v1.RefreshTokenRequest
+	(*RefreshTokenResponse)(nil),  // 5: auth.v1.RefreshTokenResponse
 }
 var file_idl_auth_v1_auth_proto_depIdxs = []int32{
-	0, // 0: auth.v1.AuthService.GenerateConnToken:input_type -> auth.v1.GenerateConnTokenRequest
+	0, // 0: auth.v1.AuthService.GenerateToken:input_type -> auth.v1.GenerateTokenRequest
 	2, // 1: auth.v1.AuthService.ParseToken:input_type -> auth.v1.ParseTokenRequest
-	4, // 2: auth.v1.AuthService.RefreshBizToken:input_type -> auth.v1.RefreshBizTokenRequest
-	1, // 3: auth.v1.AuthService.GenerateConnToken:output_type -> auth.v1.GenerateConnTokenResponse
+	4, // 2: auth.v1.AuthService.RefreshToken:input_type -> auth.v1.RefreshTokenRequest
+	1, // 3: auth.v1.AuthService.GenerateToken:output_type -> auth.v1.GenerateTokenResponse
 	3, // 4: auth.v1.AuthService.ParseToken:output_type -> auth.v1.ParseTokenResponse
-	5, // 5: auth.v1.AuthService.RefreshBizToken:output_type -> auth.v1.RefreshBizTokenResponse
+	5, // 5: auth.v1.AuthService.RefreshToken:output_type -> auth.v1.RefreshTokenResponse
 	3, // [3:6] is the sub-list for method output_type
 	0, // [0:3] is the sub-list for method input_type
 	0, // [0:0] is the sub-list for extension type_name

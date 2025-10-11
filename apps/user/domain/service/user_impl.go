@@ -14,7 +14,6 @@ import (
 	"github.com/crazyfrankie/goim/apps/user/domain/repository"
 	"github.com/crazyfrankie/goim/infra/contract/idgen"
 	"github.com/crazyfrankie/goim/infra/contract/storage"
-	"github.com/crazyfrankie/goim/infra/contract/token"
 	"github.com/crazyfrankie/goim/pkg/errorx"
 	"github.com/crazyfrankie/goim/pkg/lang/conv"
 	"github.com/crazyfrankie/goim/pkg/lang/ptr"
@@ -27,7 +26,6 @@ type Components struct {
 	UserRepo repository.UserRepository
 	IDGen    idgen.IDGenerator
 	IconOSS  storage.Storage
-	TokenGen token.Token
 }
 
 type userImpl struct {
@@ -97,7 +95,7 @@ func (u *userImpl) Create(ctx context.Context, req *CreateUserRequest) (*entity.
 		return nil, fmt.Errorf("get icon url failed: %w", err)
 	}
 
-	return userPO2DO(newUser, nil, iconURL), nil
+	return userPO2DO(newUser, iconURL), nil
 }
 
 func (u *userImpl) Login(ctx context.Context, email, password string) (*entity.User, error) {
@@ -114,21 +112,12 @@ func (u *userImpl) Login(ctx context.Context, email, password string) (*entity.U
 		return nil, errorx.New(errno.ErrUserInfoInvalidCode)
 	}
 
-	tokens, err := u.TokenGen.GenerateToken(userModel.ID)
-	if err != nil {
-		return nil, err
-	}
-
 	resURL, err := u.IconOSS.GetObjectUrl(ctx, userModel.IconURI)
 	if err != nil {
 		return nil, err
 	}
 
-	return userPO2DO(userModel, tokens, resURL), nil
-}
-
-func (u *userImpl) Logout(ctx context.Context, userID int64) error {
-	return u.TokenGen.CleanToken(ctx, userID)
+	return userPO2DO(userModel, resURL), nil
 }
 
 func (u *userImpl) ResetPassword(ctx context.Context, email, password string) error {
@@ -156,7 +145,7 @@ func (u *userImpl) GetUserInfo(ctx context.Context, userID int64) (*entity.User,
 		return nil, err
 	}
 
-	return userPO2DO(userModel, nil, resURL), nil
+	return userPO2DO(userModel, resURL), nil
 }
 
 func (u *userImpl) UpdateAvatar(ctx context.Context, userID int64, ext string, imagePayload []byte) (url string, err error) {
@@ -270,7 +259,7 @@ func (u *userImpl) MGetUserProfiles(ctx context.Context, userIDs []int64) (users
 			continue // If getting the image URL fails, skip the user
 		}
 
-		users = append(users, userPO2DO(um, nil, resURL))
+		users = append(users, userPO2DO(um, resURL))
 	}
 
 	return users, nil
@@ -299,8 +288,8 @@ func (u *userImpl) getUniqueNameFormEmail(ctx context.Context, email string) str
 	return username
 }
 
-func userPO2DO(model *model.User, tokens []string, iconURL string) *entity.User {
-	res := &entity.User{
+func userPO2DO(model *model.User, iconURL string) *entity.User {
+	return &entity.User{
 		UserID:      model.ID,
 		Name:        model.Name,
 		UniqueName:  model.UniqueName,
@@ -312,12 +301,6 @@ func userPO2DO(model *model.User, tokens []string, iconURL string) *entity.User 
 		CreatedAt:   model.CreatedAt,
 		UpdatedAt:   model.UpdatedAt,
 	}
-	if tokens != nil {
-		res.AccessToken = tokens[0]
-		res.RefreshToken = tokens[1]
-	}
-
-	return res
 }
 
 func hashPassword(password string) (string, error) {

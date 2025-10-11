@@ -19,18 +19,18 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	AuthService_GenerateConnToken_FullMethodName = "/auth.v1.AuthService/GenerateConnToken"
-	AuthService_ParseToken_FullMethodName        = "/auth.v1.AuthService/ParseToken"
-	AuthService_RefreshBizToken_FullMethodName   = "/auth.v1.AuthService/RefreshBizToken"
+	AuthService_GenerateToken_FullMethodName = "/auth.v1.AuthService/GenerateToken"
+	AuthService_ParseToken_FullMethodName    = "/auth.v1.AuthService/ParseToken"
+	AuthService_RefreshToken_FullMethodName  = "/auth.v1.AuthService/RefreshToken"
 )
 
 // AuthServiceClient is the client API for AuthService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type AuthServiceClient interface {
-	GenerateConnToken(ctx context.Context, in *GenerateConnTokenRequest, opts ...grpc.CallOption) (*GenerateConnTokenResponse, error)
+	GenerateToken(ctx context.Context, in *GenerateTokenRequest, opts ...grpc.CallOption) (*GenerateTokenResponse, error)
 	ParseToken(ctx context.Context, in *ParseTokenRequest, opts ...grpc.CallOption) (*ParseTokenResponse, error)
-	RefreshBizToken(ctx context.Context, in *RefreshBizTokenRequest, opts ...grpc.CallOption) (*RefreshBizTokenResponse, error)
+	RefreshToken(ctx context.Context, in *RefreshTokenRequest, opts ...grpc.CallOption) (*RefreshTokenResponse, error)
 }
 
 type authServiceClient struct {
@@ -41,10 +41,10 @@ func NewAuthServiceClient(cc grpc.ClientConnInterface) AuthServiceClient {
 	return &authServiceClient{cc}
 }
 
-func (c *authServiceClient) GenerateConnToken(ctx context.Context, in *GenerateConnTokenRequest, opts ...grpc.CallOption) (*GenerateConnTokenResponse, error) {
+func (c *authServiceClient) GenerateToken(ctx context.Context, in *GenerateTokenRequest, opts ...grpc.CallOption) (*GenerateTokenResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(GenerateConnTokenResponse)
-	err := c.cc.Invoke(ctx, AuthService_GenerateConnToken_FullMethodName, in, out, cOpts...)
+	out := new(GenerateTokenResponse)
+	err := c.cc.Invoke(ctx, AuthService_GenerateToken_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -61,10 +61,10 @@ func (c *authServiceClient) ParseToken(ctx context.Context, in *ParseTokenReques
 	return out, nil
 }
 
-func (c *authServiceClient) RefreshBizToken(ctx context.Context, in *RefreshBizTokenRequest, opts ...grpc.CallOption) (*RefreshBizTokenResponse, error) {
+func (c *authServiceClient) RefreshToken(ctx context.Context, in *RefreshTokenRequest, opts ...grpc.CallOption) (*RefreshTokenResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(RefreshBizTokenResponse)
-	err := c.cc.Invoke(ctx, AuthService_RefreshBizToken_FullMethodName, in, out, cOpts...)
+	out := new(RefreshTokenResponse)
+	err := c.cc.Invoke(ctx, AuthService_RefreshToken_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -75,9 +75,9 @@ func (c *authServiceClient) RefreshBizToken(ctx context.Context, in *RefreshBizT
 // All implementations must embed UnimplementedAuthServiceServer
 // for forward compatibility.
 type AuthServiceServer interface {
-	GenerateConnToken(context.Context, *GenerateConnTokenRequest) (*GenerateConnTokenResponse, error)
+	GenerateToken(context.Context, *GenerateTokenRequest) (*GenerateTokenResponse, error)
 	ParseToken(context.Context, *ParseTokenRequest) (*ParseTokenResponse, error)
-	RefreshBizToken(context.Context, *RefreshBizTokenRequest) (*RefreshBizTokenResponse, error)
+	RefreshToken(context.Context, *RefreshTokenRequest) (*RefreshTokenResponse, error)
 	mustEmbedUnimplementedAuthServiceServer()
 }
 
@@ -88,14 +88,14 @@ type AuthServiceServer interface {
 // pointer dereference when methods are called.
 type UnimplementedAuthServiceServer struct{}
 
-func (UnimplementedAuthServiceServer) GenerateConnToken(context.Context, *GenerateConnTokenRequest) (*GenerateConnTokenResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GenerateConnToken not implemented")
+func (UnimplementedAuthServiceServer) GenerateToken(context.Context, *GenerateTokenRequest) (*GenerateTokenResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GenerateToken not implemented")
 }
 func (UnimplementedAuthServiceServer) ParseToken(context.Context, *ParseTokenRequest) (*ParseTokenResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ParseToken not implemented")
 }
-func (UnimplementedAuthServiceServer) RefreshBizToken(context.Context, *RefreshBizTokenRequest) (*RefreshBizTokenResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method RefreshBizToken not implemented")
+func (UnimplementedAuthServiceServer) RefreshToken(context.Context, *RefreshTokenRequest) (*RefreshTokenResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RefreshToken not implemented")
 }
 func (UnimplementedAuthServiceServer) mustEmbedUnimplementedAuthServiceServer() {}
 func (UnimplementedAuthServiceServer) testEmbeddedByValue()                     {}
@@ -118,20 +118,20 @@ func RegisterAuthServiceServer(s grpc.ServiceRegistrar, srv AuthServiceServer) {
 	s.RegisterService(&AuthService_ServiceDesc, srv)
 }
 
-func _AuthService_GenerateConnToken_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GenerateConnTokenRequest)
+func _AuthService_GenerateToken_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GenerateTokenRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(AuthServiceServer).GenerateConnToken(ctx, in)
+		return srv.(AuthServiceServer).GenerateToken(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: AuthService_GenerateConnToken_FullMethodName,
+		FullMethod: AuthService_GenerateToken_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AuthServiceServer).GenerateConnToken(ctx, req.(*GenerateConnTokenRequest))
+		return srv.(AuthServiceServer).GenerateToken(ctx, req.(*GenerateTokenRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -154,20 +154,20 @@ func _AuthService_ParseToken_Handler(srv interface{}, ctx context.Context, dec f
 	return interceptor(ctx, in, info, handler)
 }
 
-func _AuthService_RefreshBizToken_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(RefreshBizTokenRequest)
+func _AuthService_RefreshToken_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RefreshTokenRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(AuthServiceServer).RefreshBizToken(ctx, in)
+		return srv.(AuthServiceServer).RefreshToken(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: AuthService_RefreshBizToken_FullMethodName,
+		FullMethod: AuthService_RefreshToken_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AuthServiceServer).RefreshBizToken(ctx, req.(*RefreshBizTokenRequest))
+		return srv.(AuthServiceServer).RefreshToken(ctx, req.(*RefreshTokenRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -180,16 +180,16 @@ var AuthService_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*AuthServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "GenerateConnToken",
-			Handler:    _AuthService_GenerateConnToken_Handler,
+			MethodName: "GenerateToken",
+			Handler:    _AuthService_GenerateToken_Handler,
 		},
 		{
 			MethodName: "ParseToken",
 			Handler:    _AuthService_ParseToken_Handler,
 		},
 		{
-			MethodName: "RefreshBizToken",
-			Handler:    _AuthService_RefreshBizToken_Handler,
+			MethodName: "RefreshToken",
+			Handler:    _AuthService_RefreshToken_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -4,10 +4,13 @@ package auth.v1;
 
 option go_package="github.com/crazyfrankie/goim/protocol/auth/v1;authv1";
 
-message GenerateConnTokenRequest {}
+message GenerateTokenRequest {
+  int64 userID = 1;
+}
 
-message GenerateConnTokenResponse {
-  string token = 1;
+message GenerateTokenResponse {
+  string access_token = 1;
+  string refresh_token = 2;
 }
 
 message ParseTokenRequest {
@@ -18,18 +21,18 @@ message ParseTokenResponse {
   int64 userID = 1;
 }
 
-message RefreshBizTokenRequest {
+message RefreshTokenRequest {
   string refresh_token = 1;
 }
 
-message RefreshBizTokenResponse {
+message RefreshTokenResponse {
   string access_token = 1;
   string refresh_token = 2;
   int64 userID = 3;
 }
 
 service AuthService {
-  rpc GenerateConnToken(GenerateConnTokenRequest) returns (GenerateConnTokenResponse);
+  rpc GenerateToken(GenerateTokenRequest) returns (GenerateTokenResponse);
   rpc ParseToken(ParseTokenRequest) returns (ParseTokenResponse);
-  rpc RefreshBizToken(RefreshBizTokenRequest) returns (RefreshBizTokenResponse);
+  rpc RefreshToken(RefreshTokenRequest) returns (RefreshTokenResponse);
 }

@@ -6,6 +6,7 @@ import (
 
 	wsctx "github.com/crazyfrankie/goim/interfaces/ws/context"
 	"github.com/crazyfrankie/goim/pkg/logs"
+	messagev1 "github.com/crazyfrankie/goim/protocol/message/v1"
 )
 
 func (s *Server) InitServer(ctx context.Context) error {
@@ -66,7 +67,7 @@ func (s *Server) GetUsersOnlineStatus(ctx context.Context, req *GetUsersOnlineSt
 	return &resp, nil
 }
 
-func (s *Server) pushToUser(ctx context.Context, userID string, msgData []byte) *SingleMsgToUserResults {
+func (s *Server) pushToUser(ctx context.Context, userID string, msgData *messagev1.Message) *SingleMsgToUserResults {
 	clients, ok := s.LongConnServer.GetUserAllCons(userID)
 	if !ok {
 		logs.Debugf("push user not online, userID: %s", userID)
@@ -205,8 +206,8 @@ type GetUsersOnlineStatusResp_SuccessDetail struct {
 }
 
 type OnlineBatchPushOneMsgReq struct {
-	PushToUserIDs []string `json:"pushToUserIDs"`
-	MsgData       []byte   `json:"msgData"`
+	PushToUserIDs []string           `json:"pushToUserIDs"`
+	MsgData       *messagev1.Message `json:"msgData"`
 }
 
 type OnlineBatchPushOneMsgResp struct {

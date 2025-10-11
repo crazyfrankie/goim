@@ -3,24 +3,24 @@ package application
 import (
 	"context"
 
-	"github.com/crazyfrankie/goim/infra/contract/discovery"
 	"gorm.io/gorm"
 
+	"github.com/crazyfrankie/goim/infra/contract/discovery"
 	"github.com/crazyfrankie/goim/infra/contract/idgen"
 	"github.com/crazyfrankie/goim/infra/contract/storage"
-	"github.com/crazyfrankie/goim/infra/contract/token"
 	"github.com/crazyfrankie/goim/infra/impl/cache/redis"
 	idgenimpl "github.com/crazyfrankie/goim/infra/impl/idgen"
 	"github.com/crazyfrankie/goim/infra/impl/mysql"
 	storageimpl "github.com/crazyfrankie/goim/infra/impl/storage"
-	tokenimpl "github.com/crazyfrankie/goim/infra/impl/token"
+	authv1 "github.com/crazyfrankie/goim/protocol/auth/v1"
+	"github.com/crazyfrankie/goim/types/consts"
 )
 
 type BasicServices struct {
-	DB       *gorm.DB
-	IDGen    idgen.IDGenerator
-	IconOSS  storage.Storage
-	TokenGen token.Token
+	DB      *gorm.DB
+	IDGen   idgen.IDGenerator
+	IconOSS storage.Storage
+	AuthCli authv1.AuthServiceClient
 }
 
 func Init(ctx context.Context, client discovery.SvcDiscoveryRegistry) (*BasicServices, error) {
@@ -39,10 +39,12 @@ func Init(ctx context.Context, client discovery.SvcDiscoveryRegistry) (*BasicSer
 		return nil, err
 	}
 
-	basic.TokenGen, err = tokenimpl.New(cacheCli)
+	authCC, err := client.GetConn(ctx, consts.AuthServiceName)
 	if err != nil {
 		return nil, err
 	}
+
+	basic.AuthCli = authv1.NewAuthServiceClient(authCC)
 
 	basic.IconOSS, err = storageimpl.New(ctx)
 	if err != nil {

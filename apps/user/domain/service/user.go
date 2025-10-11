@@ -44,7 +44,6 @@ type UpdateProfileRequest struct {
 type User interface {
 	Create(ctx context.Context, req *CreateUserRequest) (*entity.User, error)
 	Login(ctx context.Context, email, password string) (*entity.User, error)
-	Logout(ctx context.Context, userID int64) error
 	ResetPassword(ctx context.Context, email, password string) error
 	GetUserInfo(ctx context.Context, userID int64) (user *entity.User, err error)
 	ValidateProfileUpdate(ctx context.Context, req *ValidateProfileUpdateRequest) (resp *ValidateProfileUpdateResponse, err error)
