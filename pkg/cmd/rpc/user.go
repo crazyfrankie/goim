@@ -12,9 +12,8 @@ import (
 	"github.com/crazyfrankie/goim/pkg/grpc/interceptor"
 	"github.com/crazyfrankie/goim/pkg/grpc/startrpc"
 	"github.com/crazyfrankie/goim/pkg/lang/program"
+	"github.com/crazyfrankie/goim/types/consts"
 )
-
-const userServiceName = "goim-rpc-user"
 
 type UserCmd struct {
 	*cmd.RootCmd
@@ -22,7 +21,7 @@ type UserCmd struct {
 
 func NewUserCmd() *UserCmd {
 	userCmd := &UserCmd{
-		RootCmd: cmd.NewRootCmd(program.GetProcessName(), userServiceName),
+		RootCmd: cmd.NewRootCmd(program.GetProcessName(), consts.UserServiceName),
 	}
 	userCmd.Command.RunE = func(cmd *cobra.Command, args []string) error {
 		return userCmd.runE()
@@ -40,11 +39,14 @@ func (u *UserCmd) runE() error {
 	registerIP := os.Getenv("REGISTER_IP")
 	listenPort := os.Getenv("LISTEN_PORT")
 
-	return startrpc.Start(context.Background(), listenIP, registerIP, listenPort, userServiceName, user.Start, userGrpcServerOption()...)
+	return startrpc.Start(context.Background(), listenIP, registerIP, listenPort, consts.UserServiceName, user.Start, userGrpcServerOption()...)
 }
 
 func userGrpcServerOption() []grpc.ServerOption {
 	return []grpc.ServerOption{
-		grpc.UnaryInterceptor(interceptor.ResponseInterceptor()),
+		grpc.ChainUnaryInterceptor(
+			interceptor.CtxMDInterceptor(),
+			interceptor.ResponseInterceptor(),
+		),
 	}
 }

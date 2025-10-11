@@ -12,9 +12,8 @@ import (
 	"github.com/crazyfrankie/goim/pkg/grpc/interceptor"
 	"github.com/crazyfrankie/goim/pkg/grpc/startrpc"
 	"github.com/crazyfrankie/goim/pkg/lang/program"
+	"github.com/crazyfrankie/goim/types/consts"
 )
-
-const authServiceName = "goim-rpc-auth"
 
 type AuthCmd struct {
 	*cmd.RootCmd
@@ -22,7 +21,7 @@ type AuthCmd struct {
 
 func NewAuthCmd() *AuthCmd {
 	authCmd := &AuthCmd{
-		RootCmd: cmd.NewRootCmd(program.GetProcessName(), authServiceName),
+		RootCmd: cmd.NewRootCmd(program.GetProcessName(), consts.AuthServiceName),
 	}
 	authCmd.Command.RunE = func(cmd *cobra.Command, args []string) error {
 		return authCmd.runE()
@@ -40,11 +39,14 @@ func (a *AuthCmd) runE() error {
 	registerIP := os.Getenv("REGISTER_IP")
 	listenPort := os.Getenv("LISTEN_PORT")
 
-	return startrpc.Start(context.Background(), listenIP, registerIP, listenPort, authServiceName, auth.Start, authGrpcServerOption()...)
+	return startrpc.Start(context.Background(), listenIP, registerIP, listenPort, consts.AuthServiceName, auth.Start, authGrpcServerOption()...)
 }
 
 func authGrpcServerOption() []grpc.ServerOption {
 	return []grpc.ServerOption{
-		grpc.UnaryInterceptor(interceptor.ResponseInterceptor()),
+		grpc.ChainUnaryInterceptor(
+			interceptor.CtxMDInterceptor(),
+			interceptor.ResponseInterceptor(),
+		),
 	}
 }

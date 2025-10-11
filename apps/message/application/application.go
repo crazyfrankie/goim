@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/crazyfrankie/goim/infra/contract/discovery"
 	"gorm.io/gorm"
 
 	message "github.com/crazyfrankie/goim/apps/message/domain/service"
@@ -23,7 +24,7 @@ type BasicServices struct {
 	MessageEventBus messageevent.PublishEventBus
 }
 
-func Init(ctx context.Context) (*BasicServices, error) {
+func Init(ctx context.Context, client discovery.SvcDiscoveryRegistry) (*BasicServices, error) {
 	basic := &BasicServices{}
 	var err error
 

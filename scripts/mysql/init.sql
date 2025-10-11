@@ -25,7 +25,7 @@ CREATE TABLE IF NOT EXISTS `message` (
   `send_id` bigint NOT NULL COMMENT 'Sender ID',
   `recv_id` bigint NOT NULL COMMENT 'Receiver ID',
   `group_id` bigint NOT NULL COMMENT 'Group ID',
-  `client_msg_id` bigint NOT NULL COMMENT 'Client Message ID',
+  `client_msg_id` tinytext NOT NULL COMMENT 'Client Message ID',
   `session_type` int NOT NULL COMMENT 'Session Type',
   `message_from` int NOT NULL COMMENT 'Message Source',
   `content_type` int NOT NULL COMMENT 'Message Content Type',

@@ -34,7 +34,7 @@ type WebsocketServer struct {
 	registerChan      chan *Client
 	unregisterChan    chan *Client
 	kickHandlerChan   chan *kickHandler
-	bucketManager     *BucketManager // 使用我们的BucketManager替代clients UserMap
+	bucketManager     *BucketManager
 	subscription      *Subscription
 	clientPool        sync.Pool
 	onlineUserNum     atomic.Int64
@@ -92,10 +92,10 @@ func NewWebsocketServer(opts ...Option) *WebsocketServer {
 
 	v := validator.New()
 	return &WebsocketServer{
-		port:             0,
-		wsMaxConnNum:     0,
-		writeBufferSize:  0,
-		handshakeTimeout: 0,
+		port:             config.port,
+		wsMaxConnNum:     config.maxConnNum,
+		writeBufferSize:  config.writeBufferSize,
+		handshakeTimeout: config.handshakeTimeout,
 		clientPool: sync.Pool{
 			New: func() any {
 				return new(Client)

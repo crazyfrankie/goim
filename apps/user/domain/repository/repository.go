@@ -3,9 +3,10 @@ package repository
 import (
 	"context"
 
+	"gorm.io/gorm"
+
 	"github.com/crazyfrankie/goim/apps/user/domain/internal/dal"
 	"github.com/crazyfrankie/goim/apps/user/domain/internal/dal/model"
-	"gorm.io/gorm"
 )
 
 type UserRepository interface {

@@ -26,7 +26,7 @@ type Message struct {
 	SendID        int64                  `protobuf:"varint,1,opt,name=sendID,proto3" json:"sendID,omitempty"`
 	RecvID        int64                  `protobuf:"varint,2,opt,name=recvID,proto3" json:"recvID,omitempty"`
 	GroupID       int64                  `protobuf:"varint,3,opt,name=groupID,proto3" json:"groupID,omitempty"`
-	ClientMsgID   int64                  `protobuf:"varint,4,opt,name=client_msgID,json=clientMsgID,proto3" json:"client_msgID,omitempty"`
+	ClientMsgID   string                 `protobuf:"bytes,4,opt,name=client_msgID,json=clientMsgID,proto3" json:"client_msgID,omitempty"`
 	SessionType   int32                  `protobuf:"varint,5,opt,name=session_type,json=sessionType,proto3" json:"session_type,omitempty"`
 	MessageFrom   int32                  `protobuf:"varint,6,opt,name=message_from,json=messageFrom,proto3" json:"message_from,omitempty"`
 	ContentType   int32                  `protobuf:"varint,7,opt,name=contentType,proto3" json:"contentType,omitempty"`
@@ -87,11 +87,11 @@ func (x *Message) GetGroupID() int64 {
 	return 0
 }
 
-func (x *Message) GetClientMsgID() int64 {
+func (x *Message) GetClientMsgID() string {
 	if x != nil {
 		return x.ClientMsgID
 	}
-	return 0
+	return ""
 }
 
 func (x *Message) GetSessionType() int32 {
@@ -176,7 +176,7 @@ func (x *SendMessageRequest) GetData() *Message {
 type SendMessageResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	ServerMsgID   int64                  `protobuf:"varint,1,opt,name=serverMsgID,proto3" json:"serverMsgID,omitempty"`
-	ClientMsgID   int64                  `protobuf:"varint,2,opt,name=clientMsgID,proto3" json:"clientMsgID,omitempty"`
+	ClientMsgID   string                 `protobuf:"bytes,2,opt,name=clientMsgID,proto3" json:"clientMsgID,omitempty"`
 	SendTime      int64                  `protobuf:"varint,3,opt,name=sendTime,proto3" json:"sendTime,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -219,11 +219,11 @@ func (x *SendMessageResponse) GetServerMsgID() int64 {
 	return 0
 }
 
-func (x *SendMessageResponse) GetClientMsgID() int64 {
+func (x *SendMessageResponse) GetClientMsgID() string {
 	if x != nil {
 		return x.ClientMsgID
 	}
-	return 0
+	return ""
 }
 
 func (x *SendMessageResponse) GetSendTime() int64 {
@@ -323,7 +323,7 @@ const file_idl_message_v1_message_proto_rawDesc = "" +
 	"\x06sendID\x18\x01 \x01(\x03R\x06sendID\x12\x16\n" +
 	"\x06recvID\x18\x02 \x01(\x03R\x06recvID\x12\x18\n" +
 	"\agroupID\x18\x03 \x01(\x03R\agroupID\x12!\n" +
-	"\fclient_msgID\x18\x04 \x01(\x03R\vclientMsgID\x12!\n" +
+	"\fclient_msgID\x18\x04 \x01(\tR\vclientMsgID\x12!\n" +
 	"\fsession_type\x18\x05 \x01(\x05R\vsessionType\x12!\n" +
 	"\fmessage_from\x18\x06 \x01(\x05R\vmessageFrom\x12 \n" +
 	"\vcontentType\x18\a \x01(\x05R\vcontentType\x12\x1b\n" +
@@ -333,7 +333,7 @@ const file_idl_message_v1_message_proto_rawDesc = "" +
 	"\x04data\x18\x01 \x01(\v2\x13.message.v1.MessageR\x04data\"u\n" +
 	"\x13SendMessageResponse\x12 \n" +
 	"\vserverMsgID\x18\x01 \x01(\x03R\vserverMsgID\x12 \n" +
-	"\vclientMsgID\x18\x02 \x01(\x03R\vclientMsgID\x12\x1a\n" +
+	"\vclientMsgID\x18\x02 \x01(\tR\vclientMsgID\x12\x1a\n" +
 	"\bsendTime\x18\x03 \x01(\x03R\bsendTime\"1\n" +
 	"\x17SetMessageStatusRequest\x12\x16\n" +
 	"\x06status\x18\x01 \x01(\x05R\x06status\"\x1a\n" +

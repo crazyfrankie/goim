@@ -37,14 +37,6 @@ func DefaultBucketConfig() *BucketConfig {
 	}
 }
 
-type ServerConfig struct {
-	BucketNum     int
-	MaxConnNum    int64
-	HeartbeatTime time.Duration
-	Bucket        *BucketConfig
-	Client        *ClientConfig
-}
-
 func NewBucketManager(bucketNum int, config *BucketConfig) *BucketManager {
 	bm := &BucketManager{
 		buckets:   make([]*Bucket, bucketNum),
@@ -83,6 +75,14 @@ type Bucket struct {
 	// Asynchronous processing
 	routines   []chan *BroadcastReq
 	routineNum uint64
+
+	ch chan UserState
+}
+
+type UserState struct {
+	UserID  string
+	Online  []int32
+	Offline []int32
 }
 
 type UserPlatforms struct {
@@ -90,6 +90,28 @@ type UserPlatforms struct {
 	Platforms map[int32][]*Client
 	mutex     sync.RWMutex
 	lastTime  int64
+}
+
+func (u *UserPlatforms) PlatformIDs() []int32 {
+	if len(u.Platforms) == 0 {
+		return nil
+	}
+	platformIDs := make([]int32, 0, len(u.Platforms))
+	for platform := range u.Platforms {
+		platformIDs = append(platformIDs, platform)
+	}
+	return platformIDs
+}
+
+func (u *UserPlatforms) PlatformIDSet() map[int32]struct{} {
+	if len(u.Platforms) == 0 {
+		return nil
+	}
+	platformIDs := make(map[int32]struct{})
+	for platform := range u.Platforms {
+		platformIDs[platform] = struct{}{}
+	}
+	return platformIDs
 }
 
 func NewBucket(id int, config *BucketConfig) *Bucket {
@@ -206,6 +228,41 @@ func (b *Bucket) GetUserPlatformClients(userID string, platformID int32) []*Clie
 	defer userPlatforms.mutex.RUnlock()
 
 	return userPlatforms.Platforms[platformID]
+}
+
+// RecvSubChange Receive updates to the user's status subscription
+func (b *Bucket) RecvSubChange(userID string, platformIDs []int32) bool {
+	b.lock.RLock()
+	defer b.lock.RUnlock()
+	result, ok := b.userMap[userID]
+	if !ok {
+		return false
+	}
+	localPlatformIDs := result.PlatformIDSet()
+	for _, platformID := range platformIDs {
+		delete(localPlatformIDs, platformID)
+	}
+	if len(localPlatformIDs) == 0 {
+		return false
+	}
+	b.push(userID, result, nil)
+	return true
+}
+
+// push pushes user's state to channel
+func (b *Bucket) push(userID string, userPlatform *UserPlatforms, offline []int32) bool {
+	select {
+	case b.ch <- UserState{UserID: userID, Online: userPlatform.PlatformIDs(), Offline: offline}:
+		userPlatform.lastTime = time.Now().Unix()
+		return true
+	default:
+		return false
+	}
+}
+
+// UserState return User's State
+func (b *Bucket) UserState() chan<- UserState {
+	return b.ch
 }
 
 // JoinRoom Join the room

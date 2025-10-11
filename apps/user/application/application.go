@@ -3,6 +3,7 @@ package application
 import (
 	"context"
 
+	"github.com/crazyfrankie/goim/infra/contract/discovery"
 	"gorm.io/gorm"
 
 	"github.com/crazyfrankie/goim/infra/contract/idgen"
@@ -22,7 +23,7 @@ type BasicServices struct {
 	TokenGen token.Token
 }
 
-func Init(ctx context.Context) (*BasicServices, error) {
+func Init(ctx context.Context, client discovery.SvcDiscoveryRegistry) (*BasicServices, error) {
 	basic := &BasicServices{}
 	var err error
 

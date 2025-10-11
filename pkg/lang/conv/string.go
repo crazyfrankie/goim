@@ -17,3 +17,21 @@ func BytesToString(val []byte) string {
 
 	return *(*string)(unsafe.Pointer(&sh))
 }
+
+func BytesToStr(b []byte) string {
+	if len(b) == 0 {
+		return ""
+	}
+
+	if len(b) < 64 {
+		return string(b)
+	}
+
+	for _, v := range b {
+		if v > 127 {
+			return string(b)
+		}
+	}
+
+	return BytesToString(b)
+}

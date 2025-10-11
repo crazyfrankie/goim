@@ -8,7 +8,7 @@ message Message {
   int64 sendID = 1;
   int64 recvID = 2;
   int64 groupID = 3;
-  int64 client_msgID = 4;
+  string client_msgID = 4;
   int32 session_type = 5;
   int32 message_from = 6;
   int32 contentType = 7;
@@ -22,7 +22,7 @@ message SendMessageRequest {
 
 message SendMessageResponse {
   int64 serverMsgID = 1;
-  int64 clientMsgID = 2;
+  string clientMsgID = 2;
   int64 sendTime = 3;
 }
 

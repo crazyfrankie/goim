@@ -13,7 +13,7 @@ import (
 )
 
 func Start(ctx context.Context, client discovery.SvcDiscoveryRegistry, srv grpc.ServiceRegistrar) error {
-	basic, err := application.Init(ctx)
+	basic, err := application.Init(ctx, client)
 	if err != nil {
 		return err
 	}

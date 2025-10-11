@@ -6,14 +6,13 @@ import (
 	"time"
 
 	"github.com/spf13/cobra"
-	
+
 	"github.com/crazyfrankie/goim/interfaces/http/user"
 	"github.com/crazyfrankie/goim/pkg/cmd"
 	"github.com/crazyfrankie/goim/pkg/gin/starthttp"
 	"github.com/crazyfrankie/goim/pkg/lang/program"
+	"github.com/crazyfrankie/goim/types/consts"
 )
-
-const userServiceName = "goim-api-user"
 
 type UserCmd struct {
 	*cmd.RootCmd
@@ -21,7 +20,7 @@ type UserCmd struct {
 
 func NewUserCmd() *UserCmd {
 	userCmd := &UserCmd{
-		RootCmd: cmd.NewRootCmd(program.GetProcessName(), userServiceName),
+		RootCmd: cmd.NewRootCmd(program.GetProcessName(), consts.UserApiName),
 	}
 	userCmd.Command.RunE = func(cmd *cobra.Command, args []string) error {
 		return userCmd.runE()

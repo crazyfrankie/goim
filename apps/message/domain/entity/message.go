@@ -5,8 +5,8 @@ type Message struct {
 	SendID      int64
 	RecvID      int64
 	GroupID     int64  // Group ID (for group messages)
-	ClientMsgID int64  // Client-generated message ID
 	Seq         int64  // Message Sequence Number
+	ClientMsgID string // Client-generated message ID
 	Content     string // Message Content
 	SendTime    int64  // Send Time (Milliseconds)
 	Status      int32  // Message Status

@@ -10,14 +10,16 @@ require (
 	github.com/go-playground/validator/v10 v10.28.0
 	github.com/golang-jwt/jwt/v5 v5.3.0
 	github.com/gorilla/websocket v1.5.3
-	github.com/grpc-ecosystem/go-grpc-middleware v1.4.0
+	github.com/grpc-ecosystem/go-grpc-middleware/v2 v2.3.2
 	github.com/joho/godotenv v1.5.1
 	github.com/minio/minio-go/v7 v7.0.95
+	github.com/mitchellh/mapstructure v1.5.0
 	github.com/oklog/run v1.2.0
 	github.com/redis/go-redis/v9 v9.14.0
 	github.com/spf13/cobra v1.10.1
 	go.etcd.io/etcd/api/v3 v3.6.5
 	go.etcd.io/etcd/client/v3 v3.6.5
+	go.opentelemetry.io/otel/trace v1.37.0
 	golang.org/x/crypto v0.42.0
 	google.golang.org/grpc v1.75.1
 	google.golang.org/protobuf v1.36.10
@@ -56,7 +58,6 @@ require (
 	github.com/golang/protobuf v1.5.4 // indirect
 	github.com/golang/snappy v1.0.0 // indirect
 	github.com/google/uuid v1.6.0 // indirect
-	github.com/grpc-ecosystem/go-grpc-middleware/v2 v2.3.2 // indirect
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.26.3 // indirect
 	github.com/hashicorp/go-uuid v1.0.3 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
@@ -94,6 +95,7 @@ require (
 	github.com/twitchyliquid64/golang-asm v0.15.1 // indirect
 	github.com/ugorji/go/codec v1.3.0 // indirect
 	go.etcd.io/etcd/client/pkg/v3 v3.6.5 // indirect
+	go.opentelemetry.io/otel v1.37.0 // indirect
 	go.uber.org/atomic v1.11.0 // indirect
 	go.uber.org/mock v0.6.0 // indirect
 	go.uber.org/multierr v1.11.0 // indirect

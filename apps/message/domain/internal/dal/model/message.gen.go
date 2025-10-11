@@ -12,7 +12,7 @@ type Message struct {
 	SendID      int64  `gorm:"column:send_id;not null;comment:Sender ID" json:"send_id"`                              // Sender ID
 	RecvID      int64  `gorm:"column:recv_id;not null;comment:Receiver ID" json:"recv_id"`                            // Receiver ID
 	GroupID     int64  `gorm:"column:group_id;not null;comment:Group ID" json:"group_id"`                             // Group ID
-	ClientMsgID int64  `gorm:"column:client_msg_id;not null;comment:Client Message ID" json:"client_msg_id"`          // Client Message ID
+	ClientMsgID string `gorm:"column:client_msg_id;not null;comment:Client Message ID" json:"client_msg_id"`          // Client Message ID
 	SessionType int32  `gorm:"column:session_type;not null;comment:Session Type" json:"session_type"`                 // Session Type
 	MessageFrom int32  `gorm:"column:message_from;not null;comment:Message Source" json:"message_from"`               // Message Source
 	ContentType int32  `gorm:"column:content_type;not null;comment:Message Content Type" json:"content_type"`         // Message Content Type

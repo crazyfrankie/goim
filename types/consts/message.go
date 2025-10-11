@@ -14,6 +14,8 @@ const (
 	RevokeMessageType
 	TypingMessageType
 	QuoteMessageType
+	MarkdownTextMessageType
+	OANotification
 )
 
 const (

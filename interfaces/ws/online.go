@@ -195,9 +195,3 @@ type UserOnlineStatus struct {
 	Offline []int32 `json:"offline"`
 	ConnID  string  `json:"connID,omitempty"`
 }
-
-type UserState struct {
-	UserID  string
-	Online  []int32
-	Offline []int32
-}

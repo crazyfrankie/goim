@@ -32,7 +32,7 @@ func newMessage(db *gorm.DB, opts ...gen.DOOption) message {
 	_message.SendID = field.NewInt64(tableName, "send_id")
 	_message.RecvID = field.NewInt64(tableName, "recv_id")
 	_message.GroupID = field.NewInt64(tableName, "group_id")
-	_message.ClientMsgID = field.NewInt64(tableName, "client_msg_id")
+	_message.ClientMsgID = field.NewString(tableName, "client_msg_id")
 	_message.SessionType = field.NewInt32(tableName, "session_type")
 	_message.MessageFrom = field.NewInt32(tableName, "message_from")
 	_message.ContentType = field.NewInt32(tableName, "content_type")
@@ -58,7 +58,7 @@ type message struct {
 	SendID      field.Int64  // Sender ID
 	RecvID      field.Int64  // Receiver ID
 	GroupID     field.Int64  // Group ID
-	ClientMsgID field.Int64  // Client Message ID
+	ClientMsgID field.String // Client Message ID
 	SessionType field.Int32  // Session Type
 	MessageFrom field.Int32  // Message Source
 	ContentType field.Int32  // Message Content Type
@@ -89,7 +89,7 @@ func (m *message) updateTableName(table string) *message {
 	m.SendID = field.NewInt64(table, "send_id")
 	m.RecvID = field.NewInt64(table, "recv_id")
 	m.GroupID = field.NewInt64(table, "group_id")
-	m.ClientMsgID = field.NewInt64(table, "client_msg_id")
+	m.ClientMsgID = field.NewString(table, "client_msg_id")
 	m.SessionType = field.NewInt32(table, "session_type")
 	m.MessageFrom = field.NewInt32(table, "message_from")
 	m.ContentType = field.NewInt32(table, "content_type")
