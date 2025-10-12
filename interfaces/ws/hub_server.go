@@ -6,16 +6,12 @@ import (
 
 	wsctx "github.com/crazyfrankie/goim/interfaces/ws/context"
 	"github.com/crazyfrankie/goim/pkg/logs"
-	messagev1 "github.com/crazyfrankie/goim/protocol/message/v1"
+	msgv1 "github.com/crazyfrankie/goim/protocol/msg/v1"
+	msggatewayv1 "github.com/crazyfrankie/goim/protocol/msggateway/v1"
 )
 
-func (s *Server) InitServer(ctx context.Context) error {
-	// 初始化服务器
-	logs.Infof("InitServer completed")
-	return nil
-}
-
 type Server struct {
+	msggatewayv1.UnimplementedMsgGatewayServer
 	LongConnServer LongConnServer
 	pushTerminal   map[int]struct{}
 	ready          func(srv *Server) error
@@ -37,23 +33,23 @@ func NewServer(longConnServer LongConnServer, ready func(srv *Server) error) *Se
 	return s
 }
 
-func (s *Server) GetUsersOnlineStatus(ctx context.Context, req *GetUsersOnlineStatusReq) (*GetUsersOnlineStatusResp, error) {
-	var resp GetUsersOnlineStatusResp
-	for _, userID := range req.UserIDs {
+func (s *Server) GetUsersOnlineStatus(ctx context.Context, req *msggatewayv1.GetUsersOnlineStatusRequest) (*msggatewayv1.GetUsersOnlineStatusResponse, error) {
+	var resp msggatewayv1.GetUsersOnlineStatusResponse
+	for _, userID := range req.UserID {
 		clients, ok := s.LongConnServer.GetUserAllCons(userID)
 		if !ok {
 			continue
 		}
 
-		uresp := new(GetUsersOnlineStatusResp_SuccessResult)
+		uresp := new(msggatewayv1.GetUsersOnlineStatusResponse_SuccessResult)
 		uresp.UserID = userID
 		for _, client := range clients {
 			if client == nil {
 				continue
 			}
 
-			ps := new(GetUsersOnlineStatusResp_SuccessDetail)
-			ps.PlatformID = int32(client.PlatformID)
+			ps := new(msggatewayv1.GetUsersOnlineStatusResponse_SuccessDetail)
+			ps.PlatformID = client.PlatformID
 			ps.ConnID = client.ctx.GetConnID()
 			ps.Token = client.Token
 			ps.IsBackground = client.IsBackground
@@ -67,27 +63,27 @@ func (s *Server) GetUsersOnlineStatus(ctx context.Context, req *GetUsersOnlineSt
 	return &resp, nil
 }
 
-func (s *Server) pushToUser(ctx context.Context, userID string, msgData *messagev1.Message) *SingleMsgToUserResults {
+func (s *Server) pushToUser(ctx context.Context, userID string, msgData *msgv1.Message) *msggatewayv1.SingleMsgToUserResults {
 	clients, ok := s.LongConnServer.GetUserAllCons(userID)
 	if !ok {
 		logs.Debugf("push user not online, userID: %s", userID)
-		return &SingleMsgToUserResults{
+		return &msggatewayv1.SingleMsgToUserResults{
 			UserID: userID,
 		}
 	}
 
 	logs.Debugf("push user online, clients count: %d, userID: %s", len(clients), userID)
-	result := &SingleMsgToUserResults{
+	result := &msggatewayv1.SingleMsgToUserResults{
 		UserID: userID,
-		Resp:   make([]*SingleMsgToUserPlatform, 0, len(clients)),
+		Resp:   make([]*msggatewayv1.SingleMsgToUserPlatform, 0, len(clients)),
 	}
 
 	for _, client := range clients {
 		if client == nil {
 			continue
 		}
-		userPlatform := &SingleMsgToUserPlatform{
-			RecvPlatFormID: int32(client.PlatformID),
+		userPlatform := &msggatewayv1.SingleMsgToUserPlatform{
+			RecvPlatFormID: client.PlatformID,
 		}
 
 		if !client.IsBackground || (client.IsBackground && client.PlatformID != 2) { // iOS平台ID为2
@@ -108,27 +104,27 @@ func (s *Server) pushToUser(ctx context.Context, userID string, msgData *message
 	return result
 }
 
-func (s *Server) SuperGroupOnlineBatchPushOneMsg(ctx context.Context, req *OnlineBatchPushOneMsgReq) (*OnlineBatchPushOneMsgResp, error) {
+func (s *Server) SuperGroupOnlineBatchPushOneMsg(ctx context.Context, req *msggatewayv1.OnlineBatchPushOneMsgRequest) (*msggatewayv1.OnlineBatchPushOneMsgResponse, error) {
 	if len(req.PushToUserIDs) == 0 {
-		return &OnlineBatchPushOneMsgResp{}, nil
+		return &msggatewayv1.OnlineBatchPushOneMsgResponse{}, nil
 	}
 
-	ch := make(chan *SingleMsgToUserResults, len(req.PushToUserIDs))
+	ch := make(chan *msggatewayv1.SingleMsgToUserResults, len(req.PushToUserIDs))
 	var count atomic.Int64
 	count.Add(int64(len(req.PushToUserIDs)))
 
 	for i := range req.PushToUserIDs {
 		userID := req.PushToUserIDs[i]
 		go func(uid string) {
-			ch <- s.pushToUser(ctx, uid, req.MsgData)
+			ch <- s.pushToUser(ctx, uid, req.GetMessage())
 			if count.Add(-1) == 0 {
 				close(ch)
 			}
 		}(userID)
 	}
 
-	resp := &OnlineBatchPushOneMsgResp{
-		SinglePushResult: make([]*SingleMsgToUserResults, 0, len(req.PushToUserIDs)),
+	resp := &msggatewayv1.OnlineBatchPushOneMsgResponse{
+		SinglePushResult: make([]*msggatewayv1.SingleMsgToUserResults, 0, len(req.PushToUserIDs)),
 	}
 
 	for {
@@ -145,7 +141,7 @@ func (s *Server) SuperGroupOnlineBatchPushOneMsg(ctx context.Context, req *Onlin
 	}
 }
 
-func (s *Server) KickUserOffline(ctx context.Context, req *KickUserOfflineReq) (*KickUserOfflineResp, error) {
+func (s *Server) KickUserOffline(ctx context.Context, req *msggatewayv1.KickUserOfflineRequest) (*msggatewayv1.KickUserOfflineResponse, error) {
 	for _, v := range req.KickUserIDList {
 		clients, _, ok := s.LongConnServer.GetUserPlatformCons(v, int(req.PlatformID))
 		if !ok {
@@ -161,10 +157,10 @@ func (s *Server) KickUserOffline(ctx context.Context, req *KickUserOfflineReq) (
 		}
 	}
 
-	return &KickUserOfflineResp{}, nil
+	return &msggatewayv1.KickUserOfflineResponse{}, nil
 }
 
-func (s *Server) MultiTerminalLoginCheck(ctx context.Context, req *MultiTerminalLoginCheckReq) (*MultiTerminalLoginCheckResp, error) {
+func (s *Server) MultiTerminalLoginCheck(ctx context.Context, req *msggatewayv1.MultiTerminalLoginCheckRequest) (*msggatewayv1.MultiTerminalLoginCheckResponse, error) {
 	if oldClients, userOK, clientOK := s.LongConnServer.GetUserPlatformCons(req.UserID, int(req.PlatformID)); userOK {
 		tempUserCtx := wsctx.NewTempContext()
 		tempUserCtx.SetToken(req.Token)
@@ -180,62 +176,5 @@ func (s *Server) MultiTerminalLoginCheck(ctx context.Context, req *MultiTerminal
 		}
 		s.LongConnServer.SetKickHandlerInfo(i)
 	}
-	return &MultiTerminalLoginCheckResp{}, nil
+	return &msggatewayv1.MultiTerminalLoginCheckResponse{}, nil
 }
-
-// 相关数据结构
-type GetUsersOnlineStatusReq struct {
-	UserIDs []string `json:"userIDs"`
-}
-
-type GetUsersOnlineStatusResp struct {
-	SuccessResult []*GetUsersOnlineStatusResp_SuccessResult `json:"successResult"`
-}
-
-type GetUsersOnlineStatusResp_SuccessResult struct {
-	UserID               string                                    `json:"userID"`
-	Status               int32                                     `json:"status"`
-	DetailPlatformStatus []*GetUsersOnlineStatusResp_SuccessDetail `json:"detailPlatformStatus"`
-}
-
-type GetUsersOnlineStatusResp_SuccessDetail struct {
-	PlatformID   int32  `json:"platformID"`
-	ConnID       string `json:"connID"`
-	Token        string `json:"token"`
-	IsBackground bool   `json:"isBackground"`
-}
-
-type OnlineBatchPushOneMsgReq struct {
-	PushToUserIDs []string           `json:"pushToUserIDs"`
-	MsgData       *messagev1.Message `json:"msgData"`
-}
-
-type OnlineBatchPushOneMsgResp struct {
-	SinglePushResult []*SingleMsgToUserResults `json:"singlePushResult"`
-}
-
-type SingleMsgToUserResults struct {
-	UserID     string                     `json:"userID"`
-	Resp       []*SingleMsgToUserPlatform `json:"resp"`
-	OnlinePush bool                       `json:"onlinePush"`
-}
-
-type SingleMsgToUserPlatform struct {
-	RecvPlatFormID int32 `json:"recvPlatFormID"`
-	ResultCode     int64 `json:"resultCode"`
-}
-
-type KickUserOfflineReq struct {
-	KickUserIDList []string `json:"kickUserIDList"`
-	PlatformID     int32    `json:"platformID"`
-}
-
-type KickUserOfflineResp struct{}
-
-type MultiTerminalLoginCheckReq struct {
-	UserID     string `json:"userID"`
-	PlatformID int32  `json:"platformID"`
-	Token      string `json:"token"`
-}
-
-type MultiTerminalLoginCheckResp struct{}

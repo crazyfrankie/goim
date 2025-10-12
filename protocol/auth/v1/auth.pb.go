@@ -24,6 +24,7 @@ const (
 type GenerateTokenRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	UserID        int64                  `protobuf:"varint,1,opt,name=userID,proto3" json:"userID,omitempty"`
+	PlatformID    int32                  `protobuf:"varint,2,opt,name=platformID,proto3" json:"platformID,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -61,6 +62,13 @@ func (*GenerateTokenRequest) Descriptor() ([]byte, []int) {
 func (x *GenerateTokenRequest) GetUserID() int64 {
 	if x != nil {
 		return x.UserID
+	}
+	return 0
+}
+
+func (x *GenerateTokenRequest) GetPlatformID() int32 {
+	if x != nil {
+		return x.PlatformID
 	}
 	return 0
 }
@@ -164,6 +172,7 @@ func (x *ParseTokenRequest) GetToken() string {
 type ParseTokenResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	UserID        int64                  `protobuf:"varint,1,opt,name=userID,proto3" json:"userID,omitempty"`
+	PlatformID    int32                  `protobuf:"varint,2,opt,name=platformID,proto3" json:"platformID,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -201,6 +210,13 @@ func (*ParseTokenResponse) Descriptor() ([]byte, []int) {
 func (x *ParseTokenResponse) GetUserID() int64 {
 	if x != nil {
 		return x.UserID
+	}
+	return 0
+}
+
+func (x *ParseTokenResponse) GetPlatformID() int32 {
+	if x != nil {
+		return x.PlatformID
 	}
 	return 0
 }
@@ -313,16 +329,22 @@ var File_idl_auth_v1_auth_proto protoreflect.FileDescriptor
 
 const file_idl_auth_v1_auth_proto_rawDesc = "" +
 	"\n" +
-	"\x16idl/auth/v1/auth.proto\x12\aauth.v1\".\n" +
+	"\x16idl/auth/v1/auth.proto\x12\aauth.v1\"N\n" +
 	"\x14GenerateTokenRequest\x12\x16\n" +
-	"\x06userID\x18\x01 \x01(\x03R\x06userID\"_\n" +
+	"\x06userID\x18\x01 \x01(\x03R\x06userID\x12\x1e\n" +
+	"\n" +
+	"platformID\x18\x02 \x01(\x05R\n" +
+	"platformID\"_\n" +
 	"\x15GenerateTokenResponse\x12!\n" +
 	"\faccess_token\x18\x01 \x01(\tR\vaccessToken\x12#\n" +
 	"\rrefresh_token\x18\x02 \x01(\tR\frefreshToken\")\n" +
 	"\x11ParseTokenRequest\x12\x14\n" +
-	"\x05token\x18\x01 \x01(\tR\x05token\",\n" +
+	"\x05token\x18\x01 \x01(\tR\x05token\"L\n" +
 	"\x12ParseTokenResponse\x12\x16\n" +
-	"\x06userID\x18\x01 \x01(\x03R\x06userID\":\n" +
+	"\x06userID\x18\x01 \x01(\x03R\x06userID\x12\x1e\n" +
+	"\n" +
+	"platformID\x18\x02 \x01(\x05R\n" +
+	"platformID\":\n" +
 	"\x13RefreshTokenRequest\x12#\n" +
 	"\rrefresh_token\x18\x01 \x01(\tR\frefreshToken\"v\n" +
 	"\x14RefreshTokenResponse\x12!\n" +

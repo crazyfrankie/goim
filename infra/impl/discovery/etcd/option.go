@@ -15,7 +15,7 @@ func WithDialTimeout(timeout time.Duration) Option {
 	}
 }
 
-// WithMaxCallSendMsgSize sets a custom max call send message size for the etcd client
+// WithMaxCallSendMsgSize sets a custom max call send msg size for the etcd client
 func WithMaxCallSendMsgSize(size int) Option {
 	return func(cfg *clientv3.Config) {
 		cfg.MaxCallSendMsgSize = size

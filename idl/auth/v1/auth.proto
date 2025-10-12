@@ -6,6 +6,7 @@ option go_package="github.com/crazyfrankie/goim/protocol/auth/v1;authv1";
 
 message GenerateTokenRequest {
   int64 userID = 1;
+  int32 platformID = 2;
 }
 
 message GenerateTokenResponse {
@@ -19,6 +20,7 @@ message ParseTokenRequest {
 
 message ParseTokenResponse {
   int64 userID = 1;
+  int32 platformID = 2;
 }
 
 message RefreshTokenRequest {

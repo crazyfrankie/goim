@@ -201,7 +201,6 @@ func (ws *WebsocketServer) pushUserIDOnlineStatus(ctx context.Context, userID st
 	}
 }
 
-// 订阅相关的数据结构
 type SubUserOnlineStatus struct {
 	SubscribeUserID   []string `json:"subscribeUserID"`
 	UnsubscribeUserID []string `json:"unsubscribeUserID"`

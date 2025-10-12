@@ -13,18 +13,18 @@ import (
 type Conn interface {
 	// Close this connection
 	Close() error
-	// WriteMessage write message to connection,messageType means data type
+	// WriteMessage write msg to connection,messageType means data type
 	WriteMessage(messageType int, data []byte) error
-	// ReadMessage read message from this connection
+	// ReadMessage read msg from this connection
 	ReadMessage() (int, []byte, error)
 	// SetReadDeadline sets the read deadline on the underlying network connection,
 	// after a read has timed out, will return an error.
 	SetReadDeadline(timeout time.Duration) error
-	// SetWriteDeadline sets to write deadline when send message,when read has timed out,will return error.
+	// SetWriteDeadline sets to write deadline when send msg,when read has timed out,will return error.
 	SetWriteDeadline(timeout time.Duration) error
 	// GenerateConn Check the connection of the current and when it was sent are the same
 	GenerateConn(w http.ResponseWriter, r *http.Request) error
-	// SetReadLimit sets the maximum size for a message read from the peer.bytes
+	// SetReadLimit sets the maximum size for a msg read from the peer.bytes
 	SetReadLimit(limit int64)
 	SetPongHandler(handler PingPongHandler)
 	SetPingHandler(handler PingPongHandler)

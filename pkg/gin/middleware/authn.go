@@ -51,22 +51,24 @@ func (h *AuthnHandler) Auth() gin.HandlerFunc {
 			return
 		}
 
-		refreshToken, err := c.Cookie("goim_refresh")
-		if err != nil {
-			response.Unauthorized(c)
-			return
-		}
+		response.Unauthorized(c)
 
-		refreshRes, err := h.authClient.RefreshToken(c.Request.Context(), &authv1.RefreshTokenRequest{RefreshToken: refreshToken})
-		if err != nil {
-			response.InternalServerError(c, err)
-			return
-		}
-		c.Request = c.Request.WithContext(h.storeUserID(c.Request.Context(), refreshRes.GetUserID()))
-
-		response.SetAuthorization(c, refreshRes.AccessToken, refreshRes.RefreshToken)
-
-		c.Next()
+		//refreshToken, err := c.Cookie("goim_refresh")
+		//if err != nil {
+		//	response.Unauthorized(c)
+		//	return
+		//}
+		//
+		//refreshRes, err := h.authClient.RefreshToken(c.Request.Context(), &authv1.RefreshTokenRequest{RefreshToken: refreshToken})
+		//if err != nil {
+		//	response.InternalServerError(c, err)
+		//	return
+		//}
+		//c.Request = c.Request.WithContext(h.storeUserID(c.Request.Context(), refreshRes.GetUserID()))
+		//
+		//response.SetAuthorization(c, refreshRes.AccessToken, refreshRes.RefreshToken)
+		//
+		//c.Next()
 	}
 }
 

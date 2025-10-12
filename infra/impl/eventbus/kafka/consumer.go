@@ -22,7 +22,7 @@ type consumerImpl struct {
 
 func RegisterConsumer(broker string, topic, groupID string, handler eventbus.ConsumerHandler, opts ...eventbus.ConsumerOpt) error {
 	config := sarama.NewConfig()
-	config.Consumer.Offsets.Initial = sarama.OffsetOldest // Start consuming from the earliest message
+	config.Consumer.Offsets.Initial = sarama.OffsetOldest // Start consuming from the earliest msg
 	config.Consumer.Group.Session.Timeout = 30 * time.Second
 
 	o := &eventbus.ConsumerOption{}

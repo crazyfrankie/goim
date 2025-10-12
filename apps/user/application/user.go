@@ -12,6 +12,7 @@ import (
 	langslice "github.com/crazyfrankie/goim/pkg/lang/slice"
 	authv1 "github.com/crazyfrankie/goim/protocol/auth/v1"
 	userv1 "github.com/crazyfrankie/goim/protocol/user/v1"
+	"github.com/crazyfrankie/goim/types/consts"
 	"github.com/crazyfrankie/goim/types/errno"
 )
 
@@ -50,8 +51,12 @@ func (u *UserApplicationService) Register(ctx context.Context, req *userv1.Regis
 		return nil, err
 	}
 
+	ua := ctxutil.MustGetUserAgent(ctx)
+	platformID := consts.PlatformNameToID(consts.ExtractPlatform(ua))
+
 	tkRes, err := u.authCli.GenerateToken(ctx, &authv1.GenerateTokenRequest{
-		UserID: userInfo.UserID,
+		UserID:     userInfo.UserID,
+		PlatformID: platformID,
 	})
 	if err != nil {
 		return nil, err
@@ -72,8 +77,12 @@ func (u *UserApplicationService) Login(ctx context.Context, req *userv1.LoginReq
 		return nil, err
 	}
 
+	ua := ctxutil.MustGetUserAgent(ctx)
+	platformID := consts.PlatformNameToID(consts.ExtractPlatform(ua))
+
 	tkRes, err := u.authCli.GenerateToken(ctx, &authv1.GenerateTokenRequest{
-		UserID: userInfo.UserID,
+		UserID:     userInfo.UserID,
+		PlatformID: platformID,
 	})
 	if err != nil {
 		return nil, err

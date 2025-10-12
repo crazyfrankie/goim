@@ -2,9 +2,9 @@
 // versions:
 // - protoc-gen-go-grpc v1.5.1
 // - protoc             (unknown)
-// source: idl/message/v1/message.proto
+// source: idl/msg/v1/message.proto
 
-package messagev1
+package msgv1
 
 import (
 	context "context"
@@ -19,8 +19,8 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	MessageService_SendMessage_FullMethodName      = "/message.v1.MessageService/SendMessage"
-	MessageService_SetMessageStatus_FullMethodName = "/message.v1.MessageService/SetMessageStatus"
+	MessageService_SendMessage_FullMethodName      = "/msg.v1.MessageService/SendMessage"
+	MessageService_SetMessageStatus_FullMethodName = "/msg.v1.MessageService/SetMessageStatus"
 )
 
 // MessageServiceClient is the client API for MessageService service.
@@ -142,7 +142,7 @@ func _MessageService_SetMessageStatus_Handler(srv interface{}, ctx context.Conte
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var MessageService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "message.v1.MessageService",
+	ServiceName: "msg.v1.MessageService",
 	HandlerType: (*MessageServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
@@ -155,5 +155,5 @@ var MessageService_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "idl/message/v1/message.proto",
+	Metadata: "idl/msg/v1/message.proto",
 }

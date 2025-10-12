@@ -25,7 +25,7 @@ func NewMessageHandler(messageClient messagev1.MessageServiceClient) *MessageHan
 }
 
 func (h *MessageHandler) RegisterRoute(r *gin.RouterGroup) {
-	messageGroup := r.Group("message")
+	messageGroup := r.Group("msg")
 	{
 		messageGroup.POST("send", h.SendMessage())
 	}
@@ -68,26 +68,16 @@ func (h *MessageHandler) getSendMsgReq(req *model.SendMsgReq) (*messagev1.SendMe
 		data = &apistruct.VideoElem{}
 	case consts.FileMessageType:
 		data = &apistruct.FileElem{}
-	case consts.AtTextMessageType:
-		data = &apistruct.AtElem{}
 	case consts.CustomMessageType:
 		data = &apistruct.CustomElem{}
-	case consts.MarkdownTextMessageType:
-		data = &apistruct.MarkdownTextElem{}
 	case consts.QuoteMessageType:
 		data = &apistruct.QuoteElem{}
-	case consts.OANotification:
-		data = &apistruct.OANotificationElem{}
-		req.SessionType = consts.NotificationChatType
-		//if err := h.userClient.GetNotificationByID(c, req.SendID); err != nil {
-		//	return nil, err
-		//}
 	default:
 		return nil, errorx.Wrapf(nil, "unsupported content type, contentType: %s", req.ContentType)
 	}
 
 	if err := mapstructure.WeakDecode(req.Content, data); err != nil {
-		return nil, errorx.Wrapf(err, "failed to decode message content")
+		return nil, errorx.Wrapf(err, "failed to decode msg content")
 	}
 
 	return h.newUserSendMsgReq(req, data), nil
@@ -106,17 +96,8 @@ func (h *MessageHandler) newUserSendMsgReq(req *model.SendMsgReq, data any) *mes
 	}
 	var newContent string
 	switch req.ContentType {
-	//case consts.OANotification:
-	//	notification := sdkws.NotificationElem{}
-	//	notification.Detail, _ = sonic.MarshalString(params.Content)
-	//	newContent, _ = sonic.MarshalString(&notification)
 	case consts.TextMessageType:
 		fallthrough
-	//case consts.AtTextMessageType:
-	//	if atElem, ok := data.(*apistruct.AtElem); ok {
-	//		msgData.AtUserIDList = atElem.AtUserList
-	//	}
-	//	fallthrough
 	case consts.PictureMessageType:
 		fallthrough
 	case consts.CustomMessageType:

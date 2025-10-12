@@ -43,7 +43,7 @@ func (w *statusError) Msg() string {
 }
 
 func (w *statusError) Error() string {
-	return fmt.Sprintf("code=%d message=%s", w.statusCode, w.message)
+	return fmt.Sprintf("code=%d msg=%s", w.statusCode, w.message)
 }
 
 func (w *statusError) Extra() map[string]string {

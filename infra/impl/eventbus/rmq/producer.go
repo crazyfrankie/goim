@@ -8,7 +8,7 @@ import (
 	"github.com/apache/rocketmq-client-go/v2"
 	"github.com/apache/rocketmq-client-go/v2/primitive"
 	"github.com/apache/rocketmq-client-go/v2/producer"
-	
+
 	"github.com/crazyfrankie/goim/infra/contract/eventbus"
 	"github.com/crazyfrankie/goim/pkg/lang/signal"
 	"github.com/crazyfrankie/goim/pkg/logs"
@@ -68,7 +68,7 @@ func NewProducer(nameServer, topic, group string, retries int) (eventbus.Produce
 func (r *producerImpl) Send(ctx context.Context, body []byte, opts ...eventbus.SendOpt) error {
 	_, err := r.p.SendSync(context.Background(), primitive.NewMessage(r.topic, body))
 	if err != nil {
-		return fmt.Errorf("[producerImpl] send message failed: %w", err)
+		return fmt.Errorf("[producerImpl] send msg failed: %w", err)
 	}
 	return err
 }

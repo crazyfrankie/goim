@@ -18,8 +18,8 @@ func NewAuthDomain(c *Components) Auth {
 	return &authImpl{c}
 }
 
-func (a *authImpl) GenerateToken(ctx context.Context, uid int64) ([]string, error) {
-	tokens, err := a.TokenGen.GenerateToken(uid)
+func (a *authImpl) GenerateToken(ctx context.Context, uid int64, platformID int32) ([]string, error) {
+	tokens, err := a.TokenGen.GenerateToken(uid, platformID)
 	if err != nil {
 		return nil, err
 	}

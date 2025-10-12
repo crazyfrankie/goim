@@ -4,8 +4,10 @@ import (
 	"context"
 	"sync"
 
-	"github.com/crazyfrankie/goim/pkg/sonic"
 	"github.com/go-playground/validator/v10"
+
+	"github.com/crazyfrankie/goim/pkg/sonic"
+	msgv1 "github.com/crazyfrankie/goim/protocol/msg/v1"
 )
 
 const (
@@ -90,15 +92,15 @@ func (r *Resp) String() string {
 }
 
 type GrpcHandler struct {
-	validate *validator.Validate
-	// msgClient    pb.MsgClient
+	validate  *validator.Validate
+	msgClient msgv1.MessageServiceClient
 	// pushClient   pb.PushClient
-	// userClient   pb.UserClient
 }
 
-func NewGrpcHandler(validate *validator.Validate) *GrpcHandler {
+func NewGrpcHandler(validate *validator.Validate, msgClient msgv1.MessageServiceClient) *GrpcHandler {
 	return &GrpcHandler{
-		validate: validate,
+		validate:  validate,
+		msgClient: msgClient,
 	}
 }
 

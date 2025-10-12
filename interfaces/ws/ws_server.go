@@ -8,9 +8,15 @@ import (
 	"sync/atomic"
 	"time"
 
+	"github.com/crazyfrankie/goim/infra/contract/discovery"
 	"github.com/crazyfrankie/goim/interfaces/ws/compressor"
 	wsctx "github.com/crazyfrankie/goim/interfaces/ws/context"
+	"github.com/crazyfrankie/goim/pkg/errorx"
+	"github.com/crazyfrankie/goim/pkg/lang/conv"
 	"github.com/crazyfrankie/goim/pkg/logs"
+	authv1 "github.com/crazyfrankie/goim/protocol/auth/v1"
+	"github.com/crazyfrankie/goim/types/consts"
+	"github.com/crazyfrankie/goim/types/errno"
 	"github.com/go-playground/validator/v10"
 )
 
@@ -22,6 +28,7 @@ type LongConnServer interface {
 	Validate(s any) error
 	KickUserConn(client *Client) error
 	UnRegister(c *Client)
+	SetDiscoveryRegistry(ctx context.Context, client discovery.Conn) error
 	SetKickHandlerInfo(i *kickHandler)
 	SubUserOnlineStatus(ctx context.Context, client *Client, data *Req) ([]byte, error)
 	compressor.Compressor
@@ -29,7 +36,7 @@ type LongConnServer interface {
 }
 
 type WebsocketServer struct {
-	port              int
+	port              string
 	wsMaxConnNum      int64
 	registerChan      chan *Client
 	unregisterChan    chan *Client
@@ -44,6 +51,8 @@ type WebsocketServer struct {
 	validate          *validator.Validate
 	compressor.Compressor
 	MessageHandler
+
+	authClient authv1.AuthServiceClient
 }
 
 type kickHandler struct {
@@ -82,6 +91,17 @@ func (ws *WebsocketServer) GetUserPlatformCons(userID string, platform int) ([]*
 	}
 
 	return allClients, len(allClients) > 0, len(allClients) > 0
+}
+
+func (ws *WebsocketServer) SetDiscoveryRegistry(ctx context.Context, client discovery.Conn) error {
+	authCC, err := client.GetConn(ctx, consts.AuthServiceName)
+	if err != nil {
+		return err
+	}
+
+	ws.authClient = authv1.NewAuthServiceClient(authCC)
+
+	return nil
 }
 
 func NewWebsocketServer(opts ...Option) *WebsocketServer {
@@ -132,7 +152,7 @@ func (ws *WebsocketServer) Run(ctx context.Context) error {
 
 	done := make(chan struct{})
 	go func() {
-		wsSrv := http.Server{Addr: fmt.Sprintf(":%d", ws.port), Handler: nil}
+		wsSrv := http.Server{Addr: fmt.Sprintf(":%s", ws.port), Handler: nil}
 		http.HandleFunc("/", ws.wsHandler)
 		go func() {
 			defer close(done)
@@ -177,7 +197,6 @@ func (ws *WebsocketServer) registerClient(client *Client) {
 }
 
 func (ws *WebsocketServer) KickUserConn(client *Client) error {
-	// 从BucketManager中移除客户端
 	bucket := ws.bucketManager.GetBucket(client.UserID)
 	bucket.DelClient(client)
 	return client.KickOnlineMessage()
@@ -193,6 +212,17 @@ func (ws *WebsocketServer) wsHandler(w http.ResponseWriter, r *http.Request) {
 
 	err := connContext.ParseEssentialArgs()
 	if err != nil {
+		httpError(connContext, err)
+		return
+	}
+
+	res, err := ws.authClient.ParseToken(connContext, &authv1.ParseTokenRequest{Token: connContext.GetToken()})
+	if err != nil {
+		httpError(connContext, err)
+		return
+	}
+
+	if err := ws.validateRespWithRequest(connContext, res); err != nil {
 		httpError(connContext, err)
 		return
 	}
@@ -213,8 +243,7 @@ func (ws *WebsocketServer) wsHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func (ws *WebsocketServer) multiTerminalLoginChecker(clientOK bool, oldClients []*Client, newClient *Client) {
-	//// 多终端登录检查逻辑，基本保持与open-im-server一致
-	//// 这里简化实现，实际应该根据配置策略处理
+	// 这里简化实现，实际应该根据配置策略处理
 	//if clientOK {
 	//	for _, c := range oldClients {
 	//		if c.token == newClient.token {
@@ -235,7 +264,6 @@ func (ws *WebsocketServer) multiTerminalLoginChecker(clientOK bool, oldClients [
 func (ws *WebsocketServer) unregisterClient(client *Client) {
 	defer ws.clientPool.Put(client)
 
-	// 从BucketManager中移除客户端
 	bucket := ws.bucketManager.GetBucket(client.UserID)
 	bucket.DelClient(client)
 
@@ -246,14 +274,14 @@ func (ws *WebsocketServer) unregisterClient(client *Client) {
 		client.UserID, client.closedErr, ws.onlineUserConnNum.Load())
 }
 
-func getRemoteAdders(client []*Client) string {
-	var ret string
-	for i, c := range client {
-		if i == 0 {
-			ret = c.ctx.GetRemoteAddr()
-		} else {
-			ret += "@" + c.ctx.GetRemoteAddr()
-		}
+func (ws *WebsocketServer) validateRespWithRequest(ctx *wsctx.Context, resp *authv1.ParseTokenResponse) error {
+	userID, _ := conv.StrToInt64(ctx.GetUserID())
+	platformID, _ := conv.StrToInt64(ctx.GetPlatformID())
+	if resp.UserID != userID {
+		return errorx.Wrapf(errorx.New(errno.ErrTokenInvalidCode), "token uid %d != userID %d", resp.UserID, userID)
 	}
-	return ret
+	if resp.PlatformID != int32(platformID) {
+		return errorx.Wrapf(errorx.New(errno.ErrTokenInvalidCode), "token platform %d != platformID %d", resp.PlatformID, platformID)
+	}
+	return nil
 }

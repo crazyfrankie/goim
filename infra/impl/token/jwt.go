@@ -47,14 +47,14 @@ func New(cmd cache.Cmdable) (token.Token, error) {
 	return &TokenService{cmd: cmd, signAlgo: signAlgo, secretKey: private, publicKey: public}, nil
 }
 
-func (s *TokenService) GenerateToken(uid int64) ([]string, error) {
+func (s *TokenService) GenerateToken(uid int64, platformID int32) ([]string, error) {
 	res := make([]string, 2)
-	access, err := s.newToken(uid, time.Minute*15)
+	access, err := s.newToken(uid, platformID, time.Minute*15)
 	if err != nil {
 		return res, err
 	}
 	res[0] = access
-	refresh, err := s.newToken(uid, time.Hour*24*30)
+	refresh, err := s.newToken(uid, platformID, time.Hour*24*30)
 	if err != nil {
 		return res, err
 	}
@@ -71,14 +71,15 @@ func (s *TokenService) GenerateToken(uid int64) ([]string, error) {
 	return res, nil
 }
 
-func (s *TokenService) GenerateConnToken(uid int64) (string, error) {
-	return s.newToken(uid, time.Hour*24)
+func (s *TokenService) GenerateConnToken(uid int64, platformID int32) (string, error) {
+	return s.newToken(uid, platformID, time.Hour*24)
 }
 
-func (s *TokenService) newToken(uid int64, duration time.Duration) (string, error) {
+func (s *TokenService) newToken(uid int64, platformID int32, duration time.Duration) (string, error) {
 	now := time.Now()
 	claims := &token.Claims{
-		UID: uid,
+		UID:        uid,
+		PlatformID: platformID,
 		RegisteredClaims: jwt.RegisteredClaims{
 			IssuedAt:  jwt.NewNumericDate(now),
 			ExpiresAt: jwt.NewNumericDate(now.Add(duration)),
@@ -117,7 +118,7 @@ func (s *TokenService) TryRefresh(refresh string) ([]string, int64, error) {
 		return nil, 0, errors.New("jwt invalid or revoked")
 	}
 
-	access, err := s.newToken(refreshClaims.UID, time.Hour)
+	access, err := s.newToken(refreshClaims.UID, refreshClaims.PlatformID, time.Hour)
 	if err != nil {
 		return nil, 0, err
 	}
@@ -127,7 +128,7 @@ func (s *TokenService) TryRefresh(refresh string) ([]string, int64, error) {
 	expire, _ := refreshClaims.GetExpirationTime()
 	if expire.Sub(now) < expire.Sub(issat.Time)/3 {
 		// try refresh
-		refresh, err = s.newToken(refreshClaims.UID, time.Hour*24*30)
+		refresh, err = s.newToken(refreshClaims.UID, refreshClaims.PlatformID, time.Hour*24*30)
 		err = s.cmd.Set(context.Background(), refreshKey(refreshClaims.UID), refresh, time.Hour*24*30).Err()
 		if err != nil {
 			return nil, 0, err

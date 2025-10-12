@@ -1,5 +1,7 @@
 package consts
 
+import "regexp"
+
 // fixme 1<--->IOS 2<--->Android  3<--->Windows
 // fixme  4<--->OSX  5<--->Web  6<--->MiniWeb 7<--->Linux.
 const (
@@ -105,4 +107,28 @@ func PlatformNameToClass(name string) string {
 
 func PlatformIDToClass(num int32) string {
 	return PlatformID2class[num]
+}
+
+func ExtractPlatform(ua string) string {
+	patterns := map[string]*regexp.Regexp{
+		AdminPlatformStr:      regexp.MustCompile(`(?i)admin`),
+		MiniWebPlatformStr:    regexp.MustCompile(`(?i)miniprogram|miniweb`),
+		WebPlatformStr:        regexp.MustCompile(`(?i)mozilla(?!.*mobile)`),
+		IPadPlatformStr:       regexp.MustCompile(`(?i)ipad`),
+		IOSPlatformStr:        regexp.MustCompile(`(?i)iphone|ipod`),
+		AndroidPadPlatformStr: regexp.MustCompile(`(?i)android.*pad|pad.*android`),
+		AndroidPlatformStr:    regexp.MustCompile(`(?i)android`),
+		HarmonyOSPlatformStr:  regexp.MustCompile(`(?i)harmonyos`),
+		OSXPlatformStr:        regexp.MustCompile(`(?i)mac os x`),
+		WindowsPlatformStr:    regexp.MustCompile(`(?i)windows`),
+		LinuxPlatformStr:      regexp.MustCompile(`(?i)linux`),
+	}
+
+	for platform, pattern := range patterns {
+		if pattern.MatchString(ua) {
+			return platform
+		}
+	}
+
+	return "Unknown"
 }

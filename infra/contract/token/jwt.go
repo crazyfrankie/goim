@@ -8,7 +8,8 @@ import (
 )
 
 type Claims struct {
-	UID int64 `json:"uid"`
+	UID        int64 `json:"uid"`
+	PlatformID int32 `json:"platformID"`
 	jwt.RegisteredClaims
 }
 
@@ -19,8 +20,7 @@ type ResetClaims struct {
 
 type Token interface {
 	ResetToken
-	GenerateToken(uid int64) ([]string, error)
-	GenerateConnToken(uid int64) (string, error)
+	GenerateToken(uid int64, platformID int32) ([]string, error)
 	ParseToken(token string) (*Claims, error)
 	TryRefresh(refresh string) ([]string, int64, error)
 	CleanToken(ctx context.Context, uid int64) error

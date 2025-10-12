@@ -5,10 +5,10 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/crazyfrankie/goim/infra/contract/discovery"
 	"gorm.io/gorm"
 
 	message "github.com/crazyfrankie/goim/apps/message/domain/service"
+	"github.com/crazyfrankie/goim/infra/contract/discovery"
 	"github.com/crazyfrankie/goim/infra/contract/idgen"
 	"github.com/crazyfrankie/goim/infra/impl/cache/redis"
 	"github.com/crazyfrankie/goim/infra/impl/eventbus"
@@ -54,7 +54,7 @@ func initAppEventProducer() (eventbus.Producer, error) {
 	nameServer := os.Getenv(consts.MQServer)
 	messageEventProducer, err := eventbus.NewProducer(nameServer, consts.RMQTopicMessage, consts.RMQConsumeGroupMessage, 1)
 	if err != nil {
-		return nil, fmt.Errorf("init message producer failed, err=%w", err)
+		return nil, fmt.Errorf("init msg producer failed, err=%w", err)
 	}
 
 	return messageEventProducer, nil

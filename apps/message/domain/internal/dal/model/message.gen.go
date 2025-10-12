@@ -4,7 +4,7 @@
 
 package model
 
-const TableNameMessage = "message"
+const TableNameMessage = "msg"
 
 // Message Message Table
 type Message struct {

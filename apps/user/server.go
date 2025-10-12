@@ -22,9 +22,8 @@ func Start(ctx context.Context, client discovery.SvcDiscoveryRegistry, srv grpc.
 		UserRepo: userRepo,
 		IDGen:    basic.IDGen,
 		IconOSS:  basic.IconOSS,
-		TokenGen: basic.TokenGen,
 	})
-	appService := application.NewUserApplicationService(userDomain)
+	appService := application.NewUserApplicationService(userDomain, basic.AuthCli)
 
 	userv1.RegisterUserServiceServer(srv, appService)
 

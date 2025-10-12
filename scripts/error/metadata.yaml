@@ -28,4 +28,6 @@ app:
         code: 1
       - name: ws
         code: 2
+      - name: auth
+        code: 3
 

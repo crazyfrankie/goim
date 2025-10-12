@@ -17,7 +17,7 @@ import (
 	"github.com/crazyfrankie/goim/pkg/logs"
 	"github.com/crazyfrankie/goim/pkg/safego"
 	"github.com/crazyfrankie/goim/pkg/sonic"
-	messagev1 "github.com/crazyfrankie/goim/protocol/message/v1"
+	msgv1 "github.com/crazyfrankie/goim/protocol/msg/v1"
 	"github.com/crazyfrankie/goim/types/consts"
 )
 
@@ -26,31 +26,31 @@ const (
 	MessageText = iota + 1
 	// MessageBinary is for binary messages like protobufs.
 	MessageBinary
-	// CloseMessage denotes a close control message. The optional message
+	// CloseMessage denotes a close control msg. The optional msg
 	// payload contains a numeric code and text. Use the FormatCloseMessage
-	// function to format a close message payload.
+	// function to format a close msg payload.
 	CloseMessage = 8
 
-	// PingMessage denotes a ping control message. The optional message payload
+	// PingMessage denotes a ping control msg. The optional msg payload
 	// is UTF-8 encoded text.
 	PingMessage = 9
 
-	// PongMessage denotes a pong control message. The optional message payload
+	// PongMessage denotes a pong control msg. The optional msg payload
 	// is UTF-8 encoded text.
 	PongMessage = 10
 )
 
 const (
-	// Time allowed to write a message to the peer.
+	// Time allowed to write a msg to the peer.
 	writeWait = 10 * time.Second
 
-	// Time allowed to read the next pong message from the peer.
+	// Time allowed to read the next pong msg from the peer.
 	pongWait = 30 * time.Second
 
 	// Send pings to peer with this period. Must be less than pongWait.
 	pingPeriod = (pongWait * 9) / 10
 
-	// Maximum message size allowed from peer.
+	// Maximum msg size allowed from peer.
 	maxMessageSize = 51200
 )
 
@@ -213,8 +213,8 @@ func (c *Client) PushUserOnlineStatus(data []byte) error {
 	return c.sendResp(resp)
 }
 
-func (c *Client) PushMessage(ctx context.Context, msgData *messagev1.Message) error {
-	//var msg *messagev1.Message
+func (c *Client) PushMessage(ctx context.Context, msgData *msgv1.Message) error {
+	//var msg *msgv1.Message
 	//conversationID := msgprocessor.GetConversationIDByMsg(msgData)
 	//m := map[string]*sdkws.PullMsgs{conversationID: {Msgs: []*sdkws.MsgData{msgData}}}
 	//if msgprocessor.IsNotification(conversationID) {
@@ -222,7 +222,6 @@ func (c *Client) PushMessage(ctx context.Context, msgData *messagev1.Message) er
 	//} else {
 	//	msg.Msgs = m
 	//}
-	//log.ZDebug(ctx, "PushMessage", "msg", &msg)
 	//data, err := proto.Marshal(&msg)
 	//if err != nil {
 	//	return err
@@ -386,7 +385,7 @@ func (c *Client) processMessage(message []byte) error {
 		types.PlatformID, consts.PlatformIDToName(c.PlatformID),
 		types.ConnID, c.ctx.GetConnID())
 
-	logs.CtxDebugf(ctx, "gateway req message, req: %s", binaryReq.String())
+	logs.CtxDebugf(ctx, "gateway req msg, req: %s", binaryReq.String())
 
 	var (
 		resp       []byte
@@ -447,7 +446,7 @@ func (c *Client) handleTextMessage(message []byte) error {
 		}
 		return c.conn.WriteMessage(MessageText, msgData)
 	default:
-		return fmt.Errorf("not support message type %s", msg.Type)
+		return fmt.Errorf("not support msg type %s", msg.Type)
 	}
 }
 
@@ -462,7 +461,7 @@ func (c *Client) replyMessage(ctx context.Context, binaryReq *Req, err error, re
 		Data:          resp,
 	}
 	t := time.Now()
-	logs.CtxDebugf(ctx, "gateway reply message, resp: %s", mReply.String())
+	logs.CtxDebugf(ctx, "gateway reply msg, resp: %s", mReply.String())
 	err = c.sendResp(mReply)
 	if err != nil {
 		logs.CtxWarnf(ctx, "wireBinaryMsg replyMessage, err: %v, resp: %s", err, mReply.String())
@@ -603,7 +602,7 @@ func (c *Client) writeMessage(data []byte) error {
 	if c.IsCompress && len(data) > 1024 {
 		if compressed, err := c.ConnServer.Compress(data); err == nil {
 			data = compressed
-			logs.CtxDebugf(c.ctx, "message compressed: %d -> %d bytes (%.1f%%)",
+			logs.CtxDebugf(c.ctx, "msg compressed: %d -> %d bytes (%.1f%%)",
 				originalSize, len(data),
 				float64(len(data))/float64(originalSize)*100)
 		}

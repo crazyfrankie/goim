@@ -2,9 +2,9 @@
 // versions:
 // 	protoc-gen-go v1.36.10
 // 	protoc        (unknown)
-// source: idl/message/v1/message.proto
+// source: idl/msg/v1/message.proto
 
-package messagev1
+package msgv1
 
 import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
@@ -38,7 +38,7 @@ type Message struct {
 
 func (x *Message) Reset() {
 	*x = Message{}
-	mi := &file_idl_message_v1_message_proto_msgTypes[0]
+	mi := &file_idl_msg_v1_message_proto_msgTypes[0]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -50,7 +50,7 @@ func (x *Message) String() string {
 func (*Message) ProtoMessage() {}
 
 func (x *Message) ProtoReflect() protoreflect.Message {
-	mi := &file_idl_message_v1_message_proto_msgTypes[0]
+	mi := &file_idl_msg_v1_message_proto_msgTypes[0]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -63,7 +63,7 @@ func (x *Message) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Message.ProtoReflect.Descriptor instead.
 func (*Message) Descriptor() ([]byte, []int) {
-	return file_idl_message_v1_message_proto_rawDescGZIP(), []int{0}
+	return file_idl_msg_v1_message_proto_rawDescGZIP(), []int{0}
 }
 
 func (x *Message) GetSendID() int64 {
@@ -138,7 +138,7 @@ type SendMessageRequest struct {
 
 func (x *SendMessageRequest) Reset() {
 	*x = SendMessageRequest{}
-	mi := &file_idl_message_v1_message_proto_msgTypes[1]
+	mi := &file_idl_msg_v1_message_proto_msgTypes[1]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -150,7 +150,7 @@ func (x *SendMessageRequest) String() string {
 func (*SendMessageRequest) ProtoMessage() {}
 
 func (x *SendMessageRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_idl_message_v1_message_proto_msgTypes[1]
+	mi := &file_idl_msg_v1_message_proto_msgTypes[1]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -163,7 +163,7 @@ func (x *SendMessageRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SendMessageRequest.ProtoReflect.Descriptor instead.
 func (*SendMessageRequest) Descriptor() ([]byte, []int) {
-	return file_idl_message_v1_message_proto_rawDescGZIP(), []int{1}
+	return file_idl_msg_v1_message_proto_rawDescGZIP(), []int{1}
 }
 
 func (x *SendMessageRequest) GetData() *Message {
@@ -184,7 +184,7 @@ type SendMessageResponse struct {
 
 func (x *SendMessageResponse) Reset() {
 	*x = SendMessageResponse{}
-	mi := &file_idl_message_v1_message_proto_msgTypes[2]
+	mi := &file_idl_msg_v1_message_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -196,7 +196,7 @@ func (x *SendMessageResponse) String() string {
 func (*SendMessageResponse) ProtoMessage() {}
 
 func (x *SendMessageResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_idl_message_v1_message_proto_msgTypes[2]
+	mi := &file_idl_msg_v1_message_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -209,7 +209,7 @@ func (x *SendMessageResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SendMessageResponse.ProtoReflect.Descriptor instead.
 func (*SendMessageResponse) Descriptor() ([]byte, []int) {
-	return file_idl_message_v1_message_proto_rawDescGZIP(), []int{2}
+	return file_idl_msg_v1_message_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *SendMessageResponse) GetServerMsgID() int64 {
@@ -242,7 +242,7 @@ type SetMessageStatusRequest struct {
 
 func (x *SetMessageStatusRequest) Reset() {
 	*x = SetMessageStatusRequest{}
-	mi := &file_idl_message_v1_message_proto_msgTypes[3]
+	mi := &file_idl_msg_v1_message_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -254,7 +254,7 @@ func (x *SetMessageStatusRequest) String() string {
 func (*SetMessageStatusRequest) ProtoMessage() {}
 
 func (x *SetMessageStatusRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_idl_message_v1_message_proto_msgTypes[3]
+	mi := &file_idl_msg_v1_message_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -267,7 +267,7 @@ func (x *SetMessageStatusRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SetMessageStatusRequest.ProtoReflect.Descriptor instead.
 func (*SetMessageStatusRequest) Descriptor() ([]byte, []int) {
-	return file_idl_message_v1_message_proto_rawDescGZIP(), []int{3}
+	return file_idl_msg_v1_message_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *SetMessageStatusRequest) GetStatus() int32 {
@@ -285,7 +285,7 @@ type SetMessageStatusResponse struct {
 
 func (x *SetMessageStatusResponse) Reset() {
 	*x = SetMessageStatusResponse{}
-	mi := &file_idl_message_v1_message_proto_msgTypes[4]
+	mi := &file_idl_msg_v1_message_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -297,7 +297,7 @@ func (x *SetMessageStatusResponse) String() string {
 func (*SetMessageStatusResponse) ProtoMessage() {}
 
 func (x *SetMessageStatusResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_idl_message_v1_message_proto_msgTypes[4]
+	mi := &file_idl_msg_v1_message_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -310,15 +310,14 @@ func (x *SetMessageStatusResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SetMessageStatusResponse.ProtoReflect.Descriptor instead.
 func (*SetMessageStatusResponse) Descriptor() ([]byte, []int) {
-	return file_idl_message_v1_message_proto_rawDescGZIP(), []int{4}
+	return file_idl_msg_v1_message_proto_rawDescGZIP(), []int{4}
 }
 
-var File_idl_message_v1_message_proto protoreflect.FileDescriptor
+var File_idl_msg_v1_message_proto protoreflect.FileDescriptor
 
-const file_idl_message_v1_message_proto_rawDesc = "" +
+const file_idl_msg_v1_message_proto_rawDesc = "" +
 	"\n" +
-	"\x1cidl/message/v1/message.proto\x12\n" +
-	"message.v1\"\x95\x02\n" +
+	"\x18idl/msg/v1/message.proto\x12\x06msg.v1\"\x95\x02\n" +
 	"\aMessage\x12\x16\n" +
 	"\x06sendID\x18\x01 \x01(\x03R\x06sendID\x12\x16\n" +
 	"\x06recvID\x18\x02 \x01(\x03R\x06recvID\x12\x18\n" +
@@ -328,46 +327,46 @@ const file_idl_message_v1_message_proto_rawDesc = "" +
 	"\fmessage_from\x18\x06 \x01(\x05R\vmessageFrom\x12 \n" +
 	"\vcontentType\x18\a \x01(\x05R\vcontentType\x12\x1b\n" +
 	"\tsend_time\x18\b \x01(\x03R\bsendTime\x12\x18\n" +
-	"\acontent\x18\t \x01(\fR\acontent\"=\n" +
-	"\x12SendMessageRequest\x12'\n" +
-	"\x04data\x18\x01 \x01(\v2\x13.message.v1.MessageR\x04data\"u\n" +
+	"\acontent\x18\t \x01(\fR\acontent\"9\n" +
+	"\x12SendMessageRequest\x12#\n" +
+	"\x04data\x18\x01 \x01(\v2\x0f.msg.v1.MessageR\x04data\"u\n" +
 	"\x13SendMessageResponse\x12 \n" +
 	"\vserverMsgID\x18\x01 \x01(\x03R\vserverMsgID\x12 \n" +
 	"\vclientMsgID\x18\x02 \x01(\tR\vclientMsgID\x12\x1a\n" +
 	"\bsendTime\x18\x03 \x01(\x03R\bsendTime\"1\n" +
 	"\x17SetMessageStatusRequest\x12\x16\n" +
 	"\x06status\x18\x01 \x01(\x05R\x06status\"\x1a\n" +
-	"\x18SetMessageStatusResponse2\xbf\x01\n" +
-	"\x0eMessageService\x12N\n" +
-	"\vSendMessage\x12\x1e.message.v1.SendMessageRequest\x1a\x1f.message.v1.SendMessageResponse\x12]\n" +
-	"\x10SetMessageStatus\x12#.message.v1.SetMessageStatusRequest\x1a$.message.v1.SetMessageStatusResponseB<Z:github.com/crazyfrankie/goim/protocol/message/v1;messagev1b\x06proto3"
+	"\x18SetMessageStatusResponse2\xaf\x01\n" +
+	"\x0eMessageService\x12F\n" +
+	"\vSendMessage\x12\x1a.msg.v1.SendMessageRequest\x1a\x1b.msg.v1.SendMessageResponse\x12U\n" +
+	"\x10SetMessageStatus\x12\x1f.msg.v1.SetMessageStatusRequest\x1a .msg.v1.SetMessageStatusResponseB4Z2github.com/crazyfrankie/goim/protocol/msg/v1;msgv1b\x06proto3"
 
 var (
-	file_idl_message_v1_message_proto_rawDescOnce sync.Once
-	file_idl_message_v1_message_proto_rawDescData []byte
+	file_idl_msg_v1_message_proto_rawDescOnce sync.Once
+	file_idl_msg_v1_message_proto_rawDescData []byte
 )
 
-func file_idl_message_v1_message_proto_rawDescGZIP() []byte {
-	file_idl_message_v1_message_proto_rawDescOnce.Do(func() {
-		file_idl_message_v1_message_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_idl_message_v1_message_proto_rawDesc), len(file_idl_message_v1_message_proto_rawDesc)))
+func file_idl_msg_v1_message_proto_rawDescGZIP() []byte {
+	file_idl_msg_v1_message_proto_rawDescOnce.Do(func() {
+		file_idl_msg_v1_message_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_idl_msg_v1_message_proto_rawDesc), len(file_idl_msg_v1_message_proto_rawDesc)))
 	})
-	return file_idl_message_v1_message_proto_rawDescData
+	return file_idl_msg_v1_message_proto_rawDescData
 }
 
-var file_idl_message_v1_message_proto_msgTypes = make([]protoimpl.MessageInfo, 5)
-var file_idl_message_v1_message_proto_goTypes = []any{
-	(*Message)(nil),                  // 0: message.v1.Message
-	(*SendMessageRequest)(nil),       // 1: message.v1.SendMessageRequest
-	(*SendMessageResponse)(nil),      // 2: message.v1.SendMessageResponse
-	(*SetMessageStatusRequest)(nil),  // 3: message.v1.SetMessageStatusRequest
-	(*SetMessageStatusResponse)(nil), // 4: message.v1.SetMessageStatusResponse
+var file_idl_msg_v1_message_proto_msgTypes = make([]protoimpl.MessageInfo, 5)
+var file_idl_msg_v1_message_proto_goTypes = []any{
+	(*Message)(nil),                  // 0: msg.v1.Message
+	(*SendMessageRequest)(nil),       // 1: msg.v1.SendMessageRequest
+	(*SendMessageResponse)(nil),      // 2: msg.v1.SendMessageResponse
+	(*SetMessageStatusRequest)(nil),  // 3: msg.v1.SetMessageStatusRequest
+	(*SetMessageStatusResponse)(nil), // 4: msg.v1.SetMessageStatusResponse
 }
-var file_idl_message_v1_message_proto_depIdxs = []int32{
-	0, // 0: message.v1.SendMessageRequest.data:type_name -> message.v1.Message
-	1, // 1: message.v1.MessageService.SendMessage:input_type -> message.v1.SendMessageRequest
-	3, // 2: message.v1.MessageService.SetMessageStatus:input_type -> message.v1.SetMessageStatusRequest
-	2, // 3: message.v1.MessageService.SendMessage:output_type -> message.v1.SendMessageResponse
-	4, // 4: message.v1.MessageService.SetMessageStatus:output_type -> message.v1.SetMessageStatusResponse
+var file_idl_msg_v1_message_proto_depIdxs = []int32{
+	0, // 0: msg.v1.SendMessageRequest.data:type_name -> msg.v1.Message
+	1, // 1: msg.v1.MessageService.SendMessage:input_type -> msg.v1.SendMessageRequest
+	3, // 2: msg.v1.MessageService.SetMessageStatus:input_type -> msg.v1.SetMessageStatusRequest
+	2, // 3: msg.v1.MessageService.SendMessage:output_type -> msg.v1.SendMessageResponse
+	4, // 4: msg.v1.MessageService.SetMessageStatus:output_type -> msg.v1.SetMessageStatusResponse
 	3, // [3:5] is the sub-list for method output_type
 	1, // [1:3] is the sub-list for method input_type
 	1, // [1:1] is the sub-list for extension type_name
@@ -375,26 +374,26 @@ var file_idl_message_v1_message_proto_depIdxs = []int32{
 	0, // [0:1] is the sub-list for field type_name
 }
 
-func init() { file_idl_message_v1_message_proto_init() }
-func file_idl_message_v1_message_proto_init() {
-	if File_idl_message_v1_message_proto != nil {
+func init() { file_idl_msg_v1_message_proto_init() }
+func file_idl_msg_v1_message_proto_init() {
+	if File_idl_msg_v1_message_proto != nil {
 		return
 	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
-			RawDescriptor: unsafe.Slice(unsafe.StringData(file_idl_message_v1_message_proto_rawDesc), len(file_idl_message_v1_message_proto_rawDesc)),
+			RawDescriptor: unsafe.Slice(unsafe.StringData(file_idl_msg_v1_message_proto_rawDesc), len(file_idl_msg_v1_message_proto_rawDesc)),
 			NumEnums:      0,
 			NumMessages:   5,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
-		GoTypes:           file_idl_message_v1_message_proto_goTypes,
-		DependencyIndexes: file_idl_message_v1_message_proto_depIdxs,
-		MessageInfos:      file_idl_message_v1_message_proto_msgTypes,
+		GoTypes:           file_idl_msg_v1_message_proto_goTypes,
+		DependencyIndexes: file_idl_msg_v1_message_proto_depIdxs,
+		MessageInfos:      file_idl_msg_v1_message_proto_msgTypes,
 	}.Build()
-	File_idl_message_v1_message_proto = out.File
-	file_idl_message_v1_message_proto_goTypes = nil
-	file_idl_message_v1_message_proto_depIdxs = nil
+	File_idl_msg_v1_message_proto = out.File
+	file_idl_msg_v1_message_proto_goTypes = nil
+	file_idl_msg_v1_message_proto_depIdxs = nil
 }

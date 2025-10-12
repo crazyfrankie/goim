@@ -1,8 +1,8 @@
 syntax="proto3";
 
-package message.v1;
+package msg.v1;
 
-option go_package="github.com/crazyfrankie/goim/protocol/message/v1;messagev1";
+option go_package="github.com/crazyfrankie/goim/protocol/msg/v1;msgv1";
 
 message Message {
   int64 sendID = 1;

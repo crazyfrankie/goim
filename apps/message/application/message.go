@@ -8,21 +8,21 @@ import (
 	message "github.com/crazyfrankie/goim/apps/message/domain/service"
 	eventbus "github.com/crazyfrankie/goim/internal/events/message"
 	"github.com/crazyfrankie/goim/pkg/grpc/ctxutil"
-	messagev1 "github.com/crazyfrankie/goim/protocol/message/v1"
+	msgv1 "github.com/crazyfrankie/goim/protocol/msg/v1"
 	"github.com/crazyfrankie/goim/types/consts"
 )
 
 type MessageApplicationService struct {
 	messageDomain   message.Message
 	messageEventBus eventbus.PublishEventBus
-	messagev1.UnimplementedMessageServiceServer
+	msgv1.UnimplementedMessageServiceServer
 }
 
 func NewMessageApplicationService(messageDomain message.Message) *MessageApplicationService {
 	return &MessageApplicationService{messageDomain: messageDomain}
 }
 
-func (m *MessageApplicationService) SendMessage(ctx context.Context, req *messagev1.SendMessageRequest) (*messagev1.SendMessageResponse, error) {
+func (m *MessageApplicationService) SendMessage(ctx context.Context, req *msgv1.SendMessageRequest) (*msgv1.SendMessageResponse, error) {
 	if err := ctxutil.CheckAccess(ctx, req.GetData().GetSendID()); err != nil {
 		return nil, err
 	}
@@ -56,41 +56,41 @@ func (m *MessageApplicationService) SendMessage(ctx context.Context, req *messag
 	}
 }
 
-func (m *MessageApplicationService) sendSingleChat(ctx context.Context, msg *entity.Message) (*messagev1.SendMessageResponse, error) {
+func (m *MessageApplicationService) sendSingleChat(ctx context.Context, msg *entity.Message) (*msgv1.SendMessageResponse, error) {
 	// TODO
 
-	return &messagev1.SendMessageResponse{
+	return &msgv1.SendMessageResponse{
 		SendTime:    msg.SendTime,
 		ServerMsgID: msg.MsgID,
 		ClientMsgID: msg.ClientMsgID,
 	}, nil
 }
 
-func (m *MessageApplicationService) sendGroupChat(ctx context.Context, msg *entity.Message) (*messagev1.SendMessageResponse, error) {
+func (m *MessageApplicationService) sendGroupChat(ctx context.Context, msg *entity.Message) (*msgv1.SendMessageResponse, error) {
 	// TODO
 
-	return &messagev1.SendMessageResponse{
+	return &msgv1.SendMessageResponse{
 		SendTime:    msg.SendTime,
 		ServerMsgID: msg.MsgID,
 		ClientMsgID: msg.ClientMsgID,
 	}, nil
 }
 
-func (m *MessageApplicationService) sendNotificationChat(ctx context.Context, msg *entity.Message) (*messagev1.SendMessageResponse, error) {
+func (m *MessageApplicationService) sendNotificationChat(ctx context.Context, msg *entity.Message) (*msgv1.SendMessageResponse, error) {
 	// TODO
 
-	return &messagev1.SendMessageResponse{
+	return &msgv1.SendMessageResponse{
 		SendTime:    msg.SendTime,
 		ServerMsgID: msg.MsgID,
 		ClientMsgID: msg.ClientMsgID,
 	}, nil
 }
 
-func (m *MessageApplicationService) SetMessageStatus(ctx context.Context, req *messagev1.SetMessageStatusRequest) (*messagev1.SetMessageStatusResponse, error) {
+func (m *MessageApplicationService) SetMessageStatus(ctx context.Context, req *msgv1.SetMessageStatusRequest) (*msgv1.SetMessageStatusResponse, error) {
 	err := m.messageDomain.UpdateMessageStatus(ctx, req.GetStatus())
 	if err != nil {
 		return nil, err
 	}
 
-	return &messagev1.SetMessageStatusResponse{}, nil
+	return &msgv1.SetMessageStatusResponse{}, nil
 }

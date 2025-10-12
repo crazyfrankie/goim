@@ -1,0 +1,85 @@
+syntax="proto3";
+
+package msggateway.v1;
+
+option go_package="github.com/crazyfrankie/goim/protocol/msggateway/v1;msggatewayv1";
+
+import "idl/msg/v1/message.proto";
+
+message OnlinePushMsgRequest {
+  msg.v1.Message message = 1;
+  int64 pushToUserID = 2;
+}
+
+message OnlinePushMsgResponse {
+  repeated SingleMsgToUserPlatform resp = 1;
+}
+
+message GetUsersOnlineStatusRequest {
+  repeated string userID = 1;
+}
+
+message GetUsersOnlineStatusResponse {
+  repeated SuccessResult successResult = 1;
+  repeated FailedDetail failedResult = 2;
+  message SuccessDetail {
+    int32 platformID = 1;
+    string connID = 2;
+    bool isBackground = 3;
+    string token = 4;
+  }
+
+  message FailedDetail {
+    string userID = 1;
+  }
+  message SuccessResult {
+    string userID = 1;
+    int32 status = 2;
+    repeated SuccessDetail detailPlatformStatus = 3;
+  }
+}
+
+message SingleMsgToUserPlatform {
+  int64 resultCode = 1;
+  string recvID = 2;
+  int32 recvPlatFormID = 3;
+}
+
+message SingleMsgToUserResults {
+  string userID = 1;
+  repeated SingleMsgToUserPlatform resp = 2;
+  bool onlinePush = 3;
+}
+
+message OnlineBatchPushOneMsgRequest {
+  msg.v1.Message message = 1;
+  repeated string pushToUserIDs = 2;
+}
+
+message OnlineBatchPushOneMsgResponse {
+  repeated SingleMsgToUserResults singlePushResult = 1;
+}
+
+message KickUserOfflineRequest {
+  int32 platformID = 1;
+  repeated string kickUserIDList = 2;
+}
+
+message KickUserOfflineResponse {}
+
+message MultiTerminalLoginCheckRequest {
+  string userID = 1;
+  int32 platformID = 2;
+  string token = 3;
+}
+
+message MultiTerminalLoginCheckResponse {}
+
+service msgGateway {
+  rpc OnlinePushMsg(OnlinePushMsgRequest) returns (OnlinePushMsgResponse);
+  rpc GetUsersOnlineStatus(GetUsersOnlineStatusRequest) returns (GetUsersOnlineStatusResponse);
+  rpc OnlineBatchPushOneMsg(OnlineBatchPushOneMsgRequest) returns (OnlineBatchPushOneMsgResponse);
+  rpc SuperGroupOnlineBatchPushOneMsg(OnlineBatchPushOneMsgRequest) returns (OnlineBatchPushOneMsgResponse);
+  rpc KickUserOffline(KickUserOfflineRequest) returns (KickUserOfflineResponse);
+  rpc MultiTerminalLoginCheck(MultiTerminalLoginCheckRequest) returns (MultiTerminalLoginCheckResponse);
+}

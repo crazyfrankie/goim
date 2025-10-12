@@ -238,7 +238,7 @@ func generateGoCode(config *Config, bizName string, bizCode int, bizErrors []int
 		}
 
 		unexportName := strings.ToLower(name[:1]) + name[1:]
-		message := getString(errorMap, "message")
+		message := getString(errorMap, "msg")
 		description := getString(errorMap, "description")
 		noAffect := getBool(errorMap, "no_affect_stability")
 

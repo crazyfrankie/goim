@@ -9,7 +9,7 @@ import (
 	"github.com/crazyfrankie/goim/apps/message/domain/repository"
 	"github.com/crazyfrankie/goim/apps/message/domain/service"
 	"github.com/crazyfrankie/goim/infra/contract/discovery"
-	messagev1 "github.com/crazyfrankie/goim/protocol/message/v1"
+	msgv1 "github.com/crazyfrankie/goim/protocol/msg/v1"
 )
 
 func Start(ctx context.Context, client discovery.SvcDiscoveryRegistry, srv grpc.ServiceRegistrar) error {
@@ -24,7 +24,7 @@ func Start(ctx context.Context, client discovery.SvcDiscoveryRegistry, srv grpc.
 	})
 	appService := application.NewMessageApplicationService(messageDomain)
 
-	messagev1.RegisterMessageServiceServer(srv, appService)
+	msgv1.RegisterMessageServiceServer(srv, appService)
 
 	return nil
 }

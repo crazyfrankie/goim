@@ -17,7 +17,7 @@ func NewAuthApplicationService(authDomain auth.Auth) *AuthApplicationService {
 }
 
 func (a *AuthApplicationService) GenerateToken(ctx context.Context, req *authv1.GenerateTokenRequest) (*authv1.GenerateTokenResponse, error) {
-	tokens, err := a.authDomain.GenerateToken(ctx, req.GetUserId())
+	tokens, err := a.authDomain.GenerateToken(ctx, req.GetUserID(), req.GetPlatformID())
 	if err != nil {
 		return nil, err
 	}
@@ -34,7 +34,7 @@ func (a *AuthApplicationService) ParseToken(ctx context.Context, req *authv1.Par
 		return nil, err
 	}
 
-	return &authv1.ParseTokenResponse{UserID: claims.UID}, nil
+	return &authv1.ParseTokenResponse{UserID: claims.UID, PlatformID: claims.PlatformID}, nil
 }
 
 func (a *AuthApplicationService) RefreshToken(ctx context.Context, req *authv1.RefreshTokenRequest) (*authv1.RefreshTokenResponse, error) {

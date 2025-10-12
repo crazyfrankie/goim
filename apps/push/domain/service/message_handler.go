@@ -20,7 +20,7 @@ func NewMessageEventHandler() *MessageEventHandler {
 func (h *MessageEventHandler) HandleMessage(ctx context.Context, msg *eventbus.Message) error {
 	var event message.MessageEvent
 	if err := sonic.Unmarshal(msg.Body, &event); err != nil {
-		logs.Errorf("unmarshal message event failed: %v", err)
+		logs.Errorf("unmarshal msg event failed: %v", err)
 		return err
 	}
 
@@ -38,8 +38,8 @@ func (h *MessageEventHandler) HandleMessage(ctx context.Context, msg *eventbus.M
 }
 
 func (h *MessageEventHandler) handleMessageSent(ctx context.Context, event *message.MessageEvent) error {
-	// TODO , implement the message push logic
-	logs.Infof("pushing message %d to user %d", event.MessageID, event.UserID)
+	// TODO , implement the msg push logic
+	logs.Infof("pushing msg %d to user %d", event.MessageID, event.UserID)
 	return nil
 }
 

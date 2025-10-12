@@ -6,7 +6,7 @@ type (
 	Option  func(opt *configs)
 	configs struct {
 		// Long connection listening port
-		port int
+		port string
 		// Maximum number of connections allowed for long connection
 		maxConnNum int64
 		// Connection handshake timeout
@@ -18,7 +18,7 @@ type (
 	}
 )
 
-func WithPort(port int) Option {
+func WithPort(port string) Option {
 	return func(opt *configs) {
 		opt.port = port
 	}

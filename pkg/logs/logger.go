@@ -61,8 +61,8 @@ type FullLogger interface {
 	LogOption
 }
 
-// Level defines the priority of a log message.
-// When a logs is configured with a level, any log message with a lower
+// Level defines the priority of a log msg.
+// When a logs is configured with a level, any log msg with a lower
 // log level (smaller by integer comparison) will not be output.
 type Level int
 

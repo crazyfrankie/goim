@@ -1,12 +1,12 @@
 package entity
 
 type Message struct {
-	MsgID       int64 // Server-generated message ID
+	MsgID       int64 // Server-generated msg ID
 	SendID      int64
 	RecvID      int64
 	GroupID     int64  // Group ID (for group messages)
 	Seq         int64  // Message Sequence Number
-	ClientMsgID string // Client-generated message ID
+	ClientMsgID string // Client-generated msg ID
 	Content     string // Message Content
 	SendTime    int64  // Send Time (Milliseconds)
 	Status      int32  // Message Status

@@ -48,7 +48,7 @@ func NewSvcDiscoveryRegistry(rootDirectory string, endpoints []string, watchName
 	cfg := clientv3.Config{
 		Endpoints:   endpoints,
 		DialTimeout: 5 * time.Second,
-		// Increase keep-alive queue capacity and message size
+		// Increase keep-alive queue capacity and msg size
 		PermitWithoutStream: true,
 		MaxCallSendMsgSize:  10 * 1024 * 1024, // 10 MB
 	}
