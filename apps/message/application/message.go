@@ -8,13 +8,15 @@ import (
 	message "github.com/crazyfrankie/goim/apps/message/domain/service"
 	eventbus "github.com/crazyfrankie/goim/internal/events/message"
 	"github.com/crazyfrankie/goim/pkg/grpc/ctxutil"
+	"github.com/crazyfrankie/goim/pkg/lang/conv"
 	msgv1 "github.com/crazyfrankie/goim/protocol/msg/v1"
+	pushv1 "github.com/crazyfrankie/goim/protocol/push/v1"
 	"github.com/crazyfrankie/goim/types/consts"
 )
 
 type MessageApplicationService struct {
 	messageDomain   message.Message
-	messageEventBus eventbus.PublishEventBus
+	messageEventBus eventbus.PushEventBus
 	msgv1.UnimplementedMessageServiceServer
 }
 
@@ -46,7 +48,7 @@ func (m *MessageApplicationService) SendMessage(ctx context.Context, req *msgv1.
 
 	switch req.GetData().GetSessionType() {
 	case consts.SingleChatType:
-		return m.sendSingleChat(ctx, msg)
+		return m.sendSingleChat(ctx, req.GetData(), msg)
 	case consts.GroupChatType:
 		return m.sendGroupChat(ctx, msg)
 	case consts.NotificationChatType:
@@ -56,8 +58,15 @@ func (m *MessageApplicationService) SendMessage(ctx context.Context, req *msgv1.
 	}
 }
 
-func (m *MessageApplicationService) sendSingleChat(ctx context.Context, msg *entity.Message) (*msgv1.SendMessageResponse, error) {
-	// TODO
+func (m *MessageApplicationService) sendSingleChat(ctx context.Context, req *msgv1.Message, msg *entity.Message) (*msgv1.SendMessageResponse, error) {
+	err := m.messageEventBus.PushMessageEvent(ctx, &pushv1.PushMsgRequest{
+		Message:        req,
+		ConversationID: "",
+		UserIDs:        []string{conv.Int64ToStr(msg.RecvID)},
+	})
+	if err != nil {
+		return nil, err
+	}
 
 	return &msgv1.SendMessageResponse{
 		SendTime:    msg.SendTime,

@@ -21,7 +21,7 @@ import (
 type BasicServices struct {
 	DB              *gorm.DB
 	IDGen           idgen.IDGenerator
-	MessageEventBus messageevent.PublishEventBus
+	MessageEventBus messageevent.PushEventBus
 }
 
 func Init(ctx context.Context, client discovery.SvcDiscoveryRegistry) (*BasicServices, error) {
@@ -45,7 +45,7 @@ func Init(ctx context.Context, client discovery.SvcDiscoveryRegistry) (*BasicSer
 		return nil, err
 	}
 
-	basic.MessageEventBus = message.NewMessageEventPublisher(appEventProducer)
+	basic.MessageEventBus = message.NewMessageEventPusher(appEventProducer)
 
 	return basic, nil
 }

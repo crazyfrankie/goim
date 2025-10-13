@@ -93,7 +93,7 @@ func (u *UserApplicationService) Login(ctx context.Context, req *userv1.LoginReq
 	data.RefreshToken = tkRes.RefreshToken
 
 	return &userv1.LoginResponse{
-		Data: userDO2DTO(userInfo),
+		Data: data,
 	}, nil
 }
 

@@ -100,33 +100,10 @@ type Client struct {
 	ConnServer LongConnServer
 }
 
-func NewClient(conn Conn, ctx *wsctx.Context, config *ClientConfig, connServer LongConnServer) *Client {
-	clientCtx, cancel := context.WithCancel(context.Background())
-
-	client := &Client{
-		conn:          conn,
-		ctx:           ctx,
-		UserID:        ctx.GetUserID(),
-		PlatformID:    stringToInt(ctx.GetPlatformID()),
-		Token:         ctx.GetToken(),
-		SDKType:       ctx.GetSDKType(),
-		ConnID:        ctx.GetConnID(),
-		sendCh:        make(chan []byte, config.SendQueueSize),
-		recvRing:      NewRing(config.RecvRingSize),
-		subscriptions: make(map[string]struct{}),
-		encoder:       encoding.NewJSONEncoder(),
-		clientCtx:     clientCtx,
-		cancel:        cancel,
-		lastActive:    time.Now().Unix(),
-		ConnServer:    connServer,
-	}
-
-	return client
-}
-
 func (c *Client) Reset(ctx *wsctx.Context, conn Conn, wsSrv LongConnServer) {
 	c.conn = conn
 	c.ctx = ctx
+	c.ConnServer = wsSrv
 
 	c.UserID = ctx.GetUserID()
 	c.PlatformID = stringToInt(ctx.GetPlatformID())
@@ -140,45 +117,14 @@ func (c *Client) Reset(ctx *wsctx.Context, conn Conn, wsSrv LongConnServer) {
 	c.closedErr = nil
 	c.lastActive = 0
 
-	c.room = nil
-	c.Next = nil
-	c.Prev = nil
-
-	c.subLock.Lock()
-	for k := range c.subscriptions {
-		delete(c.subscriptions, k)
-	}
-	c.subLock.Unlock()
-
-	if c.recvRing != nil {
-		c.recvRing.Reset()
-	}
+	c.subscriptions = make(map[string]struct{})
+	c.clientCtx, c.cancel = context.WithCancel(c.ctx)
 
 	if c.SDKType == types.GoSDK {
 		c.encoder = encoding.NewGobEncoder()
 	} else {
 		c.encoder = encoding.NewJSONEncoder()
 	}
-
-	if c.sendCh != nil {
-		for {
-			select {
-			case <-c.sendCh:
-			default:
-				goto done
-			}
-		}
-	done:
-	}
-
-	c.ConnServer = wsSrv
-
-	// 取消上下文
-	if c.cancel != nil {
-		c.cancel()
-		c.cancel = nil
-	}
-	c.clientCtx = nil
 }
 
 func (c *Client) Key() string {

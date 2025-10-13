@@ -1,0 +1,28 @@
+syntax="proto3";
+
+package push.v1;
+
+option go_package="github.com/crazyfrankie/goim/protocol/push/v1;pushv1";
+
+import "idl/msg/v1/message.proto";
+
+message PushMsgRequest {
+  msg.v1.Message message = 1;
+  string conversationID = 2;
+  repeated string userIDs = 3;
+}
+
+message PushMsgResponse {}
+
+message DelUserPushTokenRequest {
+  string userID = 1;
+  int32 platformID = 2;
+}
+
+message DelUserPushTokenResponse {}
+
+service PushService {
+  rpc DelUserPushToken(DelUserPushTokenRequest) returns (DelUserPushTokenResponse);
+}
+
+

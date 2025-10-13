@@ -12,15 +12,15 @@ import (
 	"github.com/crazyfrankie/goim/pkg/lang/conv"
 	"github.com/crazyfrankie/goim/pkg/lang/encrypt"
 	"github.com/crazyfrankie/goim/pkg/sonic"
-	messagev1 "github.com/crazyfrankie/goim/protocol/message/v1"
+	msgv1 "github.com/crazyfrankie/goim/protocol/msg/v1"
 	"github.com/crazyfrankie/goim/types/consts"
 )
 
 type MessageHandler struct {
-	messageClient messagev1.MessageServiceClient
+	messageClient msgv1.MessageServiceClient
 }
 
-func NewMessageHandler(messageClient messagev1.MessageServiceClient) *MessageHandler {
+func NewMessageHandler(messageClient msgv1.MessageServiceClient) *MessageHandler {
 	return &MessageHandler{messageClient: messageClient}
 }
 
@@ -55,7 +55,7 @@ func (h *MessageHandler) SendMessage() gin.HandlerFunc {
 	}
 }
 
-func (h *MessageHandler) getSendMsgReq(req *model.SendMsgReq) (*messagev1.SendMessageRequest, error) {
+func (h *MessageHandler) getSendMsgReq(req *model.SendMsgReq) (*msgv1.SendMessageRequest, error) {
 	var data any
 	switch req.ContentType {
 	case consts.TextMessageType:
@@ -83,10 +83,10 @@ func (h *MessageHandler) getSendMsgReq(req *model.SendMsgReq) (*messagev1.SendMe
 	return h.newUserSendMsgReq(req, data), nil
 }
 
-func (h *MessageHandler) newUserSendMsgReq(req *model.SendMsgReq, data any) *messagev1.SendMessageRequest {
+func (h *MessageHandler) newUserSendMsgReq(req *model.SendMsgReq, data any) *msgv1.SendMessageRequest {
 	sendID, _ := conv.StrToInt64(req.SendID)
 	groupID, _ := conv.StrToInt64(req.GroupID)
-	msgData := &messagev1.Message{
+	msgData := &msgv1.Message{
 		SendID:      sendID,
 		GroupID:     groupID,
 		ClientMsgID: encrypt.Md5(req.SendID),
@@ -112,7 +112,7 @@ func (h *MessageHandler) newUserSendMsgReq(req *model.SendMsgReq, data any) *mes
 		newContent, _ = sonic.MarshalString(req.Content)
 	}
 	msgData.Content = []byte(newContent)
-	pbData := &messagev1.SendMessageRequest{
+	pbData := &msgv1.SendMessageRequest{
 		Data: msgData,
 	}
 

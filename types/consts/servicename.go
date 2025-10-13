@@ -10,3 +10,7 @@ const (
 	UserApiName    = "goim-api-user"
 	MessageApiName = "goim-api-msg"
 )
+
+const (
+	MsgGatewayName = "goim-msggateway"
+)

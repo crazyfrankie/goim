@@ -35,7 +35,7 @@ func initEtcdDis() (discovery.SvcDiscoveryRegistry, error) {
 	//password := os.Getenv("ETCD_PASSWORD")
 
 	return etcd.NewSvcDiscoveryRegistry(rootDir, endpoints, watchNames,
-		etcd.WithDialTimeout(10*time.Second),
+		etcd.WithDialTimeout(30*time.Second),
 		etcd.WithMaxCallSendMsgSize(20*1024*1024))
 	//etcd.WithAuth(userName, password))
 }

@@ -113,7 +113,7 @@ func ExtractPlatform(ua string) string {
 	patterns := map[string]*regexp.Regexp{
 		AdminPlatformStr:      regexp.MustCompile(`(?i)admin`),
 		MiniWebPlatformStr:    regexp.MustCompile(`(?i)miniprogram|miniweb`),
-		WebPlatformStr:        regexp.MustCompile(`(?i)mozilla(?!.*mobile)`),
+		WebPlatformStr:        regexp.MustCompile(`(?i)mozilla`),
 		IPadPlatformStr:       regexp.MustCompile(`(?i)ipad`),
 		IOSPlatformStr:        regexp.MustCompile(`(?i)iphone|ipod`),
 		AndroidPadPlatformStr: regexp.MustCompile(`(?i)android.*pad|pad.*android`),
@@ -124,7 +124,14 @@ func ExtractPlatform(ua string) string {
 		LinuxPlatformStr:      regexp.MustCompile(`(?i)linux`),
 	}
 
+	if patterns[WebPlatformStr].MatchString(ua) && !regexp.MustCompile(`(?i)mobile`).MatchString(ua) {
+		return WebPlatformStr
+	}
+
 	for platform, pattern := range patterns {
+		if platform == WebPlatformStr {
+			continue
+		}
 		if pattern.MatchString(ua) {
 			return platform
 		}

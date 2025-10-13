@@ -2,30 +2,26 @@ package service
 
 import (
 	"context"
-	"time"
+
+	"google.golang.org/protobuf/proto"
 
 	"github.com/crazyfrankie/goim/infra/contract/eventbus"
 	"github.com/crazyfrankie/goim/internal/events/message"
-	"github.com/crazyfrankie/goim/pkg/sonic"
+	pushv1 "github.com/crazyfrankie/goim/protocol/push/v1"
 )
 
-type messageEventPublisher struct {
+type messageEventPusher struct {
 	producer eventbus.Producer
 }
 
-func NewMessageEventPublisher(producer eventbus.Producer) message.PublishEventBus {
-	return &messageEventPublisher{
+func NewMessageEventPusher(producer eventbus.Producer) message.PushEventBus {
+	return &messageEventPusher{
 		producer: producer,
 	}
 }
 
-func (p *messageEventPublisher) PublishMessageEvent(ctx context.Context, event *message.MessageEvent) error {
-	if event.Meta == nil {
-		event.Meta = &message.EventMeta{}
-	}
-	event.Meta.SendTimeMs = time.Now().UnixMilli()
-
-	bytes, err := sonic.Marshal(event)
+func (p *messageEventPusher) PushMessageEvent(ctx context.Context, event *pushv1.PushMsgRequest) error {
+	bytes, err := proto.Marshal(event)
 	if err != nil {
 		return err
 	}

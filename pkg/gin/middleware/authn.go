@@ -31,9 +31,14 @@ func (h *AuthnHandler) IgnorePath(paths []string) *AuthnHandler {
 
 func (h *AuthnHandler) Auth() gin.HandlerFunc {
 	return func(c *gin.Context) {
+		md := metadata.New(map[string]string{
+			"user_agent": c.Request.UserAgent(),
+		})
+
 		currentPath := c.Request.URL.Path
 
 		if _, ok := h.noAuthPaths[currentPath]; ok {
+			c.Request = c.Request.WithContext(h.storeUserInfo(c, md))
 			c.Next()
 			return
 		}
@@ -45,37 +50,19 @@ func (h *AuthnHandler) Auth() gin.HandlerFunc {
 		}
 		parseRes, err := h.authClient.ParseToken(c.Request.Context(), &authv1.ParseTokenRequest{Token: accessToken})
 		if err == nil {
-			c.Request = c.Request.WithContext(h.storeUserID(c.Request.Context(), parseRes.GetUserID()))
+			md.Append("user_id", conv.Int64ToStr(parseRes.GetUserID()))
+			c.Request = c.Request.WithContext(h.storeUserInfo(c, md))
 
 			c.Next()
 			return
 		}
 
 		response.Unauthorized(c)
-
-		//refreshToken, err := c.Cookie("goim_refresh")
-		//if err != nil {
-		//	response.Unauthorized(c)
-		//	return
-		//}
-		//
-		//refreshRes, err := h.authClient.RefreshToken(c.Request.Context(), &authv1.RefreshTokenRequest{RefreshToken: refreshToken})
-		//if err != nil {
-		//	response.InternalServerError(c, err)
-		//	return
-		//}
-		//c.Request = c.Request.WithContext(h.storeUserID(c.Request.Context(), refreshRes.GetUserID()))
-		//
-		//response.SetAuthorization(c, refreshRes.AccessToken, refreshRes.RefreshToken)
-		//
-		//c.Next()
 	}
 }
 
-func (h *AuthnHandler) storeUserID(ctx context.Context, userID int64) context.Context {
-	return metadata.NewOutgoingContext(ctx, metadata.New(map[string]string{
-		"user_id": conv.Int64ToStr(userID),
-	}))
+func (h *AuthnHandler) storeUserInfo(ctx context.Context, md metadata.MD) context.Context {
+	return metadata.NewOutgoingContext(ctx, md)
 }
 
 func getAccessToken(c *gin.Context) (string, error) {

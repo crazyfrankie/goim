@@ -1,7 +1,6 @@
 package ws
 
 import (
-	"context"
 	"crypto/md5"
 	"encoding/binary"
 	"fmt"
@@ -87,8 +86,8 @@ func (ws *WebsocketServer) ChangeOnlineStatus(concurrent int) {
 	operationIDPrefix := fmt.Sprintf("p_%d_", os.Getpid())
 	doRequest := func(req *SetUserOnlineStatusReq) {
 		opID := operationIDPrefix + strconv.FormatInt(count.Add(1), 10)
-		ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
-		defer cancel()
+		//ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
+		//defer cancel()
 
 		// 这里应该调用用户服务更新在线状态
 		// 由于我们没有用户服务客户端，这里简化处理

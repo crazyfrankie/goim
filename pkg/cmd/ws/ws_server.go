@@ -18,7 +18,7 @@ type WebsocketCmd struct {
 
 func NewWebsocketCmd() *WebsocketCmd {
 	wsCmd := &WebsocketCmd{
-		RootCmd: cmd.NewRootCmd(program.GetProcessName(), consts.UserServiceName),
+		RootCmd: cmd.NewRootCmd(program.GetProcessName(), consts.MsgGatewayName),
 	}
 	wsCmd.Command.RunE = func(cmd *cobra.Command, args []string) error {
 		return wsCmd.runE()
@@ -32,5 +32,5 @@ func (w *WebsocketCmd) Exec() error {
 }
 
 func (w *WebsocketCmd) runE() error {
-	return startrpc.Start(context.Background(), "", "", "", consts.UserServiceName, ws.Start)
+	return startrpc.Start(context.Background(), "", "", "", consts.MsgGatewayName, ws.Start)
 }

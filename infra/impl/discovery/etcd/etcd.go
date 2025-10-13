@@ -179,7 +179,8 @@ func (r *registryEtcdImpl) AppendOption(opts ...grpc.DialOption) {
 }
 
 func (r *registryEtcdImpl) Register(ctx context.Context, serviceName string, host, port string) error {
-	r.serviceKey = fmt.Sprintf("etcd:///%s/%s", r.rootDirectory, serviceName)
+	addr := net.JoinHostPort(host, port)
+	r.serviceKey = fmt.Sprintf("%s/%s/%s", r.rootDirectory, serviceName, addr)
 	em, err := endpoints.NewManager(r.client, r.rootDirectory+"/"+serviceName)
 	if err != nil {
 		return err
@@ -192,7 +193,6 @@ func (r *registryEtcdImpl) Register(ctx context.Context, serviceName string, hos
 	}
 	r.leaseID = leaseResp.ID
 
-	addr := net.JoinHostPort(host, port)
 	r.endpoint = endpoints.Endpoint{Addr: addr}
 
 	err = r.epManager.AddEndpoint(ctx, r.serviceKey, r.endpoint, clientv3.WithLease(r.leaseID))

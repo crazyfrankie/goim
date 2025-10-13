@@ -16,8 +16,8 @@ const (
 )
 
 const (
-	RMQTopicMessage        = "goim_publish_message"
-	RMQConsumeGroupMessage = "cg_publish_message"
+	RMQTopicMessage        = "goim_push_message"
+	RMQConsumeGroupMessage = "cg_push_message"
 )
 
 const (
