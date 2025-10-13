@@ -20,8 +20,8 @@ type MessageApplicationService struct {
 	msgv1.UnimplementedMessageServiceServer
 }
 
-func NewMessageApplicationService(messageDomain message.Message) *MessageApplicationService {
-	return &MessageApplicationService{messageDomain: messageDomain}
+func NewMessageApplicationService(messageDomain message.Message, messageEventBus eventbus.PushEventBus) *MessageApplicationService {
+	return &MessageApplicationService{messageDomain: messageDomain, messageEventBus: messageEventBus}
 }
 
 func (m *MessageApplicationService) SendMessage(ctx context.Context, req *msgv1.SendMessageRequest) (*msgv1.SendMessageResponse, error) {

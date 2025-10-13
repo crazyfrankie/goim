@@ -21,8 +21,8 @@ var path2Table2FieldMapping = map[string]map[string]map[string]any{
 	},
 	// The msg table is stored in TiDB. Although you can still use MySQL when generating code (since TiDB is compatible with the MySQL protocol),
 	// note that during actual runtime, the msg table should not exist in MySQL—it should reside in TiDB.
-	"apps/msg/domain/internal/dal/query": {
-		"msg": {},
+	"apps/message/domain/internal/dal/query": {
+		"message": {},
 		//"conversation": {},
 	},
 }

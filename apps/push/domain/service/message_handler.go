@@ -44,12 +44,14 @@ func (h *MessagePushHandler) HandleMessage(ctx context.Context, msg *eventbus.Me
 func (h *MessagePushHandler) handleSingleChat(ctx context.Context, pushUserList []string, msg *msgv1.Message) error {
 	// first online push
 
-	res, err := h.onlinePusher.GetConnsAndOnlinePush(ctx, msg, pushUserList)
-	if err != nil {
-		return nil
-	}
+	logs.Infof("receive msg, %v", msg)
 
-	logs.Infof("online push results, %v", res)
+	//res, err := h.onlinePusher.GetConnsAndOnlinePush(ctx, msg, pushUserList)
+	//if err != nil {
+	//	return nil
+	//}
+
+	//logs.Infof("online push results, %v", res)
 
 	// TODO offline push
 

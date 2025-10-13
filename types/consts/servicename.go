@@ -4,6 +4,7 @@ const (
 	UserServiceName    = "goim-rpc-user"
 	AuthServiceName    = "goim-rpc-auth"
 	MessageServiceName = "goim-rpc-msg"
+	PushServiceName    = "goim-rpc-push"
 )
 
 const (

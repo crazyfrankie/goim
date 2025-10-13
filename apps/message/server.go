@@ -22,7 +22,7 @@ func Start(ctx context.Context, client discovery.SvcDiscoveryRegistry, srv grpc.
 		MessageRepo: messageRepo,
 		IDGen:       basic.IDGen,
 	})
-	appService := application.NewMessageApplicationService(messageDomain)
+	appService := application.NewMessageApplicationService(messageDomain, basic.MessageEventBus)
 
 	msgv1.RegisterMessageServiceServer(srv, appService)
 

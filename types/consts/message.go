@@ -1,7 +1,7 @@
 package consts
 
 const (
-	TextMessageType = iota
+	TextMessageType = iota + 1
 	PictureMessageType
 	VoiceMessageType
 	VideoMessageType
@@ -19,7 +19,7 @@ const (
 )
 
 const (
-	GroupChatType = iota
+	GroupChatType = iota + 1
 	SingleChatType
 	WriteGroupChatType
 	ReadGroupChatType
