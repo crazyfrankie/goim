@@ -4,21 +4,27 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"net"
 	"net/http"
 	"time"
 
-	"github.com/crazyfrankie/goim/pkg/grpc/interceptor"
 	"github.com/oklog/run"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 
 	"github.com/crazyfrankie/goim/infra/contract/discovery"
 	discoveryimpl "github.com/crazyfrankie/goim/infra/impl/discovery"
+	"github.com/crazyfrankie/goim/pkg/grpc/interceptor"
 	"github.com/crazyfrankie/goim/pkg/lang/signal"
 	"github.com/crazyfrankie/goim/pkg/logs"
+	"github.com/crazyfrankie/goim/pkg/metrics"
 )
 
-func Start(ctx context.Context, listenAddr string, initFn func(ctx context.Context, client discovery.SvcDiscoveryRegistry) (http.Handler, error), shutdownTimeout time.Duration) error {
+func init() {
+	metrics.RegisterBFF()
+}
+
+func Start(ctx context.Context, listenAddr, metricAddr string, initFn func(ctx context.Context, client discovery.SvcDiscoveryRegistry) (http.Handler, error), shutdownTimeout time.Duration) error {
 	client, err := discoveryimpl.NewDiscoveryRegister()
 	if err != nil {
 		return err
@@ -36,6 +42,17 @@ func Start(ctx context.Context, listenAddr string, initFn func(ctx context.Conte
 	// Signal handler
 	g.Add(func() error {
 		return signal.CtxWaitExit(ctx)
+	}, func(err error) {
+
+	})
+
+	g.Add(func() error {
+		listener, err := net.Listen("tcp", metricAddr)
+		if err != nil {
+			return err
+		}
+
+		return metrics.Start(listener)
 	}, func(err error) {
 
 	})

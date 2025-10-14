@@ -15,9 +15,10 @@ import (
 	"github.com/crazyfrankie/goim/pkg/grpc/interceptor"
 	"github.com/crazyfrankie/goim/pkg/lang/signal"
 	"github.com/crazyfrankie/goim/pkg/logs"
+	"github.com/crazyfrankie/goim/pkg/metrics"
 )
 
-func Start(ctx context.Context, listenIP, registerIP, listenPort, rpcRegisterName string,
+func Start(ctx context.Context, listenIP, registerIP, listenPort, rpcRegisterName, metricAddr string,
 	rpcStart func(ctx context.Context, client discovery.SvcDiscoveryRegistry, srv grpc.ServiceRegistrar) error,
 	opts ...grpc.ServerOption) error {
 
@@ -43,7 +44,18 @@ func Start(ctx context.Context, listenIP, registerIP, listenPort, rpcRegisterNam
 	})
 
 	// Prometheus metrics server
-	// TODO
+	if metricAddr != "" {
+		g.Add(func() error {
+			listener, err := net.Listen("tcp", metricAddr)
+			if err != nil {
+				return err
+			}
+
+			return metrics.Start(listener)
+		}, func(err error) {
+
+		})
+	}
 
 	// RPC server
 	var (

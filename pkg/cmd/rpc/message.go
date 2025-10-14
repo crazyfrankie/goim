@@ -4,6 +4,7 @@ import (
 	"context"
 	"os"
 
+	"github.com/crazyfrankie/goim/pkg/metrics"
 	"github.com/spf13/cobra"
 	"google.golang.org/grpc"
 
@@ -38,8 +39,11 @@ func (m *MessageCmd) runE() error {
 	listenIP := os.Getenv("LISTEN_IP")
 	registerIP := os.Getenv("REGISTER_IP")
 	listenPort := os.Getenv("LISTEN_PORT")
+	metricAddr := os.Getenv("METRIC_ADDR")
 
-	return startrpc.Start(context.Background(), listenIP, registerIP, listenPort, consts.MessageServiceName, message.Start, msgGrpcServerOption()...)
+	metrics.RegistryUser()
+
+	return startrpc.Start(context.Background(), listenIP, registerIP, listenPort, metricAddr, consts.MessageServiceName, message.Start, msgGrpcServerOption()...)
 }
 
 func msgGrpcServerOption() []grpc.ServerOption {

@@ -34,7 +34,7 @@ func Start(ctx context.Context, client discovery.SvcDiscoveryRegistry) (http.Han
 		return nil, err
 	}
 
-	srv.Use(authHdl.Auth())
+	srv.Use(middleware.Metric(), authHdl.Auth())
 
 	apiGroup := srv.Group("api")
 	messageHdl.RegisterRoute(apiGroup)

@@ -10,6 +10,7 @@ import (
 	"github.com/crazyfrankie/goim/pkg/grpc/ctxutil"
 	"github.com/crazyfrankie/goim/pkg/lang/conv"
 	langslice "github.com/crazyfrankie/goim/pkg/lang/slice"
+	"github.com/crazyfrankie/goim/pkg/metrics"
 	authv1 "github.com/crazyfrankie/goim/protocol/auth/v1"
 	userv1 "github.com/crazyfrankie/goim/protocol/user/v1"
 	"github.com/crazyfrankie/goim/types/consts"
@@ -66,6 +67,8 @@ func (u *UserApplicationService) Register(ctx context.Context, req *userv1.Regis
 	data.AccessToken = tkRes.AccessToken
 	data.RefreshToken = tkRes.RefreshToken
 
+	metrics.UserRegisterCounter.Add(1)
+
 	return &userv1.RegisterResponse{
 		Data: data,
 	}, nil
@@ -91,6 +94,8 @@ func (u *UserApplicationService) Login(ctx context.Context, req *userv1.LoginReq
 	data := userDO2DTO(userInfo)
 	data.AccessToken = tkRes.AccessToken
 	data.RefreshToken = tkRes.RefreshToken
+
+	metrics.UserLoginCounter.Add(1)
 
 	return &userv1.LoginResponse{
 		Data: data,

@@ -8,6 +8,10 @@ import (
 )
 
 const (
+	ginApiResponseKey = "gin_api_response_key"
+)
+
+const (
 	SuccessCode int32 = iota
 	InvalidParamCode
 	InternalServer
@@ -21,29 +25,34 @@ type Response struct {
 }
 
 func InternalServerError(c *gin.Context, err error) {
-	c.JSON(http.StatusInternalServerError, ParseError(err))
+	ginJSON(c, http.StatusInternalServerError, ParseError(err))
 }
 
 func InvalidParamError(c *gin.Context, message string) {
-	c.JSON(http.StatusBadRequest, Response{
+	ginJSON(c, http.StatusBadRequest, &Response{
 		Code:    InvalidParamCode,
 		Message: "invalid params, " + message,
 	})
 }
 
 func Unauthorized(c *gin.Context) {
-	c.JSON(http.StatusUnauthorized, Response{
+	ginJSON(c, http.StatusUnauthorized, &Response{
 		Code:    UnauthorizedCode,
 		Message: "unauthorized",
 	})
 }
 
 func Success(c *gin.Context, data any) {
-	c.JSON(http.StatusOK, Response{
+	ginJSON(c, http.StatusOK, &Response{
 		Code:    SuccessCode,
 		Message: "success",
 		Data:    data,
 	})
+}
+
+func ginJSON(c *gin.Context, code int, resp *Response) {
+	c.Set(ginApiResponseKey, resp)
+	c.JSON(code, resp)
 }
 
 func ParseError(err error) *Response {
@@ -59,4 +68,13 @@ func ParseError(err error) *Response {
 		Code:    code,
 		Message: msg,
 	}
+}
+
+func GetApiResp(c *gin.Context) *Response {
+	val, ok := c.Get(ginApiResponseKey)
+	if !ok {
+		return nil
+	}
+	resp, _ := val.(*Response)
+	return resp
 }

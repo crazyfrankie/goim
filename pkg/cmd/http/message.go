@@ -35,6 +35,7 @@ func (m *MessageCmd) Exec() error {
 
 func (m *MessageCmd) runE() error {
 	listenAddr := os.Getenv("LISTEN_ADDR")
+	metricAddr := os.Getenv("METRIC_ADDR")
 
-	return starthttp.Start(context.Background(), listenAddr, message.Start, time.Second*5)
+	return starthttp.Start(context.Background(), listenAddr, metricAddr, message.Start, time.Second*5)
 }

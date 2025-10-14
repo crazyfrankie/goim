@@ -38,8 +38,9 @@ func (p *PushCmd) runE() error {
 	listenIP := os.Getenv("LISTEN_IP")
 	registerIP := os.Getenv("REGISTER_IP")
 	listenPort := os.Getenv("LISTEN_PORT")
+	metricAddr := os.Getenv("METRIC_ADDR")
 
-	return startrpc.Start(context.Background(), listenIP, registerIP, listenPort, consts.PushServiceName, push.Start, pushGrpcServerOption()...)
+	return startrpc.Start(context.Background(), listenIP, registerIP, listenPort, metricAddr, consts.PushServiceName, push.Start, pushGrpcServerOption()...)
 }
 
 func pushGrpcServerOption() []grpc.ServerOption {

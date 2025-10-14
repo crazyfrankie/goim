@@ -49,7 +49,7 @@ func New(cmd cache.Cmdable) (token.Token, error) {
 
 func (s *TokenService) GenerateToken(uid int64, platformID int32) ([]string, error) {
 	res := make([]string, 2)
-	access, err := s.newToken(uid, platformID, time.Minute*15)
+	access, err := s.newToken(uid, platformID, time.Hour*2)
 	if err != nil {
 		return res, err
 	}
@@ -69,10 +69,6 @@ func (s *TokenService) GenerateToken(uid int64, platformID int32) ([]string, err
 	}
 
 	return res, nil
-}
-
-func (s *TokenService) GenerateConnToken(uid int64, platformID int32) (string, error) {
-	return s.newToken(uid, platformID, time.Hour*24)
 }
 
 func (s *TokenService) newToken(uid int64, platformID int32, duration time.Duration) (string, error) {

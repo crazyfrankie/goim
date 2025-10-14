@@ -39,7 +39,7 @@ func (a *AuthCmd) runE() error {
 	registerIP := os.Getenv("REGISTER_IP")
 	listenPort := os.Getenv("LISTEN_PORT")
 
-	return startrpc.Start(context.Background(), listenIP, registerIP, listenPort, consts.AuthServiceName, auth.Start, authGrpcServerOption()...)
+	return startrpc.Start(context.Background(), listenIP, registerIP, listenPort, "", consts.AuthServiceName, auth.Start, authGrpcServerOption()...)
 }
 
 func authGrpcServerOption() []grpc.ServerOption {

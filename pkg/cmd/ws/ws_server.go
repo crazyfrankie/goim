@@ -2,6 +2,7 @@ package ws
 
 import (
 	"context"
+	"os"
 
 	"github.com/spf13/cobra"
 
@@ -32,5 +33,7 @@ func (w *WebsocketCmd) Exec() error {
 }
 
 func (w *WebsocketCmd) runE() error {
-	return startrpc.Start(context.Background(), "", "", "", consts.MsgGatewayName, ws.Start)
+	metricAddr := os.Getenv("METRIC_ADDR")
+
+	return startrpc.Start(context.Background(), "", "", "", metricAddr, consts.MsgGatewayName, ws.Start)
 }
