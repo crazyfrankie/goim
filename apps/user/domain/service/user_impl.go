@@ -71,8 +71,6 @@ func (u *userImpl) Create(ctx context.Context, req *CreateUserRequest) (*entity.
 		return nil, fmt.Errorf("generate id error: %w", err)
 	}
 
-	now := time.Now().UnixMilli()
-
 	newUser := &model.User{
 		ID:          userID,
 		IconURI:     consts.UserIconURI,
@@ -81,8 +79,6 @@ func (u *userImpl) Create(ctx context.Context, req *CreateUserRequest) (*entity.
 		Email:       req.Email,
 		Password:    hashedPassword,
 		Description: req.Description,
-		CreatedAt:   now,
-		UpdatedAt:   now,
 	}
 
 	err = u.UserRepo.CreateUser(ctx, newUser)

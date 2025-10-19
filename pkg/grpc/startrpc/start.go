@@ -6,7 +6,11 @@ import (
 	"net"
 	"time"
 
+	"github.com/crazyfrankie/goim/pkg/tracing"
 	"github.com/oklog/run"
+	"go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"
+	"go.opentelemetry.io/otel"
+	"go.opentelemetry.io/otel/propagation"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 
@@ -18,10 +22,21 @@ import (
 	"github.com/crazyfrankie/goim/pkg/metrics"
 )
 
-func Start(ctx context.Context, listenIP, registerIP, listenPort, rpcRegisterName, metricAddr string,
-	rpcStart func(ctx context.Context, client discovery.SvcDiscoveryRegistry, srv grpc.ServiceRegistrar) error,
-	opts ...grpc.ServerOption) error {
+type Config struct {
+	ListenIP        string
+	ListenPort      string
+	RegisterIP      string
+	RPCRegisterName string
+	RPCServiceVer   string
 
+	MetricAddr    string
+	CollectorAddr string
+
+	RPCStart   func(ctx context.Context, client discovery.SvcDiscoveryRegistry, srv grpc.ServiceRegistrar) error
+	ServerOpts []grpc.ServerOption
+}
+
+func Start(ctx context.Context, cfg *Config) error {
 	client, err := discoveryimpl.NewDiscoveryRegister()
 	if err != nil {
 		return err
@@ -29,6 +44,7 @@ func Start(ctx context.Context, listenIP, registerIP, listenPort, rpcRegisterNam
 	defer client.Close()
 
 	client.AppendOption(
+		grpc.WithStatsHandler(otelgrpc.NewClientHandler()),
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
 		grpc.WithDefaultServiceConfig(fmt.Sprintf(`{"LoadBalancingPolicy": "%s"}`, "round_robin")),
 		grpc.WithChainUnaryInterceptor(interceptor.ClientLogInterceptor()),
@@ -44,9 +60,9 @@ func Start(ctx context.Context, listenIP, registerIP, listenPort, rpcRegisterNam
 	})
 
 	// Prometheus metrics server
-	if metricAddr != "" {
+	if cfg.MetricAddr != "" {
 		g.Add(func() error {
-			listener, err := net.Listen("tcp", metricAddr)
+			listener, err := net.Listen("tcp", cfg.MetricAddr)
 			if err != nil {
 				return err
 			}
@@ -63,29 +79,41 @@ func Start(ctx context.Context, listenIP, registerIP, listenPort, rpcRegisterNam
 		rpcListener net.Listener
 	)
 
+	if cfg.CollectorAddr != "" {
+		traceProvider, err := tracing.GetTraceProvider(cfg.RPCRegisterName, cfg.RPCServiceVer, cfg.CollectorAddr)
+		if err != nil {
+			return err
+		}
+		otel.SetTracerProvider(traceProvider)
+		otel.SetTextMapPropagator(propagation.NewCompositeTextMapPropagator(
+			propagation.TraceContext{},
+			propagation.Baggage{},
+		))
+	}
+
 	onRegisterService := func(desc *grpc.ServiceDesc, impl any) {
 		if rpcServer != nil {
 			rpcServer.RegisterService(desc, impl)
 			return
 		}
 
-		rpcListenAddr := net.JoinHostPort(listenIP, listenPort)
+		rpcListenAddr := net.JoinHostPort(cfg.ListenIP, cfg.ListenPort)
 
 		var err error
 		rpcListener, err = net.Listen("tcp", rpcListenAddr)
 		if err != nil {
-			logs.CtxErrorf(ctx, "listen rpc failed, rpcRegisterName: %s, rpcListenAddr: %s", rpcRegisterName, rpcListenAddr)
+			logs.CtxErrorf(ctx, "listen rpc failed, rpcRegisterName: %s, rpcListenAddr: %s", cfg.RPCRegisterName, rpcListenAddr)
 			return
 		}
 
-		rpcServer = grpc.NewServer(opts...)
+		rpcServer = grpc.NewServer(cfg.ServerOpts...)
 		rpcServer.RegisterService(desc, impl)
-		logs.CtxDebugf(ctx, "rpc start register, rpcRegisterName: %s, registerIP: %s, listenPort: %s", rpcRegisterName, registerIP, listenPort)
+		logs.CtxDebugf(ctx, "rpc start register, rpcRegisterName: %s, registerIP: %s, listenPort: %s", cfg.RPCRegisterName, cfg.RegisterIP, cfg.ListenPort)
 
 		g.Add(func() error {
 			// Register service
-			if err := client.Register(ctx, rpcRegisterName, registerIP, listenPort); err != nil {
-				return fmt.Errorf("rpc register %s: %w", rpcRegisterName, err)
+			if err := client.Register(ctx, cfg.RPCRegisterName, cfg.RegisterIP, cfg.ListenPort); err != nil {
+				return fmt.Errorf("rpc register %s: %w", cfg.RPCRegisterName, err)
 			}
 
 			// Start serving
@@ -120,7 +148,7 @@ func Start(ctx context.Context, listenIP, registerIP, listenPort, rpcRegisterNam
 		})
 	}
 
-	if err := rpcStart(ctx, client, &grpcServiceRegistrar{onRegisterService: onRegisterService}); err != nil {
+	if err := cfg.RPCStart(ctx, client, &grpcServiceRegistrar{onRegisterService: onRegisterService}); err != nil {
 		return err
 	}
 

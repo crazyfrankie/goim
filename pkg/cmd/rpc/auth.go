@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"github.com/spf13/cobra"
+	"go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"
 	"google.golang.org/grpc"
 
 	"github.com/crazyfrankie/goim/apps/auth"
@@ -35,15 +36,24 @@ func (a *AuthCmd) Exec() error {
 }
 
 func (a *AuthCmd) runE() error {
-	listenIP := os.Getenv("LISTEN_IP")
-	registerIP := os.Getenv("REGISTER_IP")
-	listenPort := os.Getenv("LISTEN_PORT")
+	cfg := &startrpc.Config{
+		ListenIP:        os.Getenv("LISTEN_IP"),
+		ListenPort:      os.Getenv("LISTEN_PORT"),
+		RegisterIP:      os.Getenv("REGISTER_IP"),
+		RPCRegisterName: consts.AuthServiceName,
+		RPCServiceVer:   consts.AuthServiceVer,
+		MetricAddr:      os.Getenv("METRIC_ADDR"),
+		CollectorAddr:   os.Getenv("COLLECTOR_ADDR"),
+		RPCStart:        auth.Start,
+		ServerOpts:      authGrpcServerOption(),
+	}
 
-	return startrpc.Start(context.Background(), listenIP, registerIP, listenPort, "", consts.AuthServiceName, auth.Start, authGrpcServerOption()...)
+	return startrpc.Start(context.Background(), cfg)
 }
 
 func authGrpcServerOption() []grpc.ServerOption {
 	return []grpc.ServerOption{
+		grpc.StatsHandler(otelgrpc.NewServerHandler()),
 		grpc.ChainUnaryInterceptor(
 			interceptor.CtxMDInterceptor(),
 			interceptor.ResponseInterceptor(),

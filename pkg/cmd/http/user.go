@@ -34,8 +34,15 @@ func (u *UserCmd) Exec() error {
 }
 
 func (u *UserCmd) runE() error {
-	listenAddr := os.Getenv("LISTEN_ADDR")
-	metricAddr := os.Getenv("METRIC_ADDR")
+	cfg := &starthttp.Config{
+		ListenAddr:      os.Getenv("LISTEN_ADDR"),
+		ServiceName:     consts.UserApiName,
+		ServiceVer:      consts.UserApiVer,
+		ShutdownTimeout: time.Second * 5,
+		MetricAddr:      os.Getenv("METRIC_ADDR"),
+		CollectorAddr:   os.Getenv("COLLECTOR_ADDR"),
+		InitFunc:        user.Start,
+	}
 
-	return starthttp.Start(context.Background(), listenAddr, metricAddr, user.Start, time.Second*5)
+	return starthttp.Start(context.Background(), cfg)
 }

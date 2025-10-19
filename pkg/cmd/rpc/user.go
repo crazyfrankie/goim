@@ -4,8 +4,8 @@ import (
 	"context"
 	"os"
 
-	"github.com/crazyfrankie/goim/pkg/metrics"
 	"github.com/spf13/cobra"
+	"go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"
 	"google.golang.org/grpc"
 
 	"github.com/crazyfrankie/goim/apps/user"
@@ -36,18 +36,24 @@ func (u *UserCmd) Exec() error {
 }
 
 func (u *UserCmd) runE() error {
-	listenIP := os.Getenv("LISTEN_IP")
-	registerIP := os.Getenv("REGISTER_IP")
-	listenPort := os.Getenv("LISTEN_PORT")
-	metricAddr := os.Getenv("METRIC_ADDR")
+	cfg := &startrpc.Config{
+		ListenIP:        os.Getenv("LISTEN_IP"),
+		ListenPort:      os.Getenv("LISTEN_PORT"),
+		RegisterIP:      os.Getenv("REGISTER_IP"),
+		RPCRegisterName: consts.UserServiceName,
+		RPCServiceVer:   consts.UserServiceVer,
+		MetricAddr:      os.Getenv("METRIC_ADDR"),
+		CollectorAddr:   os.Getenv("COLLECTOR_ADDR"),
+		RPCStart:        user.Start,
+		ServerOpts:      userGrpcServerOption(),
+	}
 
-	metrics.RegistryUser()
-
-	return startrpc.Start(context.Background(), listenIP, registerIP, listenPort, metricAddr, consts.UserServiceName, user.Start, userGrpcServerOption()...)
+	return startrpc.Start(context.Background(), cfg)
 }
 
 func userGrpcServerOption() []grpc.ServerOption {
 	return []grpc.ServerOption{
+		grpc.StatsHandler(otelgrpc.NewServerHandler()),
 		grpc.ChainUnaryInterceptor(
 			interceptor.CtxMDInterceptor(),
 			interceptor.ResponseInterceptor(),

@@ -15,7 +15,7 @@ import (
 )
 
 // Start returns gin.Engine.
-func Start(ctx context.Context, client discovery.SvcDiscoveryRegistry) (http.Handler, error) {
+func Start(ctx context.Context, client discovery.SvcDiscoveryRegistry, middlewares ...gin.HandlerFunc) (http.Handler, error) {
 	srv := gin.Default()
 
 	userCC, err := client.GetConn(ctx, consts.UserServiceName)
@@ -34,7 +34,9 @@ func Start(ctx context.Context, client discovery.SvcDiscoveryRegistry) (http.Han
 		return nil, err
 	}
 
-	srv.Use(middleware.Metric(), authHdl.IgnorePath([]string{"/api/user/login", "/api/user/register"}).Auth())
+	middlewares = append(middlewares, authHdl.IgnorePath([]string{"/api/user/login", "/api/user/register"}).Auth())
+
+	srv.Use(middlewares...)
 
 	apiGroup := srv.Group("api")
 	userHdl.RegisterRoute(apiGroup)

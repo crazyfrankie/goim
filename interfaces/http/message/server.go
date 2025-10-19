@@ -14,7 +14,7 @@ import (
 	"github.com/crazyfrankie/goim/types/consts"
 )
 
-func Start(ctx context.Context, client discovery.SvcDiscoveryRegistry) (http.Handler, error) {
+func Start(ctx context.Context, client discovery.SvcDiscoveryRegistry, middlewares ...gin.HandlerFunc) (http.Handler, error) {
 	srv := gin.Default()
 
 	authCC, err := client.GetConn(ctx, consts.AuthServiceName)
@@ -34,7 +34,9 @@ func Start(ctx context.Context, client discovery.SvcDiscoveryRegistry) (http.Han
 		return nil, err
 	}
 
-	srv.Use(middleware.Metric(), authHdl.Auth())
+	middlewares = append(middlewares, authHdl.Auth())
+
+	srv.Use(middlewares...)
 
 	apiGroup := srv.Group("api")
 	messageHdl.RegisterRoute(apiGroup)

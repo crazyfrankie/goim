@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"github.com/spf13/cobra"
+	"go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"
 	"google.golang.org/grpc"
 
 	"github.com/crazyfrankie/goim/apps/push"
@@ -35,16 +36,24 @@ func (p *PushCmd) Exec() error {
 }
 
 func (p *PushCmd) runE() error {
-	listenIP := os.Getenv("LISTEN_IP")
-	registerIP := os.Getenv("REGISTER_IP")
-	listenPort := os.Getenv("LISTEN_PORT")
-	metricAddr := os.Getenv("METRIC_ADDR")
+	cfg := &startrpc.Config{
+		ListenIP:        os.Getenv("LISTEN_IP"),
+		ListenPort:      os.Getenv("LISTEN_PORT"),
+		RegisterIP:      os.Getenv("REGISTER_IP"),
+		RPCRegisterName: consts.PushServiceName,
+		RPCServiceVer:   consts.PushServiceVer,
+		MetricAddr:      os.Getenv("METRIC_ADDR"),
+		CollectorAddr:   os.Getenv("COLLECTOR_ADDR"),
+		RPCStart:        push.Start,
+		ServerOpts:      pushGrpcServerOption(),
+	}
 
-	return startrpc.Start(context.Background(), listenIP, registerIP, listenPort, metricAddr, consts.PushServiceName, push.Start, pushGrpcServerOption()...)
+	return startrpc.Start(context.Background(), cfg)
 }
 
 func pushGrpcServerOption() []grpc.ServerOption {
 	return []grpc.ServerOption{
+		grpc.StatsHandler(otelgrpc.NewServerHandler()),
 		grpc.ChainUnaryInterceptor(
 			interceptor.CtxMDInterceptor(),
 			interceptor.ResponseInterceptor(),

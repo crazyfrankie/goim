@@ -33,7 +33,17 @@ func (w *WebsocketCmd) Exec() error {
 }
 
 func (w *WebsocketCmd) runE() error {
-	metricAddr := os.Getenv("METRIC_ADDR")
+	cfg := &startrpc.Config{
+		ListenIP:        "",
+		ListenPort:      "",
+		RegisterIP:      "",
+		RPCRegisterName: consts.MsgGatewayName,
+		RPCServiceVer:   consts.MsgGatewayVer,
+		MetricAddr:      os.Getenv("METRIC_ADDR"),
+		CollectorAddr:   os.Getenv("COLLECTOR_ADDR"),
+		RPCStart:        ws.Start,
+		ServerOpts:      nil,
+	}
 
-	return startrpc.Start(context.Background(), "", "", "", metricAddr, consts.MsgGatewayName, ws.Start)
+	return startrpc.Start(context.Background(), cfg)
 }
