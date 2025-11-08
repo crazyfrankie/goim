@@ -6,7 +6,6 @@ import (
 	"net"
 	"time"
 
-	"github.com/crazyfrankie/goim/pkg/tracing"
 	"github.com/oklog/run"
 	"go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"
 	"go.opentelemetry.io/otel"
@@ -20,6 +19,7 @@ import (
 	"github.com/crazyfrankie/goim/pkg/lang/signal"
 	"github.com/crazyfrankie/goim/pkg/logs"
 	"github.com/crazyfrankie/goim/pkg/metrics"
+	"github.com/crazyfrankie/goim/pkg/tracing"
 )
 
 type Config struct {
